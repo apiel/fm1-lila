@@ -9,7 +9,7 @@
 #include "../app/plat.h"
 
 enum { PG_HOME, PG_FX, PG_SEL, PG_ENV, PG_LFO, PG_EDIT, PG_GLO, PG_SAVE, PG_ARP, PG_SEQ, PG_PLAY, PG_REC, NPAGES };
-enum { FM_NONE, FM_BPM, FM_KEY, FM_SEMI, FM_WAVE, FM_BEND, FM_BARS };
+enum { FM_NONE, FM_BPM, FM_KEY, FM_SEMI, FM_WAVE, FM_BEND, FM_BARS, FM_VOICE, FM_SPEED };
 
 typedef struct {
     const char *name;                   /* <= 8 characters */
@@ -133,10 +133,20 @@ static const wk_t WK_JUNGLE[] = {
     WK(PG_HOME, 0, "TRUMPET", P_CAMT, 127, 0, 0, 0), WK(PG_HOME, 1, "BLOW", P_NOISE, 127, 0, 0, 0), WK(PG_HOME, 2, "STOMP", P_STOMP, 127, 0, 0, 0),
     WK(PG_HOME, 3, "SIZE", P_SIZE, 127, 0, 0, 0),
     WK(PG_EDIT, 1, "HONK", P_VOWEL, 127, 0, 0, 0), WK(PG_EDIT, 2, "HERD", P_BUDDY, 127, 0, 0, 0)};
+static const wk_t WK_STORY[] = {
+    WK(PG_HOME, 0, "SPEED", P_CTIME, 127, FM_SPEED, 0, 0), WK(PG_HOME, 1, "ROBOT", P_CAMT, 127, 0, 0, 0), WK(PG_HOME, 2, "SIZE", P_SIZE, 127, 0, 0, 0),
+    WK(PG_HOME, 3, "PITCH", P_BEND, 127, FM_BEND, 0, 0),
+    WK(PG_EDIT, 0, "VOICE", P_WAVE, 127, FM_VOICE, 0, 0), WK(PG_EDIT, 1, "CHOIR", P_BUDDY, 127, 0, 0, 0), WK(PG_EDIT, 2, "BIG", P_BIG, 127, 0, 0, 0),
+    WK(PG_EDIT, 3, "WHISPER", P_NOISE, 127, 0, 0, 0),
+    WK(PG_PLAY, 0, "SPEED", P_CTIME, 127, FM_SPEED, 0, 0), WK(PG_PLAY, 1, "REPEAT", P_MREPEAT, 1, 0, N_YESNO, 0), WK(PG_PLAY, 2, "PAUSE", P_PINGT, 127, 0, 0, 0),
+    WK(PG_PLAY, 3, "CAVE", P_SPACE, 127, 0, 0, 0)};
 #define WKS(t) {t, (uint8_t)(sizeof t / sizeof t[0])}
 static const struct { const wk_t *t; uint8_t n; } WORLD_KNOBS[NPRESET] = {
     WKS(WK_BIRD), WKS(WK_COW), WKS(WK_DOG), WKS(WK_FROG), WKS(WK_SPACE), WKS(WK_METEOR), WKS(WK_BLOCKS), WKS(WK_DINO), WKS(WK_ROBOT),
-    WKS(WK_OCEAN), WKS(WK_CASTLE), WKS(WK_JUNGLE)};
+    WKS(WK_OCEAN), WKS(WK_CASTLE), WKS(WK_JUNGLE), WKS(WK_STORY), WKS(WK_STORY)};
+
+static int story_world(void) { return PRESETS[P[P_PRESET] % NPRESET].story; }
+static int story_busy(void) { return story_all || story_part >= 0; }
 
 /* the knob a page shows for this world: the world's own, or the generic one */
 static const knobdef_t *kdef(int page, int k)
@@ -282,6 +292,16 @@ static void fmt_value(const knobdef_t *k, int v, char *out)
         put_s(out, WN[iclamp((v * 3 + 64) / 127, 0, 3)]);
         break;
     }
+    case FM_VOICE: {                                    /* a story's voice: the old talking toy's pulse, or the synth's waves */
+        static const char *const VN[4] = {"SINE", "TRIANGLE", "SAW", "SQUARE"};
+        put_s(out, v < 16 ? "CLASSIC" : VN[iclamp(((v - 16) * 3 + 55) / 111, 0, 3)]);
+        break;
+    }
+    case FM_SPEED: {                                    /* a story's speed: SLOW 64 is as it was spoken */
+        static const char *const SN[5] = {"FAST!", "FAST", "NORMAL", "SLOW", "SLOW!"};
+        put_s(out, SN[iclamp((v + 16) / 32, 0, 4)]);
+        break;
+    }
     case FM_BARS: {
         static const char *const BN[4] = {"1 BAR", "2 BARS", "4 BARS", "8 BARS"};
         put_s(out, BN[v & 3]);
@@ -324,6 +344,8 @@ static void knob_turn(int i, int d)
 static void world_change(int idx, int immediate)
 {
     idx = (idx % NPRESET + NPRESET) % NPRESET;
+    if (story_busy())
+        ev_post(EV_STOP, 0, 0);
     preset_load(idx);
     if (immediate) {
         sc.world = idx;
@@ -414,6 +436,19 @@ static void input(void)
         {
             int pg = PAGE_OF_BTN[i];
             int same = ui.page == pg;
+            if (pg == PG_PLAY && story_world() >= 0) {      /* a story world: PLAY tells the whole story, again: stop */
+                if (story_busy()) {
+                    ev_post(EV_STOP, 0, 0);
+                    toast("STOP", 0, RGB(255, 200, 120));
+                } else {
+                    ev_post(EV_PLAY, 0, 0);
+                    toast(PRESETS[P[P_PRESET] % NPRESET].name, PRESETS[P[P_PRESET] % NPRESET].voice, RGB(255, 200, 240));
+                }
+                ui.page = PG_PLAY;
+                ui.touched = -1;
+                ui.touch_ms = now;
+                continue;
+            }
             if (pg == PG_PLAY) {
                 if (mel_playing) {
                     ev_post(EV_STOP, 0, 0);
@@ -495,6 +530,14 @@ static void input(void)
         }
     }
     d = plat_enc(EN_SELECT);
+    if (d && story_world() >= 0) {                       /* a story: SELECT goes to the part before or after */
+        if (story_all)
+            ev_post(EV_STORY_SEEK, d > 0 ? 1 : -1, 0);
+        else
+            toast("PRESS PLAY", "FOR THE STORY", RGB(255, 200, 240));
+        ui.touch_ms = now;
+        d = 0;
+    }
     if (d) {
         if (mel_playing) {
             int m = ((int)mel_idx + (d > 0 ? 1 : -1) + NMEL) % NMEL;
@@ -850,6 +893,40 @@ static void overlays_draw(void)
         else
             text_out(120, 16, &FONT_S, melody_name(mel_idx), RGB(255, 255, 255), RGB(20, 30, 60));
     }
+    if (story_world() >= 0 && story_part >= 0) {         /* the story's words, for the grown-up reading along */
+        const char *t = story_text(story_world(), story_part);
+        char ln[3][41];
+        int nl = 0, len = 0, last = 0, i2, y0 = 4, np = story_parts(story_world());
+        while (*t && nl < 3) {                           /* wrap at 38 characters, on spaces */
+            const char *e = t;
+            int n = 0, cut = 0;
+            while (e[n] && n < 38) {
+                if (e[n] == ' ')
+                    cut = n;
+                n++;
+            }
+            if (e[n] && cut > 0)
+                n = cut;
+            for (i2 = 0; i2 < n; i2++)
+                ln[nl][i2] = t[i2];
+            ln[nl][n] = 0;
+            nl++;
+            t += n;
+            while (*t == ' ')
+                t++;
+        }
+        (void)len;
+        (void)last;
+        fill_rbox(4, y0, 232, 8 + nl * 13, 6, RGB(20, 16, 40));
+        fill_rbox(5, y0 + 1, 230, 6 + nl * 13, 5, RGB(255, 250, 240));
+        for (i2 = 0; i2 < nl; i2++)
+            text_c(120, y0 + 4 + i2 * 13, &FONT_XS, ln[i2], RGB(40, 30, 60));
+        if (np > 0) {                                    /* where we are in the story */
+            int w2 = 228 * (story_part * 255 + story_pos) / (np * 255);
+            box_(6, y0 + 7 + nl * 13, 228, 3, RGB(60, 50, 90));
+            box_(6, y0 + 7 + nl * 13, w2, 3, RGB(255, 140, 200));
+        }
+    }
     if (sc.rec == REC_ARMED || sc.rec == REC_RECORDING) {
         int blink = (plat_ms() / 300u) & 1u;
         fill_circle(16, 16, blink ? 9 : 6, RGB(255, 40, 40));
@@ -1024,6 +1101,15 @@ static void leds(void)
     else if (rec_state == REC_LOOPING)
         bd |= 1u << B_REC;
     k = ui.held_k;
+    if (story_world() >= 0) {                           /* a story: every key has a part (faint); the part being told is lit */
+        int np = story_parts(story_world());
+        for (i = 0; i < NKEYS_L && i < np; i++)
+            kf |= 1u << i;
+        if (story_part >= 0)
+            k |= 1u << story_part;
+        if (story_busy())
+            b |= 1u << B_PLAY;
+    }
     if (mel_playing && mel_expect >= 0) {
         if (P[P_MMODE] == 1 && ((t / 200u) & 1u))
             k |= 1u << mel_expect;                         /* FOLLOW: the next key blinks */

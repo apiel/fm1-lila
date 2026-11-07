@@ -1,0 +1,70 @@
+# the two story worlds: a key tells its part, PLAY tells it all, SELECT moves along, the knobs change the voice
+wait 300
+turn PRESET -1
+expectp PRESET 13
+wait 700
+tapkey 0
+wait 1500
+expect voices 0
+shot st_g0.png
+tapkey 9
+wait 1200
+shot st_g9.png
+tapkey 12
+wait 2500
+shot st_g12.png
+tapkey 19
+wait 1500
+shot st_g19.png
+tapkey 16
+wait 2500
+shot st_g16.png
+wait 4000
+tap PLAY
+wait 2000
+shot st_gplay.png
+turn SELECT 1
+wait 1500
+turn SELECT 1
+wait 1000
+tap PLAY
+wait 600
+turn PRESET -1
+expectp PRESET 12
+wait 700
+tapkey 7
+wait 1600
+shot st_l7.png
+tapkey 8
+wait 2200
+shot st_l8.png
+tapkey 13
+wait 2000
+shot st_l13.png
+tapkey 18
+wait 2000
+shot st_l18.png
+tap HOME
+turn K2 30
+tapkey 0
+wait 1500
+shot st_lhome.png
+# a key tells its part and lights it; PLAY tells the story, SELECT moves on, PLAY again stops
+turn K2 -30
+tapkey 3
+wait 200
+expect storypart 3
+wait 7000
+expect storypart -1
+tap PLAY
+wait 300
+expect storypart 0
+turn SELECT 1
+wait 200
+expect storypart 1
+turn SELECT 1
+wait 200
+expect storypart 2
+tap PLAY
+wait 2500
+expect storypart -1

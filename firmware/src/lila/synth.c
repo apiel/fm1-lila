@@ -10,6 +10,7 @@
 #include "lila.h"
 #include "../dsp/fastmath.h"
 #include "../app/plat.h"
+#include "story_data.h"
 
 #define FS 44100.0f
 #define CTRL 8
@@ -605,6 +606,8 @@ static int key_note(int key)                           /* a key's note: octave, 
 }
 
 static void drum_hit(int mask, int vel);
+static int story_of_preset(void);
+static void story_start(int part);
 /* the things a world adds to a note of its own: a thump, a cowbell, a chatter of blips, the note again and again */
 static void world_extras(int note, int vel)
 {
@@ -650,7 +653,7 @@ static void play_note(int src, int id, int note, int vel)
     int n = (int)(P[P_FRIENDS] & 3u);
     float v = (float)vel * (1.0f / 127.0f);
     if (src == SRC_MEL && P[P_MBAND])
-        vp = &zoo_vp[rnd32() % NPRESET];
+        vp = &zoo_vp[rnd32() % NWORLD];
     voice_on(src, id, (float)note, v, vp);
     if (n) {
         voice_on(src, id, (float)(note + FRIEND_A[n]), v * 0.85f, vp);
@@ -1029,7 +1032,7 @@ static void drums_run(float *out, int n)
 
 /* ------------------------------------------------------------------ the looper --- */
 #define REC_MAX 160
-typedef struct { uint32_t t; uint8_t on, note; } rev_t;
+typedef struct { uint32_t t; uint8_t on, note, key; } rev_t;
 static rev_t rec_ev[REC_MAX];
 static int rec_n;
 static uint32_t rec_len, rec_t0;
@@ -1083,6 +1086,7 @@ static void rec_event(int on, int key)
     rec_ev[rec_n].t = now_s - rec_t0;
     rec_ev[rec_n].on = (uint8_t)on;
     rec_ev[rec_n].note = (uint8_t)key_note(key);
+    rec_ev[rec_n].key = (uint8_t)key;
     rec_down[key] = (uint8_t)on;
     rec_n++;
 }
@@ -1100,7 +1104,9 @@ static void rec_tick(void)
             if (rec_play_i < rec_n && (float)rec_ev[rec_play_i].t < np) {
                 const rev_t *e = &rec_ev[rec_play_i++];
                 int id = (SRC_LOOP << 8) | (e->note & 127);
-                if (e->on)
+                if (e->on && story_of_preset() >= 0)
+                    story_start(e->key);
+                else if (e->on)
                     play_note(SRC_LOOP, id, (int)e->note + shift, (int)((float)P[P_RVOL] * 0.9f) + 8);
                 else
                     voices_release(id);
@@ -1133,12 +1139,263 @@ static void rec_press(void)
     rec_phase = 0;
 }
 
+/* ------------------------------------------------------------------ the stories --- */
+/* LPC speech (tools/lpc_enc.c makes it): 12 reflection coefficients, a level and a pitch, 50 frames a second, spoken at 11025 Hz
+ * times the SIZE (smaller formants: a mouse, bigger: a giant). The excitation is the synth: a Speak & Spell pulse, or the SHAPE
+ * knob's waves, with the BUDDY, the BIG sub, the FRIENDS' chords and a WHISPER of noise; the pitch follows the speech, the KEY, the
+ * octave, BEND and the LFO, and ROBOT pulls it toward one note. Then the filter, the envelope and the effects, like a voice. */
+#define ST_ORDER 12
+#define ST_FS 11025.0f
+static const uint8_t ST_KBITS[ST_ORDER] = {7, 7, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4};
+volatile int8_t story_part = -1;
+volatile uint8_t story_all, story_pos;
+static struct {
+    int s, on, gate;
+    uint32_t f0, fend;                       /* the part's frames */
+    float fpos;                              /* frames since the part started */
+    float k0[ST_ORDER + 1], k1[ST_ORDER + 1], a[ST_ORDER + 1], y[ST_ORDER + 1];
+    float g0, g1, p0, p1;                    /* the level and the period of the two frames around now */
+    int fi;                                  /* the frame k0 holds */
+    float de, ph, ph2, ph3, phs, lph, prev, cur, env, gprev, s1, s2, lvl;
+    int sub;                                 /* LPC samples until the coefficients are refreshed */
+    uint32_t gap;                            /* PLAY: samples of silence before the next part */
+} st;
+
+int story_parts(int s) { return s >= 0 && s < NSTORY ? STORIES[s].parts : 0; }
+const char *story_text(int s, int part) { return s >= 0 && s < NSTORY && part >= 0 && part < STORIES[s].parts ? STORIES[s].txt[part] : ""; }
+int story_scene(int s, int part) { return s >= 0 && s < NSTORY && part >= 0 && part < STORIES[s].parts ? STORIES[s].scene[part] : 0; }
+static int story_of_preset(void) { return PRESETS[P[P_PRESET] % NPRESET].story; }
+
+static void st_frame(uint32_t f, float *k, float *g, float *p)
+{
+    const uint8_t *b = STORIES[st.s].fr + f * 10u;
+    int pos = 0, j, q;
+    for (j = 0; j < ST_ORDER; j++) {
+        int n = ST_KBITS[j], m = (1 << (n - 1)) - 1, i;
+        unsigned v = 0;
+        for (i = 0; i < n; i++, pos++)
+            v |= (unsigned)((b[pos >> 3] >> (pos & 7)) & 1u) << i;
+        k[j + 1] = fm_sinf((float)((int)v - m) / (float)m * (FM_PI * 0.5f));
+    }
+    for (q = 0, j = 0; j < 6; j++, pos++)
+        q |= ((b[pos >> 3] >> (pos & 7)) & 1) << j;
+    *g = fm_exp2f((float)q * 1.5f * (3.321928f / 20.0f)) - 1.0f;      /* 10^(q 1.5 / 20) */
+    for (q = 0, j = 0; j < 7; j++, pos++)
+        q |= ((b[pos >> 3] >> (pos & 7)) & 1) << j;
+    *p = q ? 25.0f * fm_exp2f((float)(q - 1) * (4.0f / 126.0f)) : 0.0f;
+}
+static void st_load(int fi)                                /* the two frames around fi */
+{
+    uint32_t a = st.f0 + (uint32_t)fi, b = a + 1u < st.fend ? a + 1u : a;
+    st.fi = fi;
+    st_frame(a, st.k0, &st.g0, &st.p0);
+    st_frame(b, st.k1, &st.g1, &st.p1);
+}
+static void story_start(int part)
+{
+    int s = story_of_preset();
+    if (s < 0 || part < 0 || part >= STORIES[s].parts)
+        return;
+    st.s = s;
+    st.f0 = STORIES[s].off[part];
+    st.fend = st.f0 + STORIES[s].n[part];
+    st.fpos = 0.0f;
+    st.on = st.gate = STORIES[s].n[part] > 0;
+    st.sub = 0;
+    st.gap = 0;
+    if (st.env < 0.01f) {
+        int j;
+        for (j = 0; j <= ST_ORDER; j++)
+            st.y[j] = 0.0f;
+        st.de = st.s1 = st.s2 = 0.0f;
+    }
+    if (st.on)
+        st_load(0);
+    story_part = (int8_t)part;
+    story_pos = 0;
+}
+static void story_stop(void)
+{
+    st.gate = 0;
+    st.on = 0;                                             /* the voice fades out with the release */
+    story_all = 0;
+    st.gap = 0;
+}
+/* one LPC sample */
+static float st_sample(float rate)
+{
+    float frac, k[ST_ORDER + 1], g, p, e, nz, y, robot = knob((const uint8_t *)P, P_CAMT);
+    int j, fi;
+    st.fpos += 50.0f * fm_exp2f((64.0f - (float)P[P_CTIME]) * (1.0f / 64.0f)) / rate;    /* SLOW: 0.5x .. 2x, the pitch stays */
+    fi = (int)st.fpos;
+    if (st.f0 + (uint32_t)fi >= st.fend) {
+        st.on = 0;
+        st.gate = 0;
+        return 0.0f;
+    }
+    if (fi != st.fi)
+        st_load(fi);
+    frac = st.fpos - (float)fi;
+    if (--st.sub <= 0) {                                   /* the filter: the coefficients between the frames, every 16 samples */
+        float tmp[ST_ORDER + 1];
+        int i;
+        st.sub = 16;
+        for (j = 1; j <= ST_ORDER; j++)
+            k[j] = st.k0[j] + (st.k1[j] - st.k0[j]) * frac;
+        st.a[0] = 1.0f;
+        for (i = 1; i <= ST_ORDER; i++) {
+            for (j = 1; j < i; j++)
+                tmp[j] = st.a[j];
+            for (j = 1; j < i; j++)
+                st.a[j] = tmp[j] + k[i] * tmp[i - j];
+            st.a[i] = k[i];
+        }
+    }
+    g = (st.g0 + (st.g1 - st.g0) * frac) * (1.0f / 32768.0f);
+    p = st.p0 > 0.0f && st.p1 > 0.0f ? st.p0 + (st.p1 - st.p0) * frac : st.p0;
+    nz = frnd() * 1.73f;
+    if (p > 0.0f) {                                        /* voiced: the synth plays the pitch of the speech */
+        float f0 = ST_FS / p, semis = (float)((int)P[P_KEY] - 6) + 12.0f * (float)((int)P[P_OCT] - 3) + ctl.bend + ctl.wig + ctl.lfo_pitch;
+        float lf = fm_log2f(f0), inc, wv = (float)P[P_WAVE];
+        lf += (7.13f - lf) * robot;                        /* ROBOT: toward one note (140 Hz) */
+        f0 = fm_exp2f(lf + semis * (1.0f / 12.0f));
+        inc = f0 / rate;
+        if (inc > 0.45f)
+            inc = 0.45f;
+        st.ph += inc;
+        if (wv < 16.0f) {                                  /* the Speak & Spell pulse */
+            e = 0.0f;
+            if (st.ph >= 1.0f)
+                e = fm_sqrtf(1.0f / inc);
+        } else
+            e = shape(st.ph - (float)(int)st.ph, inc, (wv - 16.0f) * (3.0f / 111.0f), 0.5f) * 0.95f;
+        if (st.ph >= 1.0f)
+            st.ph -= 1.0f;
+        if (P[P_BUDDY]) {                                  /* a twin, a little out of tune: a choir */
+            st.ph2 += inc * g_vp.buddy_ratio;
+            if (st.ph2 >= 1.0f)
+                st.ph2 -= 1.0f;
+            e += saw_w(st.ph2, inc) * 1.2f * g_vp.buddy_lvl;
+        }
+        if (P[P_FRIENDS] & 3u) {                           /* the friends sing along: an octave, a fifth, a chord */
+            static const float FR[4] = {1.0f, 2.0f, 1.4983f, 1.2599f};
+            st.ph3 += inc * FR[P[P_FRIENDS] & 3u];
+            if (st.ph3 >= 1.0f)
+                st.ph3 -= 1.0f;
+            e += saw_w(st.ph3, inc * FR[P[P_FRIENDS] & 3u] > 0.45f ? 0.45f : inc * FR[P[P_FRIENDS] & 3u]) * 1.2f;
+        }
+        if (P[P_BIG]) {
+            st.phs += inc * 0.5f;
+            if (st.phs >= 1.0f)
+                st.phs -= 1.0f;
+            e += sn_fast(st.phs) * g_vp.sub * 1.5f;
+        }
+        e += (nz - e) * knob((const uint8_t *)P, P_NOISE);       /* WHISPER */
+    } else
+        e = nz;
+    e *= g;
+    for (j = ST_ORDER; j >= 1; j--)                         /* the vocal tract: all poles */
+        e -= st.a[j] * st.y[j];
+    if (e > 4.0f)
+        e = 4.0f;
+    if (e < -4.0f)
+        e = -4.0f;
+    for (j = ST_ORDER; j > 1; j--)
+        st.y[j] = st.y[j - 1];
+    st.y[1] = e;
+    y = e + 0.9375f * st.de;                                /* de-emphasis */
+    st.de = y;
+    st.lvl = g;
+    return y;
+}
+/* the story's voice into 8 samples of the mix: the LPC samples, interpolated to 44.1 kHz, then the filter and the envelope */
+static void story_run(float *out)
+{
+    const vp_t *vp = &g_vp;
+    float sizef = fm_exp2f(-((float)P[P_SIZE] - 64.0f) * (0.7f / 64.0f)), rate = ST_FS * sizef, step = rate * (1.0f / FS);
+    float fc, g, k, a1, a2, a3, gain, dgain, s1 = st.s1, s2 = st.s2;
+    int i, ft = vp->ftype;
+    if (st.gate) {
+        st.env += vp->atk_step;
+        if (st.env > 1.0f)
+            st.env = 1.0f;
+    } else
+        st.env *= vp->rel_c;
+    if (!st.on && st.env < 0.0005f) {
+        st.env = 0.0f;
+        if (story_all && story_part >= 0) {                 /* PLAY: the next part, after a breath */
+            if (st.gap == 0)                               /* PAUSE: 0.15 .. 1.6 s between the parts */
+                st.gap = (uint32_t)(FS * (0.15f + (float)P[P_PINGT] * (1.45f / 127.0f)));
+            else if (st.gap <= CTRL) {
+                int nx = story_part + 1;
+                st.gap = 0;
+                if (nx >= story_parts(st.s) && P[P_MREPEAT]) {   /* REPEAT: from the beginning again */
+                    mel_done++;
+                    nx = 0;
+                }
+                if (nx < story_parts(st.s)) {
+                    story_start(nx);
+                    vis_push(VE_MELODY_NOTE, 60 + nx, 100, SRC_MEL);
+                } else {
+                    story_all = 0;
+                    story_part = -1;
+                    mel_done++;
+                }
+            } else
+                st.gap -= CTRL;
+        } else if (!story_all)
+            story_part = -1;
+        return;
+    }
+    fc = fm_exp2f(vp->cut_oct + 0.4f + vp->boing * st.env * 0.5f + ctl.lfo_filter + ctl.cut_mood);
+    fc = fc > 15000.0f ? 15000.0f : fc < 40.0f ? 40.0f : fc;
+    g = fm_tanf(FM_PI * fc * (1.0f / FS));
+    k = vp->k;
+    a1 = 1.0f / (1.0f + g * (g + k));
+    a2 = g * a1;
+    a3 = g * a2;
+    gain = st.env * vp->vol * ctl.trem * 0.8f;
+    dgain = (gain - st.gprev) * (1.0f / (float)CTRL);
+    gain = st.gprev;
+    st.gprev = st.env * vp->vol * ctl.trem * 0.8f;
+    for (i = 0; i < CTRL; i++) {
+        float x, v1, v2, y;
+        st.lph += step;
+        while (st.lph >= 1.0f) {
+            st.lph -= 1.0f;
+            st.prev = st.cur;
+            st.cur = st.on ? st_sample(rate) : st.cur * 0.9f;
+        }
+        x = st.prev + (st.cur - st.prev) * st.lph;
+        if (vp->drive > 1.02f)
+            x = sat(x * vp->drive) * (1.0f / (0.55f + 0.45f * vp->drive * 0.25f));
+        v2 = x - s2;
+        v1 = a1 * s1 + a2 * v2;
+        y = s2 + a2 * s1 + a3 * v2;
+        s1 = 2.0f * v1 - s1;
+        s2 = 2.0f * y - s2;
+        x = ft == 0 ? y : ft == 1 ? v1 * k : x - k * v1 - y;
+        out[i] += x * gain;
+        gain += dgain;
+    }
+    st.s1 = s1;
+    st.s2 = s2;
+    if (st.on && st.fend > st.f0)
+        story_pos = (uint8_t)(st.fpos * 255.0f / (float)(st.fend - st.f0) > 255.0f ? 255.0f : st.fpos * 255.0f / (float)(st.fend - st.f0));
+}
+
 /* --------------------------------------------------------------- the events --- */
 static void key_on(int key)
 {
     int n = key_note(key), mode = (int)P[P_ARP];
     keys_down++;
     rec_event(1, key);
+    if (story_of_preset() >= 0) {                          /* a story world: the key tells its part */
+        story_all = 0;
+        story_start(key);
+        vis_push(VE_NOTE, n, 110, SRC_KEY);
+        return;
+    }
     mel_follow_key(key);
     if (mode) {
         if (!P[P_STICKY] || keys_down == 1) {
@@ -1157,6 +1414,8 @@ static void key_off(int key)
     if (keys_down > 0)
         keys_down--;
     rec_event(0, key);
+    if (story_of_preset() >= 0)
+        return;
     if (P[P_ARP]) {
         if (!P[P_STICKY])
             arp_del(n);
@@ -1199,12 +1458,28 @@ static void process_events(void)
                 key_off(e.a);
             break;
         case EV_PLAY:
+            if (story_of_preset() >= 0) {                   /* a story world: PLAY tells the whole story */
+                story_all = 1;
+                story_start(0);
+                vis_push(VE_MELODY_NOTE, 60, 100, SRC_MEL);
+                if (beat_on)
+                    beat_on = 0;
+                break;
+            }
             mel_start(e.a);
             if (beat_on)
                 beat_on = 0;                           /* the beat starts again with the melody, together */
             break;
         case EV_STOP:
             mel_stop();
+            story_stop();
+            break;
+        case EV_STORY_SEEK:                                 /* SELECT while a story plays: the part before or after */
+            if (story_all && story_part >= 0) {
+                int nx = story_part + e.a;
+                if (nx >= 0 && nx < story_parts(story_of_preset()))
+                    story_start(nx);
+            }
             break;
         case EV_MELODY:
             if (mel_playing)
@@ -1525,7 +1800,7 @@ void preset_load(int idx)
 /* the little sounds a world's extras are made of */
 static void make_blips(void)
 {
-    static const preset_t PLAIN = {0, 0, 0, 0, 0, 100, 0};
+    static const preset_t PLAIN = {0, 0, 0, 0, 0, 100, 0, -1};
     uint8_t o[NSND];
     int i;
     for (i = 0; i < NSND; i++)
@@ -1651,6 +1926,8 @@ void engine_render(int32_t *out, uint32_t n)
         for (k = 0; k < NVOICE; k++)
             if (voice[k].on)
                 voice_run(&voice[k], m8);
+        if (st.on || st.env > 0.0f || story_all)
+            story_run(m8);
         now_s += CTRL;
     }
     drums_run(drum, (int)nb);
@@ -1661,6 +1938,11 @@ void engine_render(int32_t *out, uint32_t n)
             if (l > lvl)
                 lvl = l;
         }
+    if (st.env > 0.0f) {                                   /* the story's loudness opens the mouths */
+        float sl = st.env * st.lvl * 14.0f;
+        if (sl > lvl)
+            lvl = sl > 1.0f ? 1.0f : sl;
+    }
     vis_voices = (uint8_t)active;
     vis_level = (uint8_t)(lvl * 255.0f > 255.0f ? 255.0f : lvl * 255.0f);
     fx_block(mono, drum, out, (int)nb, echo, space, fluff, robot);

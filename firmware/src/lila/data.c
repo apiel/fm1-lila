@@ -70,20 +70,30 @@ static const pv_t SET_JUNGLE[] = {
     {P_STOMP, 34},
 };
 
+/* the two story worlds: a clear voice, a little room */
+static const pv_t SET_LILA[] = {
+    {P_CUT, 112}, {P_RESO, 8}, {P_REL, 34}, {P_SPACE, 34}, {P_ECHO, 8}, {P_CTIME, 64}, {P_BUDDY, 0}, {P_WAVE, 0}, {P_PINGT, 30},
+};
+static const pv_t SET_GOLDY[] = {
+    {P_CUT, 112}, {P_RESO, 8}, {P_REL, 34}, {P_SPACE, 26}, {P_ECHO, 6}, {P_CTIME, 64}, {P_BUDDY, 0}, {P_WAVE, 0}, {P_PINGT, 30},
+};
+
 #define SET(n) SET_##n, (uint8_t)(sizeof SET_##n / sizeof SET_##n[0])
 const preset_t PRESETS[NPRESET] = {
-    {"BIRD", "TWEET", SET(BIRD), 1, 95, 3},
-    {"COW", "MOO", SET(COW), -1, 60, 0},
-    {"DOG", "WOOF", SET(DOG), 0, 126, 0},
-    {"FROG", "RIBBIT", SET(FROG), -1, 94, 2},
-    {"SPACE", "WHOOSH", SET(SPACE), 0, 77, 1},
-    {"METEOR", "ZAP", SET(METEOR), 0, 54, 4},
-    {"BLOCKS", "BLOOP", SET(BLOCKS), 0, 55, 1},
-    {"DINO", "ROAR", SET(DINO), -2, 101, 0},
-    {"ROBOT", "BEEP", SET(ROBOT), 0, 111, 1},
-    {"OCEAN", "BLUB", SET(OCEAN), 0, 90, 2},
-    {"CASTLE", "TINKLE", SET(CASTLE), 1, 105, 4},
-    {"JUNGLE", "TRUMPET", SET(JUNGLE), -1, 62, 3},
+    {"BIRD", "TWEET", SET(BIRD), 1, 95, 3, -1},
+    {"COW", "MOO", SET(COW), -1, 60, 0, -1},
+    {"DOG", "WOOF", SET(DOG), 0, 126, 0, -1},
+    {"FROG", "RIBBIT", SET(FROG), -1, 94, 2, -1},
+    {"SPACE", "WHOOSH", SET(SPACE), 0, 77, 1, -1},
+    {"METEOR", "ZAP", SET(METEOR), 0, 54, 4, -1},
+    {"BLOCKS", "BLOOP", SET(BLOCKS), 0, 55, 1, -1},
+    {"DINO", "ROAR", SET(DINO), -2, 101, 0, -1},
+    {"ROBOT", "BEEP", SET(ROBOT), 0, 111, 1, -1},
+    {"OCEAN", "BLUB", SET(OCEAN), 0, 90, 2, -1},
+    {"CASTLE", "TINKLE", SET(CASTLE), 1, 105, 4, -1},
+    {"JUNGLE", "TRUMPET", SET(JUNGLE), -1, 62, 3, -1},
+    {"LILA", "UNE HISTOIRE", SET(LILA), 0, 75, 0, 0},
+    {"GOLDILOCKS", "A STORY", SET(GOLDY), 0, 80, 0, 1},
 };
 
 /* a melody is a list of notes: letter, optional # or b, octave (c4 = middle C), length. Length: 0 a sixteenth, 1 an eighth,

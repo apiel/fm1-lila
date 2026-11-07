@@ -10,7 +10,8 @@
 #include <stdint.h>
 
 #define NVOICE 10
-#define NPRESET 12
+#define NPRESET 14                     /* twelve worlds and two stories */
+#define NWORLD 12                      /* the worlds that are instruments (the ZOO band picks among them) */
 #define NMEL 12
 #define NKEYS_L 27                     /* F3 .. G5, as the panel's keys */
 #define KEY0_NOTE 53                   /* the lowest key plays F3 (MIDI 53) */
@@ -68,6 +69,7 @@ typedef struct {
     int8_t oct;                       /* the instrument's own octave shift */
     uint8_t vol;                      /* level trim, 100 = 1.0 */
     uint8_t blip;                     /* BL_*: the chatter's blips */
+    int8_t story;                     /* a story world: which story the keys tell (-1: an instrument) */
 } preset_t;
 extern const preset_t PRESETS[NPRESET];
 
@@ -81,7 +83,7 @@ typedef struct { const char *name; uint16_t kick, snare, hat, clap; } beat_t;
 extern const beat_t BEATS[NBEAT];
 
 /* ---------------------------------------------------------- UI -> audio --- */
-enum { EV_KEY_ON, EV_KEY_OFF, EV_PLAY, EV_STOP, EV_MELODY, EV_REC, EV_PANIC, EV_ARP_CLEAR, EV_BEAT_RESET };
+enum { EV_KEY_ON, EV_KEY_OFF, EV_PLAY, EV_STOP, EV_MELODY, EV_REC, EV_PANIC, EV_ARP_CLEAR, EV_BEAT_RESET, EV_STORY_SEEK };
 void ev_post(int type, int a, int b);                 /* main loop */
 
 /* ---------------------------------------------------------- audio -> UI --- */
@@ -112,6 +114,14 @@ extern volatile uint32_t eng_load_pct;
 const char *melody_name(int i);
 int melody_count(void);
 int melody_notes(int i, const uint8_t **notes, const uint8_t **lens);   /* the parsed tables */
+
+/* the stories: in a story world each key tells one part, PLAY tells them all (synth.c, from build/gen/story_data.h) */
+int story_parts(int s);
+const char *story_text(int s, int part);
+int story_scene(int s, int part);                      /* the scene behind a part (+ 0x80: its characters are there) */
+extern volatile int8_t story_part;                     /* the part being told, -1 none */
+extern volatile uint8_t story_all;                     /* PLAY: the whole story, part after part */
+extern volatile uint8_t story_pos;                     /* how far into the part, 0..255 */
 
 /* a sound the way the UI wants it: load a preset's sound into P[] */
 void preset_load(int idx);

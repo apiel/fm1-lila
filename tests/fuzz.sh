@@ -7,6 +7,7 @@ set -e
 cd "$(dirname "$0")/.."
 mkdir -p build/host build/scen
 [ -f build/gen/felucca_font.h ] || python3 tools/gen_font.py build/gen/felucca_font.h >/dev/null
+python3 tools/gen_stories.py build/gen/story_data.h >/dev/null
 cc -O1 -g -fsanitize=address,undefined -fno-sanitize=shift -fno-sanitize-recover=undefined -ffp-contract=off -std=gnu99 -DX0X_HOST \
     -Ifirmware/src -Ifirmware/src/dsp -Ibuild/gen -o build/host/lila_fuzz host/lila_host.c firmware/src/lila/synth.c firmware/src/lila/data.c -lm
 for seed in 1 2 3 4 5 6; do

@@ -8,6 +8,7 @@ set -e
 cd "$(dirname "$0")/../.."
 mkdir -p build/gen build/emu
 [ -f build/gen/felucca_font.h ] || python3 tools/gen_font.py build/gen/felucca_font.h >/dev/null
+python3 tools/gen_stories.py build/gen/story_data.h >/dev/null
 emcc -O2 -ffp-contract=off -std=gnu99 -Wall -Wno-unused-function -Wno-unused-parameter -Wno-unused-variable \
     -DX0X_HOST -DLILA_WEB -Ifirmware/src -Ifirmware/src/dsp -Ibuild/gen \
     --no-entry -sSTANDALONE_WASM -sSTACK_SIZE=1048576 -sINITIAL_MEMORY=33554432 -sFILESYSTEM=0 \

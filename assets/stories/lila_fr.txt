@@ -1,0 +1,29 @@
+# LILA ET LES NOTES PERDUES (fr): an original story, Lila is the hero. One line per key (27), in order. A line: SCENE|text
+# SCENE is the world drawn behind Lila: BIRD COW DOG FROG SPACE METEOR BLOCKS DINO ROBOT OCEAN CASTLE JUNGLE, + "*" when the world's character is there too
+BIRD|Il était une fois une petite fille qui s'appelait Lila.
+BIRD|Lila adorait la musique. Elle chantait du matin jusqu'au soir.
+BIRD|Mais un matin, en se réveillant... toutes les notes de musique avaient disparu !
+BIRD|Plus de chansons, plus de mélodies. Le monde était tout silencieux.
+BIRD|Je vais retrouver les notes ! dit Lila. Et elle partit à l'aventure.
+BIRD*|Dans le jardin, elle rencontra un petit oiseau jaune, tout triste.
+BIRD*|Cui-cui ! fit l'oiseau. Ma chanson s'est envolée vers la ferme !
+COW*|À la ferme, la vache dit : Meuh ! J'ai vu une note filer chez le chien.
+DOG*|Le chien leva la tête vers la lune : Ahouuu ! Elle est partie vers la mare !
+FROG*|Au bord de la mare, la grenouille fit : Croâ, croâ ! Prends la fusée, Lila !
+SPACE*|Lila monta dans une grande fusée rouge. Trois, deux, un... décollage !
+SPACE*|La fusée vola au milieu des étoiles et des planètes.
+METEOR*|Attention, des météores ! Lila tourna à gauche, puis à droite. Ouf !
+ROBOT*|Sur une petite planète, un robot fit : Bip, boup ! Bonjour, Lila !
+ROBOT*|Le robot lui donna une note toute bleue, qui brillait comme une étoile.
+OCEAN*|Puis la fusée plongea dans l'océan. Plouf !
+OCEAN*|Une grande baleine chantait une chanson douce, très douce.
+OCEAN*|Les autres notes sont au château magique, dit la baleine.
+CASTLE*|Au château, une licorne attendait Lila, près de l'arc-en-ciel.
+CASTLE|Mais les notes étaient enfermées dans une boîte à musique, fermée à clé.
+CASTLE|Lila réfléchit très fort. Puis elle chanta de toutes ses forces : la, la, la !
+CASTLE*|Clic ! La boîte s'ouvrit, et toutes les notes s'envolèrent dans le ciel.
+OCEAN|Elles volèrent au-dessus de l'océan, des étoiles, de la mare et de la ferme.
+BIRD*|Partout, le monde se remit à chanter. L'oiseau, la vache, le chien, la grenouille.
+JUNGLE*|Tous les amis de Lila dansèrent et chantèrent avec elle.
+DOG|Le soir, Lila s'endormit, avec une petite chanson dans le cœur.
+CASTLE|Et maintenant, c'est à toi de jouer ! Fin.

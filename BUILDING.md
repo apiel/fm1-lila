@@ -82,3 +82,19 @@ Locally: `source ~/emsdk/emsdk_env.sh && web/emu/build.sh && node tests/web_emu_
 `python3 tools/make_pages.py build/pages` and `cd build/pages && python3 -m http.server 8000`. The web installer
 (`install/`) writes the newest `dist/lila-*.fwsc`. The Action does not build the firmware (it needs the JieLi toolchain and SDK), so to publish
 a new version: `python3 tools/build.py --release 1.1-beta`, copy `build/lila-1.1-beta.fwsc` to `dist/`, delete the old one and commit.
+
+## The stories
+
+A story is a text, `assets/stories/NAME.txt`: one line per key (up to 27), `SCENE|text`. `tools/story_make.py` speaks each line with Piper,
+codes it (`tools/lpc_enc.c`: 12th-order LPC at 11025 Hz, 50 frames of 10 bytes a second, about 0.5 KB a second of speech) and writes
+`NAME.lpc`, which is committed; the build turns both into C (`tools/gen_stories.py`). Piper is only needed to remake the speech:
+
+```
+python3 -m venv ~/piper && ~/piper/bin/pip install piper-tts
+curl -LO https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/fr/fr_FR/siwis/medium/fr_FR-siwis-medium.onnx      # and its .onnx.json
+python3 tools/story_make.py assets/stories/lila_fr.txt fr_FR-siwis-medium.onnx --piper ~/piper/bin/piper
+```
+
+`build/t/lpc_enc -d NAME.lpc out.raw` decodes a coding with a plain pulse, to listen to it alone (11025 Hz mono 16-bit).
+A new story also needs its row in `tools/gen_stories.py` (STORIES, SCENES), a preset in `data.c` (its `story` field) and a scene in
+`firmware/src/lila/scenes_story.c`.

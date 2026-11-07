@@ -87,6 +87,28 @@ This is the **generic** layout. Each world then takes over some of these knobs a
 | 11 | CASTLE | TINKLE: a music-box bell | a unicorn in front of a castle and a rainbow |
 | 12 | JUNGLE | TRUMPET: a brassy horn that scoops up, with a breath and a stomp | an elephant raising its trunk among palm trees |
 
+## The two story worlds
+
+Turn PRESETS past the jungle: **LILA** (in French: *Lila et les notes perdues*, a story where Lila travels through the worlds of the
+synth to find the lost music) and **GOLDILOCKS** (in English: *Goldilocks and the Three Bears*).
+
+- **Each key tells one part of the story**, in order from the lowest key (27 parts). The keys that have a part glow faintly, the part being
+  told is lit, and its words are written at the top of the screen for whoever is reading along.
+- **PLAY** tells the whole story, part after part; PLAY again stops. While it plays, **SELECT** goes to the part before or after.
+- The voice is made like the old talking toys (LPC speech) and **played by the synth**, so everything still works on it:
+
+| Page | K1 | K2 | K3 | K4 |
+|---|---|---|---|---|
+| HOME | **SPEED** (slower or faster, the pitch stays) | **ROBOT** (the voice goes flat, like a robot) | **SIZE** (a mouse's voice to a giant's) | **PITCH** |
+| EDIT | **VOICE** (CLASSIC: the old talking toy; or the synth's sine, triangle, saw, square) | **CHOIR** (a second voice, out of tune) | **BIG** (a deep voice underneath) | **WHISPER** |
+| PLAY | **SPEED** | **REPEAT** (start again at the end) | **PAUSE** (between the parts) | **CAVE** (reverb) |
+
+FX (echo, space, chorus, robot), SEL (the filter), ENV (fade in, fade out), LFO (a wobbling voice), GLO's KEY and FRIENDS (the voice sings
+in chords), the octave buttons, the beat, and REC (record which parts you press, and loop them) all work on the story too.
+
+The voices are made on a computer with Piper, free text-to-speech: LJ Speech for English (public domain) and SIWIS for French
+(CC BY 4.0). See BUILDING.md to tell a story of your own.
+
 ## The twelve songs
 
 TWINKLE STAR, FRERE JACQUES, ODE TO JOY, MARY'S LAMB, OLD MACDONALD, AU CLAIR LUNE, JINGLE BELLS, HAPPY BIRTHDAY, LONDON BRIDGE,

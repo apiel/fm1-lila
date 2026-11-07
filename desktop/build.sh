@@ -9,6 +9,7 @@ ROOT=$(pwd)
 CC="${CC:-cc}"
 mkdir -p build/gen build/desktop
 [ -f build/gen/felucca_font.h ] || python3 tools/gen_font.py build/gen/felucca_font.h >/dev/null
+python3 tools/gen_stories.py build/gen/story_data.h >/dev/null
 U="firmware/src/lila/synth.c firmware/src/lila/data.c"
 FLAGS="-O2 -ffp-contract=off -std=gnu99 -Wall -Wextra -Wno-unused-function -Wno-unused-parameter -Wno-missing-field-initializers -DX0X_HOST -Ifirmware/src -Ifirmware/src/dsp -Ibuild/gen"
 # shellcheck disable=SC2086

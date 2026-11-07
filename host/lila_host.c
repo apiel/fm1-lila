@@ -408,6 +408,7 @@ static int expect(const char *what, const char *val, int line)
     else if (!strcmp(what, "oct")) got = P[P_OCT];
     else if (!strcmp(what, "voices")) got = vis_voices;
     else if (!strcmp(what, "expectkey")) got = mel_expect;
+    else if (!strcmp(what, "storypart")) got = story_part;
     else if (!strcmp(what, "peak_db_min") || !strcmp(what, "peak_db_max")) {
         got = (long)(peak_out > 0.0f ? 20.0 * log10((double)peak_out) : -200.0);
         if (!strcmp(what, "peak_db_min")) { op = '>'; } else { op = '<'; }

@@ -15,6 +15,10 @@ makes the animal grow.
 
 ![The twelve worlds](docs/img/worlds.png)
 
+And **two story worlds**: each key tells a part of a story (in French, *Lila et les notes perdues*, where Lila is the hero; in English,
+*Goldilocks and the Three Bears*), PLAY tells it all, and the voice is played by the synth, so the filter, the effects and the LFO still
+work on it.
+
 Every button has one page and the four knobs always do something. The keys just play. See the **[manual](docs/MANUAL.md)**.
 
 | | |

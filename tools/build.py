@@ -125,10 +125,11 @@ def tc_all(*cmds):
 
 
 def generate():
-    """generated headers: the font (Felucca's)"""
+    """generated headers: the font (Felucca's), the stories (assets/stories)"""
     GEN.mkdir(parents=True, exist_ok=True)
     tools = SRC / "tools"
-    cmds = [[tools / "gen_font.py", GEN / "felucca_font.h"]]
+    cmds = [[tools / "gen_font.py", GEN / "felucca_font.h"],
+            [tools / "gen_stories.py", GEN / "story_data.h"]]
     procs = [subprocess.Popen([sys.executable, *map(str, c)], stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                               text=True) for c in cmds]
     failed = []
