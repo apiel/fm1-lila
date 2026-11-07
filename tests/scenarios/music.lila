@@ -1,0 +1,124 @@
+# LILA: the arpeggiator, the beat, the melodies (listen and follow), the looper, the treasure boxes.
+wait 400
+master 4096
+
+# --- the arpeggiator holds the notes you press and plays them one after another
+tap ARP
+expectp ARP 1
+key w0 down
+key w2 down
+wait 300
+expect arpnotes 2
+peakreset
+wait 1500
+expect peak_db_min -40
+key w0 up
+key w2 up
+wait 100
+expect arpnotes 0
+set STICKY 1
+tapkey w0
+wait 300
+expect arpnotes 1
+tap ARP
+expectp ARP 0
+set STICKY 0
+tap HOME
+
+# --- a beat: a style on, sound, off again
+peakreset
+tap SEQ
+expectp BEAT 1
+wait 2000
+expect peak_db_min -40
+turn K1 2
+expectp BEAT 3
+tap SEQ
+expectp BEAT 0
+wait 3000
+peakreset
+wait 1000
+expect peak_db_max -60
+tap HOME
+
+# --- a melody plays, SELECT changes it only while it plays
+set MMODE 0
+turn SELECT 1
+expect mel 0
+tap PLAY
+expect playing 1
+expect mel 0
+peakreset
+wait 2500
+expect melpos >2
+expect peak_db_min -40
+turn SELECT 1
+expect mel 1
+expect melpos <3
+turn SELECT -1
+turn SELECT -1
+expect mel 11
+tap PLAY
+expect playing 0
+turn SELECT 1
+expect mel 11
+
+# --- follow me: the song waits for the right key
+set MMODE 1
+set MREPEAT 0
+turn SELECT 0
+tap PLAY
+expect playing 1
+expect melpos 0
+expect expectkey 7
+wait 1500
+expect melpos 0
+tapkey 11
+wait 100
+expect melpos 0
+tapkey 7
+wait 100
+expect melpos 1
+expect expectkey 9
+tapkey w4
+wait 100
+expect melpos 1
+tap PLAY
+expect playing 0
+set MMODE 0
+tap HOME
+
+# --- the looper: arm, play, loop, clear
+tap REC
+expect rec 1
+tapkey 7
+wait 100
+expect rec 2
+wait 200
+tapkey 11
+tap REC
+expect rec 3
+peakreset
+wait 2200
+expect peak_db_min -40
+tap REC
+expect rec 0
+tap HOME
+
+# --- the treasure boxes: save a sound, change it, open the box
+set CUT 50
+set WAVE 33
+tap SAVE
+expect page 7
+set BOX 2
+set ACT 0
+tap SAVE
+set CUT 100
+set WAVE 100
+set ACT 1
+tap SAVE
+expectp CUT 50
+expectp WAVE 33
+set BOX 5
+tap SAVE
+expectp CUT 50

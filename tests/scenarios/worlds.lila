@@ -1,0 +1,85 @@
+wait 300
+turn PRESET 0
+wait 900
+key w6 down
+wait 260
+shot w00.png
+key w6 up
+wait 600
+turn PRESET 1
+wait 900
+key w6 down
+wait 260
+shot w01.png
+key w6 up
+wait 600
+turn PRESET 1
+wait 900
+key w6 down
+wait 260
+shot w02.png
+key w6 up
+wait 600
+turn PRESET 1
+wait 900
+key w6 down
+wait 260
+shot w03.png
+key w6 up
+wait 600
+turn PRESET 1
+wait 900
+key w6 down
+wait 260
+shot w04.png
+key w6 up
+wait 600
+turn PRESET 1
+wait 900
+key w6 down
+wait 260
+shot w05.png
+key w6 up
+wait 600
+turn PRESET 1
+wait 900
+key w6 down
+wait 260
+shot w06.png
+key w6 up
+wait 600
+turn PRESET 1
+wait 900
+key w6 down
+wait 260
+shot w07.png
+key w6 up
+wait 600
+turn PRESET 1
+wait 900
+key w6 down
+wait 260
+shot w08.png
+key w6 up
+wait 600
+turn PRESET 1
+wait 900
+key w6 down
+wait 260
+shot w09.png
+key w6 up
+wait 600
+turn PRESET 1
+wait 900
+key w6 down
+wait 260
+shot w10.png
+key w6 up
+wait 600
+turn PRESET 1
+wait 900
+key w6 down
+wait 260
+shot w11.png
+key w6 up
+wait 600

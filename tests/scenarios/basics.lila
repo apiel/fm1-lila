@@ -1,0 +1,150 @@
+# LILA: every button has a page, every knob does something, the keys play.
+wait 400
+expect page 0
+expectp PRESET 0
+
+# --- the pages, one per button
+tap FX
+expect page 1
+tap SEL
+expect page 2
+tap ENV
+expect page 3
+tap LFO
+expect page 4
+tap EDIT
+expect page 5
+tap GLO
+expect page 6
+tap SAVE
+expect page 7
+tap ARP
+expect page 8
+tap SEQ
+expect page 9
+tap PLAY
+expect page 10
+tap REC
+expect page 11
+tap HOME
+expect page 0
+
+# --- ARP, SEQ, PLAY and REC started things: stop them again (the same button twice for ARP and SEQ)
+expect playing 1
+expectp ARP 1
+expectp BEAT 1
+expect rec 1
+tap PLAY
+expect playing 0
+tap REC
+expect rec 0
+tap ARP
+tap ARP
+expectp ARP 0
+tap SEQ
+tap SEQ
+expectp BEAT 0
+tap HOME
+
+# --- the four knobs of every page change something (HOME: bend stars size wiggle)
+tap HOME
+set BEND 64
+turn K1 5
+expectp BEND >64
+turn K2 5
+expectp STARS >0
+turn K3 5
+expectp SIZE >64
+turn K4 5
+expectp WIGGLE >0
+tap FX
+turn K1 6
+expectp ECHO >26
+turn K2 6
+expectp SPACE >40
+turn K3 6
+expectp FLUFF >24
+turn K4 6
+expectp ROBOT >0
+tap SEL
+turn K1 -6
+expectp CUT <112
+turn K2 6
+expectp RESO >18
+turn K3 1
+expectp FTYPE 1
+turn K4 6
+expectp GRIT >0
+tap ENV
+turn K1 6
+expectp ATK >3
+turn K2 6
+expectp PLUCK >78
+turn K3 6
+expectp REL >36
+turn K4 6
+expectp BOING >30
+tap LFO
+turn K1 6
+expectp LSPD >104
+turn K2 6
+expectp LDEP >46
+turn K3 1
+expectp LWHAT 1
+turn K4 1
+expectp LWAVE 1
+tap EDIT
+turn K1 6
+expectp WAVE >8
+turn K2 6
+expectp BUDDY >0
+turn K3 6
+expectp BIG >0
+turn K4 6
+expectp METAL >34
+tap GLO
+turn K1 6
+expectp TEMPO >50
+turn K2 2
+expectp KEY 8
+turn K3 1
+expectp EASY 1
+turn K4 2
+expectp FRIENDS 2
+turn K3 -1
+turn K4 -2
+turn K2 -2
+
+# --- the keys play, and nothing else does
+tap HOME
+set PLUCK 0
+key w3 down
+wait 120
+expect voices >0
+key w3 up
+wait 3000
+expect voices 0
+
+# --- the octave
+tap OCT+
+expectp OCT 4
+tap OCT-
+tap OCT-
+expectp OCT 2
+tap OCT+
+expectp OCT 3
+
+# --- the world and the mood
+turn PRESET 1
+expectp PRESET 1
+turn PRESET -1
+turn PRESET -1
+expectp PRESET 11
+turn PRESET 1
+expectp PRESET 0
+turn ALGO 1
+expectp MOOD 1
+turn ALGO 1
+turn ALGO 1
+turn ALGO 1
+expectp MOOD 0

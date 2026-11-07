@@ -1,0 +1,42 @@
+# screenshots of the pages and the overlays
+wait 500
+turn PRESET 3
+wait 800
+tap SAVE
+set BOX 1
+set STICK 4
+set COLOR 5
+wait 100
+tap SAVE
+wait 300
+set BOX 3
+set STICK 7
+shot p_save.png
+tap ARP
+tapkey 7
+key w3 down
+key w5 down
+wait 400
+shot p_arp.png
+key w3 up
+key w5 up
+tap ARP
+tap SEQ
+wait 600
+shot p_seq.png
+tap SEQ
+set MMODE 1
+tap PLAY
+wait 600
+shot p_follow.png
+tap PLAY
+tap REC
+tapkey 7
+wait 400
+shot p_rec.png
+tap REC
+tap REC
+tap EDIT
+turn K1 10
+wait 100
+shot p_edit.png
