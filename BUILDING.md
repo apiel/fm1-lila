@@ -79,5 +79,6 @@ the `SCENES` table; raise `NPRESET`. To add a melody: a line in `data.c` (the no
 the emulator on every push to `main`. One-time setup: repository **Settings > Pages > Source: GitHub Actions**.
 
 Locally: `source ~/emsdk/emsdk_env.sh && web/emu/build.sh && node tests/web_emu_test.mjs`, then (with `pip install markdown`)
-`python3 tools/make_pages.py build/pages` and `cd build/pages && python3 -m http.server 8000`. The firmware package is not built by the
-Action (it needs the JieLi toolchain and SDK): attach `build/lila.fwsc` to a GitHub release by hand.
+`python3 tools/make_pages.py build/pages` and `cd build/pages && python3 -m http.server 8000`. The web installer
+(`install/`) writes the newest `dist/lila-*.fwsc`. The Action does not build the firmware (it needs the JieLi toolchain and SDK), so to publish
+a new version: `python3 tools/build.py --release 1.1-beta`, copy `build/lila-1.1-beta.fwsc` to `dist/`, delete the old one and commit.
