@@ -136,7 +136,7 @@ static void fg_meteor(void)
 }
 
 /* ---------------------------------------------------------------- 6 BLOCKS --- */
-/* an arcade: coloured blocks fall and pile up, a pixel invader hovers and fires, the score counts your notes */
+/* a world made of cubes, and a friendly cube of green jelly that bounces and sings */
 static void blk(int x, int y, int s, uint16_t c)            /* a lit cube face */
 {
     box_(x, y, s, s, c);
@@ -144,77 +144,69 @@ static void blk(int x, int y, int s, uint16_t c)            /* a lit cube face *
     box_(x, y + s - 2, s, 2, blend(c, K(0, 0, 0), 5));
     box_(x, y, 2, s, blend(c, K(255, 255, 255), 3));
 }
-static const uint32_t BLK_COL[7] = {0x40D8F0, 0xF0E040, 0xB060F0, 0x50E060, 0xF05050, 0x4070F0, 0xF09030};
-/* the seven falling shapes as four (col, row) cells each */
-static const int8_t TETRO[7][8] = {{0, 0, 1, 0, 2, 0, 3, 0}, {0, 0, 1, 0, 0, 1, 1, 1}, {1, 0, 0, 1, 1, 1, 2, 1}, {1, 0, 2, 0, 0, 1, 1, 1},
-                                   {0, 0, 1, 0, 1, 1, 2, 1}, {0, 0, 0, 1, 1, 1, 2, 1}, {2, 0, 0, 1, 1, 1, 2, 1}};
 static void bg_blocks(void)
 {
-    int i, x, k;
-    vgrad(0, 240, K(12, 12, 40), K(40, 24, 90));
-    for (i = 0; i < 40; i++)                                  /* square stars */
-        if (isin((int)(TM / 13) + i * 37) > -50)
-            box_((i * 53 + 11) % 240, (i * 29) % 150, 2, 2, K(200, 200, 255));
-    for (x = 0; x < 240; x += 16)                             /* a faint grid */
-        box_(x, 0, 1, 190, blend(K(12, 12, 40), K(90, 70, 200), 3));
-    for (k = 0; k < 3; k++) {                                 /* three shapes falling, in steps of one cube */
-        int period = 4200 + k * 900, ph = (int)((TM + (unsigned)k * 1700u) % (unsigned)period), shape = (int)(((TM + (unsigned)k * 1700u) / (unsigned)period + (unsigned)k * 3u) % 7u);
-        int y = -30 + (ph * 200 / period) / 14 * 14, bx = 16 + ((k * 5 + shape * 3) % 12) * 16, c;
-        for (c = 0; c < 4; c++)
-            blk(bx + TETRO[shape][c * 2] * 16, y + TETRO[shape][c * 2 + 1] * 16, 16, KC(BLK_COL[shape]));
+    int i, x;
+    vgrad(0, 180, K(110, 190, 255), K(190, 228, 255));
+    box_(186, 18, 36, 36, blend(K(255, 240, 120), K(150, 210, 255), 10));    /* a square sun */
+    box_(190, 22, 28, 28, K(255, 244, 150));
+    for (i = 0; i < 3; i++) {
+        int cxp = ((int)(TM / 70) + i * 100) % 320 - 60;
+        box_(cxp, 40 + i * 18, 52, 12, K(255, 255, 255));
+        box_(cxp + 10, 32 + i * 18, 28, 10, K(255, 255, 255));
     }
-    for (x = 0; x < 240; x += 16) {                           /* the pile on the ground */
-        int h = 1 + ((x / 16 * 5 + 3) % 4), j;
-        for (j = 0; j < h; j++)
-            blk(x, 224 - j * 16, 16, KC(BLK_COL[(x / 16 + j * 2) % 7]));
+    for (x = 0; x < 240; x += 16) {                             /* far hills in steps */
+        int h = 20 + ((x / 16 * 7) % 5) * 8;
+        box_(x, 150 - h, 16, h + 30, K(90, 170, 90));
+        box_(x, 150 - h, 16, 4, K(110, 195, 100));
     }
+    for (x = 0; x < 240; x += 16)                               /* the ground, in cubes */
+        for (i = 0; i < 4; i++) {
+            int y = 172 + i * 16;
+            uint16_t c = i == 0 ? K(100 + (x / 16 % 3) * 10, 190, 70) : K(140 + ((x / 16 + i) % 3) * 8, 100, 64);
+            blk(x, y, 16, c);
+        }
+    box_(26, 118, 10, 40, K(110, 80, 50));                      /* a tree */
+    box_(10, 82, 42, 24, K(60, 150, 60));
+    box_(18, 62, 26, 24, K(70, 165, 70));
+    box_(204, 138, 8, 34, K(110, 80, 50));
+    box_(190, 110, 36, 22, K(60, 150, 60));
 }
-static const char *const INV_A[8] = {"..#.....#..", "...#...#...", "..#######..", ".##.###.##.", "###########", "#.#######.#", "#.#.....#.#", "...##.##..."};
-static const char *const INV_B[8] = {"..#.....#..", "#..#...#..#", "#.#######.#", "###.###.###", "###########", ".#########.", "..#.....#..", ".#.......#."};
 static void act_blocks(int cx, int cy)
 {
-    const char *const *spr = ((TM / (sc.hit > 60 ? 90u : 420u)) & 1u) ? INV_B : INV_A;
-    int r, c, hover = isin((int)(TM / 14)) * 4 >> 7, u = 7;
-    uint16_t body = K(90, 240, 110), dk = K(40, 150, 70), eye = sc.hit > 100 ? K(255, 255, 255) : K(20, 40, 30);
-    cy -= 8 + hover + 6;
-    for (r = 0; r < 8; r++)
-        for (c = 0; c < 11; c++) {
-            int x0, x1, y0, y1;
-            if (spr[r][c] != '#')
-                continue;
-            x0 = X((c - 5) * u - 3);
-            x1 = X((c - 5) * u + u - 3);
-            y0 = Y(-8 * u + r * u);
-            y1 = Y(-8 * u + r * u + u);
-            box_(cx + x0, cy + y0, x1 - x0, y1 - y0, r < 3 ? body : r < 6 ? body : dk);
-            box_(cx + x0, cy + y0, x1 - x0, 1, blend(body, K(255, 255, 255), 5));
-        }
-    {   /* the eyes sit in the two gaps of the third row: they flash when it fires */
-        int ex0 = X((3 - 5) * u - 3), ex1 = X((7 - 5) * u - 3), ey = Y(-8 * u + 3 * u);
-        box_(cx + ex0, cy + ey, imax(2, X(u)), imax(2, Y(u)), eye);
-        box_(cx + ex1, cy + ey, imax(2, X(u)), imax(2, Y(u)), eye);
-    }
-    if (sc.mouth > 60)                                          /* a mouth of pixels when it sings */
-        box_(cx + X(-10), cy + Y(-8 * u + 5 * u + 2), imax(2, X(20)), imax(2, Y(3 + sc.mouth / 50)), K(255, 240, 120));
+    int g = sc.mouth * 14 / 255, hop = isin((int)(TM / 9)) > 90 ? 3 : 0, ln = sc.lean / 3, wob = isin((int)(TM / 12)) * 2 >> 7;
+    uint16_t jel = K(90, 220, 110), jel2 = K(60, 180, 90), ink = K(20, 40, 30), wh = K(255, 255, 255);
+    cy -= hop;
+    AB(-44, -84, 88, 84, jel2);                                 /* the jelly cube, with a darker edge ... */
+    AB(-40, -80, 80, 76, jel);
+    AB(-40, -80, 80, 6, blend(jel, K(255, 255, 255), 6));      /* ... a shine along the top and the left */
+    AB(-40, -80, 6, 76, blend(jel, K(255, 255, 255), 4));
+    AB(-32 + wob, -24 + wob, 8, 8, blend(jel, K(255, 255, 255), 6));      /* little cubes float inside it */
+    AB(24 - wob, -34, 6, 6, blend(jel, K(255, 255, 255), 6));
+    AB(-4, -76 + wob, 5, 5, blend(jel, K(255, 255, 255), 5));
+    AB(-30 + ln, -66, 16, 18, wh);                              /* two square eyes */
+    AB(14 + ln, -66, 16, 18, wh);
+    AB(-24 + ln + (sc.lean >> 3), -60, 8, 12, ink);
+    AB(20 + ln + (sc.lean >> 3), -60, 8, 12, ink);
+    if (g > 2)                                                  /* a wide square mouth that opens when it sings */
+        AB(-24, -38, 48, 6 + g, K(30, 80, 50));
+    else
+        AB(-22, -34, 44, 5, ink);
+    AB(-26, -40, 4, 4, ink);                                    /* the corners of a smile */
+    AB(22, -40, 4, 4, ink);
+    AB(-44 + 4, -4, 20, 4, blend(jel2, K(0, 0, 0), 4));          /* a shadow of two feet */
+    AB(44 - 24, -4, 20, 4, blend(jel2, K(0, 0, 0), 4));
 }
 static void fg_blocks(void)
 {
-    char sbuf[16], *p;
-    int n = sc.score % 10000, i, d;
-    if (sc.hit > 110) {                                           /* pew: a bolt up from the invader */
-        int x = 120 + (sc.pitch - 128) / 3;
-        box_(x - 1, 0, 3, 178 - 70 - sc.jump, K(255, 240, 120));
-        box_(x - 3, 40 + (255 - sc.hit), 7, 10, K(255, 255, 255));
+    if (sc.hit > 100) {                                         /* a block pops out of the ground */
+        int x = 8 + (sc.pitch * 200 / 255 & ~15), y = 156 - sc.hit / 8;
+        blk(x, y, 16, K(250, 200 - sc.pitch / 3, 60));
     }
-    p = put_s(sbuf, "");
-    for (d = 1000; d >= 1; d /= 10)
-        *p++ = (char)('0' + (n / d) % 10);
-    *p = 0;
-    cv_text(8, 4, &FONT_B, "SCORE", K(255, 255, 255));
-    cv_text(60, 4, &FONT_B, sbuf, K(255, 220, 60));
-    if (((TM / 500u) & 1u) || sc.hit > 100)
-        cv_text(204, 4, &FONT_B, "1UP", K(255, 80, 80));
-    (void)i;
+    if (sc.hit > 150) {                                         /* pew: a little bolt of pixels */
+        int x = 120 + (sc.pitch - 128) / 3;
+        box_(x - 1, 20, 3, 100, K(255, 240, 120));
+    }
 }
 
 /* ------------------------------------------------------------------ 7 DINO --- */

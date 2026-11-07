@@ -510,7 +510,6 @@ static void input(void)
 void ui_input_only(void) { input(); }
 
 /* ------------------------------------------------------------ the sound's look --- */
-static int look_chip;
 static void look_update(void)
 {
     int hue = ((int)P[P_KEY] - 6) * 64, mood = P[P_MOOD] & 3;
@@ -522,7 +521,6 @@ static void look_update(void)
     look.warm = P[P_FTYPE] == 0 ? 8 : P[P_FTYPE] == 2 ? -12 : 0;
     if (mood == MOOD_CRAZY)
         hue += (int)(plat_ms() / 14u);
-    hue += look_chip;
     while (hue < 0)
         hue += 768;
     look.hue = hue % 768;
@@ -719,9 +717,9 @@ static void sc_update(void)
     if (sc.chip && sc.mouth > 20) {                      /* a chord played in a flash: the colours flash through it */
         static const uint8_t CN[6] = {1, 3, 3, 2, 4, 4};
         int idx = (int)((t * (uint32_t)(8 + (int)P[P_CHIPS] / 3)) / 1000u) % CN[sc.chip % 6];
-        look_chip = idx * 140;
+        sc.chiphue = idx * 140;
     } else
-        look_chip = 0;
+        sc.chiphue = 0;
     if (sc.noise > 20 && sc.mouth > 40 && (urand() & 3u) == 0) {      /* breath, a crash, spit: puffs from the mouth */
         int x, y;
         note_origin(&x, &y);

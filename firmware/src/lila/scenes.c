@@ -22,6 +22,7 @@ static struct {
     int stompf, bellf, blipf, pingf;     /* 0..255 flashes: a stomp, the cowbell, a blip, a ping */
     int score;                  /* notes played: the arcade's score */
     int siren;                  /* 0..255: a siren or alarm sounds (the flashing lights) */
+    int chiphue;                /* the colours of the character flash through a fast chord (0..767) */
 } sc;
 static int g_sw = 100, g_sh = 100;
 #define X(v) ((v) * g_sw / 100)
@@ -118,7 +119,7 @@ static void world_draw(void)
     const scene_t *w = &SCENES[sc.world % NPRESET];
     int cx = w->hx, cy = w->hy - sc.jump, i, nb = sc.fat > 104 ? 2 : sc.fat > 58 ? 1 : 0, nf = sc.friends, ghosts = sc.echo > 110 ? 3 : sc.echo > 78 ? 2 : sc.echo > 45 ? 1 : 0;
     uint16_t hz;
-    int sw0, sh0;
+    int sw0, sh0, hue0;
     g_sh = sc.sz * sc.sq / 100;                          /* squash and stretch keep the area */
     g_sw = sc.sz * 100 / (sc.sq > 20 ? sc.sq : 100);
     sw0 = g_sw;
@@ -126,6 +127,8 @@ static void world_draw(void)
     look.fade = 0;
     hz = KC(w->horizon);
     w->bg();
+    hue0 = look.hue;
+    look.hue = (hue0 + sc.chiphue) % 768;                    /* a fast chord turns the colours of the character, not of the sky */
     /* the ground rumbles for a big sound: lines that jump */
     if (sc.big > 40 && sc.hit > 100)
         for (i = 0; i < 3; i++)
@@ -166,4 +169,5 @@ static void world_draw(void)
     }
     w->actor(cx, cy);
     w->fg();
+    look.hue = hue0;
 }

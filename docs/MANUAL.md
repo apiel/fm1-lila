@@ -80,7 +80,7 @@ This is the **generic** layout. Each world then takes over some of these knobs a
 | 4 | FROG | RIBBIT: a pulsing croak, low "rib" then high "bit" | a frog on a lily pad; the throat swells; fireflies and ripples |
 | 5 | SPACE | WHOOSH: big, slow, shimmering pads | a rocket in the galaxy; the stars speed up on the beat |
 | 6 | METEOR | ZAP: a falling "pew", a boom, a thump, a spray of debris | a cute rock with a flaming tail; more meteors with the boom, shock waves with the crash |
-| 7 | BLOCKS | BLOOP: an arcade: a sweeping thin pulse, a fast chord in every note, pews and coins | falling blocks, a pixel invader that fires, a score that counts your notes |
+| 7 | BLOCKS | BLOOP: an arcade: a sweeping thin pulse, a fast chord in every note, pews and coins | a world of cubes (square sun, blocky clouds and trees) and a friendly cube of green jelly that bounces and sings; blocks pop out of the ground |
 | 8 | DINO | ROAR: a falling growl with a rattle, a throat and a stomp | a green T-rex, a volcano that erupts harder with the growl, a pterodactyl; the ground shakes |
 | 9 | ROBOT | BEEP: crunchy robot tones, a throat, a chatter of beep-boops, sirens | a robot with the sound's wave on its chest and a speech of BEEP and BOOP; gears turn |
 | 10 | OCEAN | BLUB: a whale song that swoops, bubbles, a sonar ping | a whale singing rings and bubbles, glowing jellyfish, fish and seaweed |
