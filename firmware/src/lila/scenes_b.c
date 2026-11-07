@@ -34,7 +34,7 @@ static void bg_space(void)
 }
 static void act_space(int cx, int cy)
 {
-    int bob = isin((int)(TM / 9)) * 3 >> 7, fl = 18 + sc.lvl / 7 + (int)(urand() % 8u), ln = sc.lean / 2;
+    int bob = isin((int)(TM / 9)) * 3 >> 7, fl = 18 + sc.lvl / 7 + sc.noise / 5 + (int)(urand() % 8u), ln = sc.lean / 2;
     uint16_t sil = K(236, 240, 250), red = K(240, 70, 70), shade = K(190, 200, 225), win = K(120, 210, 255);
     cy += bob;
     AT(-8, 40, 8, 40, 0, 40 + fl, K(255, 150, 40));
@@ -63,6 +63,13 @@ static void fg_space(void)
         int p = 255 - sc.hit;
         fat_line(240 - p * 3, 20 + p, 270 - p * 3, 8 + p, 1, K(255, 255, 255));
     }
+    if (sc.camt > 8 && sc.hit > 110) {                    /* the lasers */
+        int x = 120;
+        fat_line(x - 22, 112 - sc.jump, x - 22, 0, 2, K(255, 70, 70));
+        fat_line(x + 22, 112 - sc.jump, x + 22, 0, 2, K(255, 70, 70));
+        fill_circle(x - 22, 112 - sc.jump - (255 - sc.hit), 3, K(255, 220, 220));
+        fill_circle(x + 22, 112 - sc.jump - (255 - sc.hit), 3, K(255, 220, 220));
+    }
 }
 
 /* --------------------------------------------------------------- 5 METEOR --- */
@@ -75,7 +82,7 @@ static void bg_meteor(void)
             cv_pset((i * 79) % 240, (i * 41) % 150, K(255, 230, 220));
     fill_circle(196, 52, 22, K(255, 190, 130));                 /* a far moon */
     fill_circle(204, 46, 5, K(230, 160, 110));
-    for (i = 0; i < 5; i++) {                                   /* meteors across the sky */
+    for (i = 0; i < 5 + sc.noise / 26; i++) {                   /* meteors across the sky: more of them as the boom grows */
         int p = (int)((TM / 9u + (unsigned)i * 97u) % 330u), x = 260 - p - i * 14, y = p * 2 / 3 - 70 + i * 24;
         fat_line(x + 46, y - 30, x, y, 1, K(255, 190, 90));
         fat_line(x + 22, y - 14, x, y, 2, K(255, 120, 50));
@@ -121,77 +128,93 @@ static void fg_meteor(void)
         ring_(x, 222, r, 3, K(255, 160, 60));
         fill_circle(x, 222, 4 + sc.hit / 40, K(255, 240, 160));
     }
+    if (sc.stompf > 20) {                                       /* the crash: a shock wave across the whole ground */
+        int r = (255 - sc.stompf) * 2 + 10;
+        ring_(120, 226, r, 4, K(255, 190, 110));
+        ring_(120, 226, r * 2 / 3, 2, K(255, 240, 200));
+    }
 }
 
 /* ---------------------------------------------------------------- 6 BLOCKS --- */
+/* an arcade: coloured blocks fall and pile up, a pixel invader hovers and fires, the score counts your notes */
 static void blk(int x, int y, int s, uint16_t c)            /* a lit cube face */
 {
     box_(x, y, s, s, c);
-    box_(x, y, s, 2, blend(c, K(255, 255, 255), 4));
-    box_(x, y + s - 2, s, 2, blend(c, K(0, 0, 0), 4));
+    box_(x, y, s, 2, blend(c, K(255, 255, 255), 5));
+    box_(x, y + s - 2, s, 2, blend(c, K(0, 0, 0), 5));
+    box_(x, y, 2, s, blend(c, K(255, 255, 255), 3));
 }
+static const uint32_t BLK_COL[7] = {0x40D8F0, 0xF0E040, 0xB060F0, 0x50E060, 0xF05050, 0x4070F0, 0xF09030};
+/* the seven falling shapes as four (col, row) cells each */
+static const int8_t TETRO[7][8] = {{0, 0, 1, 0, 2, 0, 3, 0}, {0, 0, 1, 0, 0, 1, 1, 1}, {1, 0, 0, 1, 1, 1, 2, 1}, {1, 0, 2, 0, 0, 1, 1, 1},
+                                   {0, 0, 1, 0, 1, 1, 2, 1}, {0, 0, 0, 1, 1, 1, 2, 1}, {2, 0, 0, 1, 1, 1, 2, 1}};
 static void bg_blocks(void)
 {
-    int i, x;
-    vgrad(0, 180, K(110, 190, 255), K(190, 228, 255));
-    box_(190, 22, 28, 28, K(255, 240, 120));                    /* a square sun */
-    box_(186, 18, 36, 36, blend(K(255, 240, 120), K(150, 210, 255), 10));
-    box_(190, 22, 28, 28, K(255, 244, 150));
-    for (i = 0; i < 3; i++) {
-        int cxp = ((int)(TM / 70) + i * 100) % 320 - 60;
-        box_(cxp, 40 + i * 18, 52, 12, K(255, 255, 255));
-        box_(cxp + 10, 32 + i * 18, 28, 10, K(255, 255, 255));
+    int i, x, k;
+    vgrad(0, 240, K(12, 12, 40), K(40, 24, 90));
+    for (i = 0; i < 40; i++)                                  /* square stars */
+        if (isin((int)(TM / 13) + i * 37) > -50)
+            box_((i * 53 + 11) % 240, (i * 29) % 150, 2, 2, K(200, 200, 255));
+    for (x = 0; x < 240; x += 16)                             /* a faint grid */
+        box_(x, 0, 1, 190, blend(K(12, 12, 40), K(90, 70, 200), 3));
+    for (k = 0; k < 3; k++) {                                 /* three shapes falling, in steps of one cube */
+        int period = 4200 + k * 900, ph = (int)((TM + (unsigned)k * 1700u) % (unsigned)period), shape = (int)(((TM + (unsigned)k * 1700u) / (unsigned)period + (unsigned)k * 3u) % 7u);
+        int y = -30 + (ph * 200 / period) / 14 * 14, bx = 16 + ((k * 5 + shape * 3) % 12) * 16, c;
+        for (c = 0; c < 4; c++)
+            blk(bx + TETRO[shape][c * 2] * 16, y + TETRO[shape][c * 2 + 1] * 16, 16, KC(BLK_COL[shape]));
     }
-    for (x = 0; x < 240; x += 16) {                             /* far hills in steps */
-        int h = 20 + ((x / 16 * 7) % 5) * 8;
-        box_(x, 150 - h, 16, h + 30, K(90, 170, 90));
-        box_(x, 150 - h, 16, 4, K(110, 195, 100));
+    for (x = 0; x < 240; x += 16) {                           /* the pile on the ground */
+        int h = 1 + ((x / 16 * 5 + 3) % 4), j;
+        for (j = 0; j < h; j++)
+            blk(x, 224 - j * 16, 16, KC(BLK_COL[(x / 16 + j * 2) % 7]));
     }
-    for (x = 0; x < 240; x += 16)                               /* the ground, in cubes */
-        for (i = 0; i < 4; i++) {
-            int y = 172 + i * 16;
-            uint16_t c = i == 0 ? K(100 + (x / 16 % 3) * 10, 190, 70) : K(140 + ((x / 16 + i) % 3) * 8, 100, 64);
-            blk(x, y, 16, c);
-        }
-    box_(26, 118, 10, 40, K(110, 80, 50));                      /* a tree */
-    box_(10, 82, 42, 24, K(60, 150, 60));
-    box_(18, 62, 26, 24, K(70, 165, 70));
-    box_(204, 138, 8, 34, K(110, 80, 50));
-    box_(190, 110, 36, 22, K(60, 150, 60));
 }
+static const char *const INV_A[8] = {"..#.....#..", "...#...#...", "..#######..", ".##.###.##.", "###########", "#.#######.#", "#.#.....#.#", "...##.##..."};
+static const char *const INV_B[8] = {"..#.....#..", "#..#...#..#", "#.#######.#", "###.###.###", "###########", ".#########.", "..#.....#..", ".#.......#."};
 static void act_blocks(int cx, int cy)
 {
-    int g = sc.mouth * 8 / 255, leg = isin((int)(TM / 8)) > 60 ? 3 : 0, ln = sc.lean / 3;
-    uint16_t pk = K(255, 160, 180), pk2 = K(240, 120, 150), sn = K(255, 190, 200), ink = K(30, 24, 40);
-    AB(-30, -24, 12, 24, pk2);
-    AB(-8, -24, 12, 24 - leg, pk2);
-    AB(14, -24, 12, 24, pk2);
-    AB(32, -24, 12, 24 - leg, pk2);
-    AB(-42, -62, 94, 42, pk);
-    AB(-42, -62, 94, 6, K(255, 190, 205));
-    AB(-34, -36, 20, 16, K(255, 130, 160));
-    AB(-8, -52, 18, 14, K(255, 130, 160));
-    AB(-52, -64, 12, 10, pk2);
-    AB(30 + ln, -90, 46, 44, pk);
-    AB(30 + ln, -90, 46, 6, K(255, 190, 205));
-    AB(36 + ln, -84 + 0, 8, 10, K(255, 255, 255));
-    AB(58 + ln, -84, 8, 10, K(255, 255, 255));
-    AB(40 + ln, -82, 4, 8, ink);
-    AB(62 + ln, -82, 4, 8, ink);
-    AB(40 + ln, -72 + g / 2, 26, 22 + g / 2, sn);
-    AB(46 + ln, -66 + g / 2, 6, 6, pk2);
-    AB(56 + ln, -66 + g / 2, 6, 6, pk2);
-    if (g > 2)
-        AB(44 + ln, -56 + g / 2, 18, 3 + g / 2, K(120, 30, 50));
-    AB(32 + ln, -96, 10, 8, pk2);
-    AB(66 + ln, -96, 10, 8, pk2);
+    const char *const *spr = ((TM / (sc.hit > 60 ? 90u : 420u)) & 1u) ? INV_B : INV_A;
+    int r, c, hover = isin((int)(TM / 14)) * 4 >> 7, u = 7;
+    uint16_t body = K(90, 240, 110), dk = K(40, 150, 70), eye = sc.hit > 100 ? K(255, 255, 255) : K(20, 40, 30);
+    cy -= 8 + hover + 6;
+    for (r = 0; r < 8; r++)
+        for (c = 0; c < 11; c++) {
+            int x0, x1, y0, y1;
+            if (spr[r][c] != '#')
+                continue;
+            x0 = X((c - 5) * u - 3);
+            x1 = X((c - 5) * u + u - 3);
+            y0 = Y(-8 * u + r * u);
+            y1 = Y(-8 * u + r * u + u);
+            box_(cx + x0, cy + y0, x1 - x0, y1 - y0, r < 3 ? body : r < 6 ? body : dk);
+            box_(cx + x0, cy + y0, x1 - x0, 1, blend(body, K(255, 255, 255), 5));
+        }
+    {   /* the eyes sit in the two gaps of the third row: they flash when it fires */
+        int ex0 = X((3 - 5) * u - 3), ex1 = X((7 - 5) * u - 3), ey = Y(-8 * u + 3 * u);
+        box_(cx + ex0, cy + ey, imax(2, X(u)), imax(2, Y(u)), eye);
+        box_(cx + ex1, cy + ey, imax(2, X(u)), imax(2, Y(u)), eye);
+    }
+    if (sc.mouth > 60)                                          /* a mouth of pixels when it sings */
+        box_(cx + X(-10), cy + Y(-8 * u + 5 * u + 2), imax(2, X(20)), imax(2, Y(3 + sc.mouth / 50)), K(255, 240, 120));
 }
 static void fg_blocks(void)
 {
-    if (sc.hit > 100) {                                           /* a block pops out of the ground */
-        int x = 8 + (sc.pitch * 200 / 255 & ~15), y = 156 - sc.hit / 8;
-        blk(x, y, 16, K(250, 200 - sc.pitch / 3, 60));
+    char sbuf[16], *p;
+    int n = sc.score % 10000, i, d;
+    if (sc.hit > 110) {                                           /* pew: a bolt up from the invader */
+        int x = 120 + (sc.pitch - 128) / 3;
+        box_(x - 1, 0, 3, 178 - 70 - sc.jump, K(255, 240, 120));
+        box_(x - 3, 40 + (255 - sc.hit), 7, 10, K(255, 255, 255));
     }
+    p = put_s(sbuf, "");
+    for (d = 1000; d >= 1; d /= 10)
+        *p++ = (char)('0' + (n / d) % 10);
+    *p = 0;
+    cv_text(8, 4, &FONT_B, "SCORE", K(255, 255, 255));
+    cv_text(60, 4, &FONT_B, sbuf, K(255, 220, 60));
+    if (((TM / 500u) & 1u) || sc.hit > 100)
+        cv_text(204, 4, &FONT_B, "1UP", K(255, 80, 80));
+    (void)i;
 }
 
 /* ------------------------------------------------------------------ 7 DINO --- */
@@ -204,9 +227,9 @@ static void bg_dino(void)
     fill_tri(150, 190, 240, 190, 214, 60, K(110, 70, 60));      /* the volcano */
     fill_tri(150, 190, 240, 190, 200, 80, K(130, 84, 70));
     fill_tri(196, 62, 232, 62, 214, 90, K(255, 90, 40));
-    for (i = 0; i < 4; i++) {                                   /* lava and smoke */
-        int p = (int)((TM / 12u + (unsigned)i * 60u) % 150u), x = 214 + (isin(i * 70) * p >> 9), y = 62 - p + (p * p / 260);
-        fill_circle(x, y, 4 + (sc.hit >> 6), K(255, 160 + i * 20, 40));
+    for (i = 0; i < 4 + sc.am / 24; i++) {                      /* lava and smoke: the louder the growl, the bigger the eruption */
+        int hgt = 150 + sc.am, p = (int)((TM / 12u + (unsigned)i * 60u) % (unsigned)hgt), x = 214 + (isin(i * 70) * p >> 9), y = 62 - p + (p * p / 260);
+        fill_circle(x, y, 4 + (sc.hit >> 6) + sc.am / 40, K(255, 160 + (i & 3) * 20, 40));
     }
     for (i = 0; i < 3; i++) {
         int p = (int)((TM / 30u + (unsigned)i * 40u) % 120u);
@@ -264,6 +287,11 @@ static void fg_dino(void)
 {
     if (sc.mouth > 70)
         bubble(8, 40, 96, 44, "ROAR!", 70, 100);
-    if (sc.hit > 160)
-        ring_(120, 188, (255 - sc.hit) + 20, 2, K(255, 240, 200));
+    if (sc.stompf > 20) {                                          /* a stomp: dust rings run over the ground and the picture shakes */
+        int r = (255 - sc.stompf) + 18;
+        ring_(150, 192, r, 3, K(255, 230, 180));
+        ring_(150, 192, r / 2, 2, K(255, 200, 140));
+        fill_ellipse(150 - r, 190, 6, 3, K(150, 120, 90));
+        fill_ellipse(150 + r, 190, 6, 3, K(150, 120, 90));
+    }
 }

@@ -56,7 +56,7 @@ expectp STARS >0
 turn K3 5
 expectp SIZE >64
 turn K4 5
-expectp WIGGLE >0
+expectp CHAT >0           # the bird's own knob: its tweets
 tap FX
 turn K1 6
 expectp ECHO >26
@@ -97,9 +97,9 @@ tap EDIT
 turn K1 6
 expectp WAVE >8
 turn K2 6
-expectp BUDDY >0
+expectp CAMT >32          # the bird's chirp
 turn K3 6
-expectp BIG >0
+expectp CTIME >28
 turn K4 6
 expectp METAL >34
 tap GLO
@@ -148,3 +148,42 @@ turn ALGO 1
 turn ALGO 1
 turn ALGO 1
 expectp MOOD 0
+
+# --- every world has its own knobs: the dog's HOME page is its siren, its howl, its slowness
+turn PRESET 1
+turn PRESET 1
+expectp PRESET 2
+tap HOME
+turn K1 1
+expectp CTYPE 2           # WOLF -> POLICE
+turn K1 1
+expectp CTYPE 3           # HI-LO
+turn K1 2
+expectp CTYPE 4           # ALARM, and no further
+turn K1 -3
+expectp CTYPE 1
+turn K2 4
+expectp CAMT >64
+tap EDIT
+turn K2 5
+expectp VOWEL >10
+# the arcade's GAME switch skips the values in between: PEW, COIN, JUMP, PLAIN
+turn PRESET 1
+turn PRESET 1
+turn PRESET 1
+turn PRESET 1
+turn PRESET 1
+turn PRESET 1
+turn PRESET 1
+expectp PRESET 9
+turn PRESET -1
+turn PRESET -1
+turn PRESET -1
+expectp PRESET 6
+tap HOME
+turn K1 1
+expectp CTYPE 7           # PEW (dive) -> COIN
+turn K1 1
+expectp CTYPE 6           # JUMP (swoop)
+turn K1 1
+expectp CTYPE 0           # PLAIN

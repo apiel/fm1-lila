@@ -22,6 +22,8 @@ something, and **whatever you turn, the picture changes with it**.
 
 ## The pages
 
+This is the **generic** layout. Each world then takes over some of these knobs and gives them its own names and meanings: see "Each world's own knobs" below. (FX, SEL, ENV and LFO mostly stay as they are; HOME and EDIT are where a world is itself.)
+
 | Button | Page | KNOB 1 | KNOB 2 | KNOB 3 | KNOB 4 |
 |---|---|---|---|---|---|
 | **HOME** | MAGIC | **BEND**: slides the pitch up or down (the animal leans and floats) | **STARS**: fairy dust after every note, stars in the sky | **SIZE**: tiny to giant: the animal grows and the sound gets deeper | **WIGGLE**: a drunken pitch and a jelly picture |
@@ -51,22 +53,39 @@ something, and **whatever you turn, the picture changes with it**.
   to throw the loop away. You can change the world while it plays: the loop plays your tune with the new sound.
 - **OCT- / OCT+**: the keyboard's octave. Hold both for five seconds to put the FM-1 in update mode (parents).
 
+## Each world's own knobs
+
+| World | HOME (K1 K2 K3 K4) | EDIT (K1 K2 K3 K4) | Others |
+|---|---|---|---|
+| **BIRD** | BEND, STARS, SIZE, **TWEETS** (a chatter of little chirps after each note) | SHAPE, **CHIRP** (how far it swoops), **LENGTH**, METAL | |
+| **COW** | **MOO** (the vowel: "oo" to "ah" to "ee"), **BELL** (a cowbell clank), SIZE, WOBBLY | SHAPE, **THROAT** (how much vowel), **DEEP**, **BREATH** | ENV K4 **SWAY** (a late vibrato); FX **BARN**, **FIELD** |
+| **DOG** | **SIREN** (WOLF howl, POLICE wail, HI-LO, fire ALARM), **HOWL** (how far the pitch goes), **SLOW**, WIGGLE | SHAPE, **OOOH** (the vowel), **THROAT**, **SHAKE** (vibrato) | FX **CANYON** (echo), **NIGHT**, TINNY. The sirens flash the whole screen red and blue |
+| **FROG** | **STYLE** (RIBBIT, PEEP, BOING, PLAIN), **GAP** (between "rib" and "bit"), **JUMP**, SIZE | SHAPE, **CROAK** (how pulsing), **RATTLE** (how fast), **THROAT** | FX **POND**, **MARSH**, **BUBBLES**, **CRUNCH** |
+| **SPACE** | BEND, STARS, SIZE, **ALIEN** (a wobbling voice) | SHAPE, **CREW** (the buddy ships), **ENGINE** (a rumble), **LASER** | FX **GALAXY**, **STATIC** |
+| **METEOR** | **PEW** (a falling zap), **BOOM** (a crash of noise), **CRASH** (a thump and a shock wave), **SPARKS** (a spray of tiny blips) | SHAPE, **ROCK** (the metal's colour), METAL, **SPEED** | FX **SMOKE** |
+| **BLOCKS** (arcade) | **GAME** (PEW, COIN, JUMP, PLAIN), **CHORD** (a fast arpeggio inside every note: MAJOR, MINOR, OCTAVE, POWER, SPOOKY), **FAST**, SIZE | **DUTY** (pulse width), **PWM** (it sweeps), SHAPE, **BOOM** | FX **8-BIT** |
+| **DINO** | **GROWL** (a pulsing rattle), **RUMBLE** (how fast), **STOMP** (a thump, the ground shakes), SIZE | SHAPE, **SCREAM** (the vowel), **PACK**, **SPIT** (noise) | FX **CANYON**, **SNARL** |
+| **ROBOT** | **CHATTER** (beep-boop blips after a note), **RANGE**, **VOICE** (the vowel), SIZE | SHAPE, **SIREN** (OFF, BEEP-BOP, SWEEP, ALARM), **SLOW**, **FM** | FX **STUTTER**, **CRUSH** |
+| **OCEAN** | **BUBBLES**, **SONAR** (the note pings again and again), **WHALE** (the song's swoop), SIZE | SHAPE, **SINGING** (vibrato), **DREAMY** (it sets in late), METAL | FX **DEEP**, **CURRENT**, **PING GAP** |
+| **CASTLE** | BEND, **DUST** (fairy dust), SIZE, **WAND** (a fast chord in every note) | SHAPE, BUDDY, **CHIME** (the note rings again), METAL | |
+| **JUNGLE** | **TRUMPET** (the scoop up, the trunk rises), **BLOW** (breath), **STOMP**, SIZE | SHAPE, **HONK** (the vowel), **HERD**, BIG | |
+
 ## The twelve worlds
 
 | # | World | Sounds like | What you see |
 |---|---|---|---|
 | 1 | BIRD | TWEET: a bright chirp that swoops up | a canary on a branch in the sun; it opens its beak and flutters |
-| 2 | COW | MOO: a low, sliding "mooo" | a cow on the farm in front of the barn, with a speech bubble |
-| 3 | DOG | WOOF: a short bark that falls | a puppy by its kennel; the tongue shows, the speech bubble barks |
-| 4 | FROG | RIBBIT: a rubbery, bubbly tremble | a frog on a lily pad; the throat swells; fireflies and ripples |
+| 2 | COW | MOO: a closed mouth that opens to a round "oo", the pitch rising and sinking, a cowbell | a cow on the farm in front of the barn, with a speech bubble |
+| 3 | DOG | AWOOO: a wolf's howl under the moon, or a police siren, an ambulance, a fire alarm | a dog sitting up and howling at the moon; the whole screen flashes red and blue for the sirens |
+| 4 | FROG | RIBBIT: a pulsing croak, low "rib" then high "bit" | a frog on a lily pad; the throat swells; fireflies and ripples |
 | 5 | SPACE | WHOOSH: big, slow, shimmering pads | a rocket in the galaxy; the stars speed up on the beat |
-| 6 | METEOR | ZAP: a metallic "pew" | a cute rock with a flaming tail; meteors crash into the ground |
-| 7 | BLOCKS | BLOOP: chunky chip sounds | a blocky pig in a world of cubes; blocks pop out of the ground |
-| 8 | DINO | ROAR: a growling, detuned bass | a green T-rex, a volcano and a pterodactyl |
-| 9 | ROBOT | BEEP: crunchy robot tones | a robot with an equalizer in its mouth; gears turn |
-| 10 | OCEAN | BLUB: watery bubbles and echoes | a whale blowing bubbles, fish and seaweed |
+| 6 | METEOR | ZAP: a falling "pew", a boom, a thump, a spray of debris | a cute rock with a flaming tail; more meteors with the boom, shock waves with the crash |
+| 7 | BLOCKS | BLOOP: an arcade: a sweeping thin pulse, a fast chord in every note, pews and coins | falling blocks, a pixel invader that fires, a score that counts your notes |
+| 8 | DINO | ROAR: a falling growl with a rattle, a throat and a stomp | a green T-rex, a volcano that erupts harder with the growl, a pterodactyl; the ground shakes |
+| 9 | ROBOT | BEEP: crunchy robot tones, a throat, a chatter of beep-boops, sirens | a robot with the sound's wave on its chest and a speech of BEEP and BOOP; gears turn |
+| 10 | OCEAN | BLUB: a whale song that swoops, bubbles, a sonar ping | a whale singing rings and bubbles, glowing jellyfish, fish and seaweed |
 | 11 | CASTLE | TINKLE: a music-box bell | a unicorn in front of a castle and a rainbow |
-| 12 | JUNGLE | TRUMPET: a brassy, swelling horn | an elephant raising its trunk among palm trees |
+| 12 | JUNGLE | TRUMPET: a brassy horn that scoops up, with a breath and a stomp | an elephant raising its trunk among palm trees |
 
 ## The twelve songs
 

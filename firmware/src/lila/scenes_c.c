@@ -44,8 +44,10 @@ static void act_robot(int cx, int cy)
     AB(6, -6, 26, 8, dk);
     fill_rbox(cx + X(-34), cy + Y(-76), X(68), Y(58), X(8), bd);
     AB(-24, -64, 48, 30, dk);
-    for (n = 0; n < 4; n++)
-        AB(-20 + n * 11, -60 + (isin((int)(TM / 5) + n * 60) + 127) * 16 / 254 * 0, 8, 6 + ((isin((int)(TM / 6) + n * 70) + 127) * (4 + sc.lvl / 14) >> 8), n == 3 ? red : K(100, 255, 140));
+    for (n = 0; n < 24; n++) {                                   /* the chest screen: the sound's wave */
+        int y = isin(n * (14 + sc.wave * 9) + (int)(TM / 3)) * (2 + sc.lvl / 20) >> 7;
+        AB(-22 + n * 2, -49 + y, 2, 3, n > 17 ? red : K(100, 255, 140));
+    }
     AB(-18, -28, 36, 6, bd2);
     AL(-34, -66, -52, -42 + arm, 5, bd);
     AL(34, -66, 52, -42 - arm, 5, bd);
@@ -65,11 +67,18 @@ static void act_robot(int cx, int cy)
     AB(-14 + ln / 2, -96 + 0, 28, 3 + sc.mouth / 40, K(40, 255, 160));
     AL(0, -130, ln / 2, -146, 2, bd2);
     AE(ln / 2, -150, 6, 6, (((int)(TM / 250u)) & 1) ? red : K(150, 40, 40));
+    if (sc.blipf > 40) {                                         /* chatter: sparks at the antenna */
+        AL(ln / 2, -154, ln / 2 + 8, -164, 1, K(255, 255, 120));
+        AL(ln / 2 + 8, -164, ln / 2 + 2, -170, 1, K(255, 255, 120));
+        AL(ln / 2, -154, ln / 2 - 8, -163, 1, K(255, 255, 120));
+    }
 }
 static void fg_robot(void)
 {
-    if (sc.hit > 160)
-        text_out(40 + sc.pitch / 2, 110 - sc.hit / 10, &FONT_B, "BEEP", K(120, 255, 160), K(0, 40, 30));
+    static const char *const SAY[6] = {"BEEP", "BOOP", "ZZZT", "BLIP", "BZZZ", "BING"};
+    if (sc.hit > 160 || sc.blipf > 60)
+        text_out(40 + sc.pitch / 2 + (sc.blipf > 60 ? 20 : 0), 110 - sc.hit / 10 - (sc.blipf > 60 ? 20 : 0), &FONT_B, SAY[(sc.score / 10 + (sc.blipf > 60 ? 3 : 0)) % 6],
+                 K(120, 255, 160), K(0, 40, 30));
 }
 
 /* ---------------------------------------------------------------- 9 OCEAN --- */
@@ -88,6 +97,14 @@ static void bg_ocean(void)
         fill_ellipse(fx, y, 10, 6, c);
         fill_tri(fx - dir * 8, y, fx - dir * 17, y - 6 + tail / 2, fx - dir * 17, y + 6 + tail / 2, c);
         cv_pset(fx + dir * 5, y - 2, K(0, 0, 0));
+    }
+    for (i = 0; i < 3; i++) {                                    /* jellyfish, glowing */
+        int jx = 30 + i * 90 + (isin((int)(TM / 30) + i * 70) >> 3), jy = 150 + (isin((int)(TM / 22) + i * 90) >> 2) - i * 14, pulse = isin((int)(TM / 9) + i * 50) >> 5, j;
+        uint16_t jc = blend(K(90, 210, 230), K(255, 150, 220), 9 + i);
+        for (j = -2; j <= 2; j++)
+            fat_line(jx + j * 4, jy, jx + j * 5 + (isin((int)(TM / 14) + j * 40 + i * 30) >> 4), jy + 22 + pulse, 1, jc);
+        fill_ellipse(jx, jy - 2, 14 + pulse / 2, 10 - pulse / 2, jc);
+        fill_ellipse(jx - 3, jy - 5, 5, 3, blend(jc, K(255, 255, 255), 8));
     }
     hills(214, 8, 150, 20, 240, K(222, 200, 140));
     for (i = 0; i < 7; i++) {                                    /* seaweed */
@@ -128,10 +145,14 @@ static void act_ocean(int cx, int cy)
 }
 static void fg_ocean(void)
 {
-    static uint32_t last;
+    static uint32_t last, last2;
     if (sc.mouth > 90 && sc.t - last > 120u) {                   /* the whale's spout makes bubbles */
         last = sc.t;
         part_add(PK_BUBBLE, 116 + rnd_range(-8, 8), 56, rnd_range(-4, 4), rnd_range(-30, -18), 50, rnd_range(3, 7), RGB(220, 250, 255), 0);
+    }
+    if (sc.mouth > 60 && sc.t - last2 > 260u) {                  /* the song: rings that grow from its mouth */
+        last2 = sc.t;
+        part_add(PK_RING, 112 + 36 * sc.sz / 100, 118 - sc.jump, 0, 0, 34, 12, RGB(190, 235, 255), 0);
     }
 }
 
@@ -234,7 +255,7 @@ static void bg_jungle(void)
 }
 static void act_jungle(int cx, int cy)
 {
-    int g = sc.mouth, up = g * 34 / 255, nod = isin((int)(TM / 13)) * 2 >> 7, ln = sc.lean / 2, ear = isin((int)(TM / 8)) * 3 >> 7;
+    int g = sc.mouth, up = g * 34 / 255 + sc.camt / 7, nod = isin((int)(TM / 13)) * 2 >> 7, ln = sc.lean / 2, ear = isin((int)(TM / 8)) * 3 >> 7;
     uint16_t gy = K(150, 160, 190), dk = K(116, 126, 160), pk = K(255, 190, 200), wh = K(255, 252, 240), ink = K(30, 30, 40);
     int i;
     for (i = 0; i < 4; i++) {

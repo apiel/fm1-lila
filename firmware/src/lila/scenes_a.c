@@ -2,6 +2,13 @@
 /* Worlds 0..3: the bird in the sun, the cow on the farm, the dog in the garden, the frog on the pond. */
 #pragma once
 
+static int strlen_(const char *s)
+{
+    int n = 0;
+    while (s[n])
+        n++;
+    return n;
+}
 /* a speech bubble with a word in it, its tail pointing to (tx, ty) */
 static void bubble(int x, int y, int w, int h, const char *word, int tx, int ty)
 {
@@ -96,7 +103,9 @@ static void bg_cow(void)
 }
 static void act_cow(int cx, int cy)
 {
-    int g = sc.mouth * 7 / 255, nod = isin((int)(TM / 14)) * 2 >> 7, sw = isin((int)(TM / 9)) * 5 >> 7, ln = sc.lean / 2;
+    int g = sc.mouth * 7 / 255 + (sc.mouth < 20 && isin((int)(TM / 7)) > 40 ? 2 : 0), nod = isin((int)(TM / 14)) * 2 >> 7,
+        sw = isin((int)(TM / (sc.hit > 100 ? 4 : 9))) * (sc.hit > 100 ? 9 : 5) >> 7, ln = sc.lean / 2, blink = ((int)(TM / 120u) % 26) == 0;
+    int bx = 34 + (isin((int)(TM / 5)) * sc.bellf >> 9), by = -46 + (icos((int)(TM / 5)) * sc.bellf >> 11);
     uint16_t wh = K(252, 252, 252), blk = K(40, 36, 44), pk = K(255, 176, 190), pk2 = K(232, 130, 150);
     int i;
     for (i = 0; i < 4; i++) {
@@ -120,80 +129,102 @@ static void act_cow(int cx, int cy)
     if (g > 2)
         AE(62 + ln, -54 + nod + g / 2, 8, 2, K(110, 30, 50));
     AE(67 + ln, -62 + nod, 2, 2, K(150, 70, 90));
-    AE(53 + ln, -73 + nod, 4, 4, blk);
-    AE(54 + ln, -74 + nod, 1, 1, wh);
-    AE(34, -46, 5, 6, K(255, 205, 60));
+    if (blink)
+        AB(49 + ln, -73 + nod, 9, 2, blk);
+    else {
+        AE(53 + ln, -73 + nod, 4, 4, blk);
+        AE(54 + ln, -74 + nod, 1, 1, wh);
+    }
+    AL(30, -52, 36, -50, 1, K(120, 60, 40));
+    AE(bx, by, 5, 6, K(255, 205, 60));
+    AE(bx, by + 4, 2, 2, K(150, 110, 20));
+    if (sc.bellf > 90)
+        AR(bx, by, 12, 2, K(255, 240, 120));
 }
 static void fg_cow(void)
 {
     grass_tufts(226, 16, K(70, 160, 60), 6);
     if (sc.mouth > 70) {
-        bubble(10, 44, 96, 44, "MOO!", 60, 112);
+        bubble(10, 44, sc.mouth > 170 ? 116 : 96, 44, sc.mouth > 170 ? "MOOO!" : "MOO!", 60, 112);
     }
 }
 
 /* ------------------------------------------------------------------- 2 DOG --- */
+/* a dog that howls at the moon, and does a police siren, an ambulance or a fire alarm: the whole world flashes red and blue */
 static void bg_dog(void)
 {
-    int i;
-    vgrad(0, 174, K(140, 205, 255), K(220, 240, 255));
-    sun(196, 36, 15, K(255, 238, 130), K(255, 228, 110));
-    cloud(((int)(TM / 80) + 20) % 300 - 40, 50, 9, K(255, 255, 255));
+    int i, howl = sc.ctype == CT_HOWL ? sc.mouth : 0, mr = 22 + howl / 28;
+    vgrad(0, 174, K(36, 30, 96), K(236, 140, 130));
+    for (i = 0; i < 26; i++)
+        if (isin((int)(TM / 11) + i * 31) > -60)
+            sparkle((i * 89 + 7) % 240, (i * 43) % 90, 1 + (isin((int)(TM / 8) + i * 17) > 100), K(255, 250, 220));
+    fill_circle(62, 56, mr + 10 + howl / 40, blend(K(36, 30, 96), K(255, 240, 190), 3 + howl / 70));     /* the moon and its glow */
+    fill_circle(62, 56, mr, K(255, 248, 215));
+    fill_circle(54, 50, mr / 4, K(236, 226, 190));
+    fill_circle(72, 64, mr / 5, K(236, 226, 190));
+    hills(150, 12, 190, 40, 240, K(70, 50, 100));
     for (i = 0; i < 16; i++) {                       /* the garden fence */
-        int h = 70 + (i & 1) * 4;
-        box_(i * 16, 150 - h + 20, 13, h, K(210 + (i % 3) * 6, 160, 100));
-        fill_tri(i * 16, 150 - h + 20, i * 16 + 13, 150 - h + 20, i * 16 + 6, 150 - h + 12, K(210 + (i % 3) * 6, 160, 100));
+        int h = 52 + (i & 1) * 4;
+        box_(i * 16, 176 - h, 13, h, K(120, 86, 84));
+        fill_tri(i * 16, 176 - h, i * 16 + 13, 176 - h, i * 16 + 6, 176 - h - 8, K(120, 86, 84));
     }
-    box_(0, 112, 240, 6, K(170, 120, 70));
-    box_(0, 140, 240, 6, K(170, 120, 70));
-    hat_ground(172, K(110, 195, 85), K(75, 155, 65));
-    box_(180, 124, 52, 48, K(200, 90, 60));                   /* the kennel */
-    fill_tri(172, 126, 240, 126, 206, 92, K(150, 60, 40));
-    fill_ellipse(206, 172, 15, 22, K(50, 30, 30));
-    fill_ellipse(206, 176, 11, 12, K(30, 20, 20));
-    /* the bone */
-    fill_circle(34, 206, 5, K(255, 252, 240));
-    fill_circle(34, 214, 5, K(255, 252, 240));
-    box_(32, 206, 36, 8, K(255, 252, 240));
-    fill_circle(68, 206, 5, K(255, 252, 240));
-    fill_circle(68, 214, 5, K(255, 252, 240));
+    box_(0, 138, 240, 5, K(96, 66, 70));
+    hat_ground(176, K(70, 130, 90), K(40, 90, 70));
+    box_(188, 134, 50, 44, K(170, 70, 56));          /* the kennel */
+    fill_tri(180, 136, 244, 136, 212, 106, K(120, 50, 44));
+    fill_ellipse(212, 178, 14, 20, K(30, 18, 26));
 }
 static void act_dog(int cx, int cy)
 {
-    int g = sc.mouth * 14 / 255, wag = isin((int)(TM / 6) + sc.bounce) * 14 >> 7, tilt = sc.lean / 2;
-    uint16_t tan = K(214, 150, 80), dk = K(150, 90, 40), lt = K(246, 214, 160), ink = K(30, 24, 30), wh = K(255, 255, 255);
-    int ear = isin((int)(TM / 11)) * 2 >> 7;
-    AL(26, -16, 44 + wag, -40, 5, tan);
-    AE(0, -26, 32, 27, tan);
-    AE(0, -18, 18, 17, lt);
-    AE(-14, -4, 12, 6, lt);
-    AE(14, -4, 12, 6, lt);
-    AE(tilt, -66, 32, 29, tan);
-    AE(-34 + tilt, -62 + ear, 12, 24, dk);
-    AE(34 + tilt, -62 - ear, 12, 24, dk);
-    AE(-14 + tilt, -74, 5, 8, K(236, 180, 110));
-    AE(tilt, -52, 17, 14 + g / 3, lt);
-    AE(-13 + tilt, -73, 8, 9, wh);
-    AE(13 + tilt, -73, 8, 9, wh);
-    AE(-12 + tilt, -72, 4, 5, ink);
-    AE(14 + tilt, -72, 4, 5, ink);
-    AE(-11 + tilt, -74, 1, 1, wh);
-    AE(15 + tilt, -74, 1, 1, wh);
-    if (g > 2) {
-        AE(tilt, -45 + g / 2, 12, 3 + g / 2, K(120, 30, 40));
-        AE(tilt, -42 + g, 6, 4 + g / 3, K(255, 100, 120));
-    } else
-        AL(-8 + tilt, -45, 8 + tilt, -45, 1, ink);
-    AE(tilt, -57, 7, 5, ink);
-    AE(tilt - 2, -59, 2, 1, wh);
-    AB(-18, -39, 36, 5, K(220, 40, 50));
-    AE(0, -33, 4, 5, K(255, 210, 60));
+    int howl = sc.ctype == CT_HOWL, tilt = sc.mouth * (howl ? 62 : 14) / 255, open = sc.mouth * 40 / 255, wag = isin((int)(TM / 6) + sc.bounce) * 12 >> 7;
+    int ang = -6 + tilt, ln = sc.lean / 2, hx = 12 + ln, hy = -92 - tilt / 5, a256 = ang * 256 / 360, sx, sy, jx, jy;
+    uint16_t tan = K(206, 140, 76), dk = K(150, 92, 46), lt = K(246, 216, 166), ink = K(30, 24, 30), wh = K(255, 255, 255);
+    uint16_t pk = K(255, 120, 140), red = K(230, 40, 50);
+    int len = 28, dirx = icos(a256), diry = isin(a256), jang = a256 - open * 256 / 360;
+    AL(-34, -16, -54 + wag, -34 - wag / 2, 5, tan);                 /* the tail */
+    AE(-18, -26, 24, 24, dk);                                       /* the haunch */
+    AE(-22, -3, 18, 6, tan);
+    AE(0, -48, 22, 38, tan);                                        /* the body, sitting up */
+    AE(10, -42, 12, 26, lt);
+    AB(6, -34, 11, 34, tan);                                        /* the front legs */
+    AE(14, -3, 11, 5, lt);
+    AL(6, -74, hx - 2, hy + 8, 11, tan);                            /* the neck */
+    AB(-6, -78, 24, 6, red);                                        /* the collar */
+    AE(hx - 12, hy - 4, 11, 22, dk);                                /* the floppy ear, behind the head */
+    AE(hx, hy, 18, 17, tan);
+    sx = hx + dirx * len / 127;
+    sy = hy + 4 - diry * len / 127;
+    jx = hx + icos(jang) * (len - 4) / 127;
+    jy = hy + 6 - isin(jang) * (len - 4) / 127;
+    if (open > 3) {
+        AL(hx + 2, hy + 8, jx, jy + 4, 5, pk);                      /* the jaw, open */
+        AL(hx + 2, hy + 6, sx - 4, sy + 2, 3, K(110, 30, 44));      /* the inside of the mouth */
+    }
+    AL(hx + 2, hy + 3, sx, sy, 9, lt);                              /* the snout */
+    AE(sx - hx + hx, sy - 1, 5, 4, ink);                            /* the nose */
+    if (tilt > 28) {                                                /* howling: the eye is shut, a happy curve */
+        AL(hx + 2, hy - 4, hx + 12, hy - 5, 1, ink);
+    } else {
+        AE(hx + 6, hy - 5, 6, 6, wh);
+        AE(hx + 8, hy - 5, 3, 4, ink);
+    }
+    AT(hx - 6, hy - 14, hx + 2, hy - 16, hx - 8, hy - 32, dk);       /* the other ear, up */
+    if (sc.ctype >= CT_WAIL && sc.ctype <= CT_ALARM) {              /* a siren light on its head */
+        int ph = (int)(TM / 160) & 1;
+        AB(hx - 7, hy - 26, 14, 8, ph ? K(255, 60, 60) : K(70, 120, 255));
+        AE(hx, hy - 27, 8, 4, ph ? K(255, 150, 150) : K(160, 190, 255));
+    }
 }
 static void fg_dog(void)
 {
-    grass_tufts(224, 14, K(60, 150, 55), 7);
-    if (sc.mouth > 70)
-        bubble(20, 38, 108, 44, "WOOF!", 78, 78);
+    const char *word = 0;
+    int w;
+    grass_tufts(224, 14, K(50, 110, 70), 7);
+    if (sc.mouth > 70) {
+        word = sc.ctype == CT_HOWL ? "AWOOO!" : sc.ctype == CT_WAIL ? "WEE-OOO" : sc.ctype == CT_HILO ? "NEE-NAW" : sc.ctype == CT_ALARM ? "BRRING!" : "WOOF!";
+        w = (int)strlen_(word) * 16 + 20;
+        bubble(124 - w / 2 + 30, 30, w, 44, word, 150, 86);
+    }
 }
 
 /* ------------------------------------------------------------------ 3 FROG --- */
@@ -221,7 +252,9 @@ static void bg_frog(void)
 }
 static void act_frog(int cx, int cy)
 {
-    int g = sc.mouth * 9 / 255, sac = sc.mouth * 14 / 255 + (sc.lvl > 20 ? 2 : 0);
+    int g = sc.mouth * 9 / 255, sac = sc.mouth * 14 / 255 + (sc.lvl > 20 ? 2 : 0), pul = sc.am > 8 && sc.mouth > 20 ? ((isin((int)(TM / 3)) + 127) * sc.am * 8 >> 15) : 0;
+    sac += pul;
+    cy += pul / 4;
     uint16_t gr = K(110, 210, 70), dk = K(60, 150, 50), lt = K(200, 240, 130), ink = K(30, 40, 30), wh = K(255, 255, 255);
     AE(-38, -14, 18, 12, dk);
     AE(38, -14, 18, 12, dk);
@@ -254,6 +287,14 @@ static void fg_frog(void)
         fill_circle(x, y, 2, K(255, 255, 140));
         fill_circle(x, y, 4, blend(K(255, 255, 140), K(70, 150, 150), 13));
     }
+    {   /* a fly, and a tongue that catches it */
+        int fx = 170 + (isin((int)(TM / 11)) * 34 >> 7), fy = 92 + (icos((int)(TM / 8)) * 20 >> 7), mx = 120, my = 176 - 32 * sc.sz / 100 - sc.jump;
+        if (sc.hit > 170)
+            fat_line(mx, my, mx + (fx - mx) * (sc.hit - 150) / 105, my + (fy - my) * (sc.hit - 150) / 105, 3, K(255, 110, 130));
+        fill_ellipse(fx, fy, 3, 2, K(20, 20, 20));
+        fat_line(fx, fy - 1, fx - 3, fy - 5 - (int)((TM / 40) & 1) * 2, 1, K(200, 230, 255));
+        fat_line(fx, fy - 1, fx + 3, fy - 5 - (int)((TM / 40) & 1) * 2, 1, K(200, 230, 255));
+    }
     if (sc.mouth > 70)
-        bubble(130, 36, 100, 44, "RIBBIT", 150, 92);
+        bubble(124, 36, sc.am > 60 ? 112 : 100, 44, sc.am > 60 ? "RRIBBIT" : "RIBBIT", 150, 92);
 }

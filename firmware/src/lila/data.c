@@ -2,47 +2,88 @@
 /* LILA's data: the twelve worlds' sounds, the melodies and the beats. */
 #include "lila.h"
 
-/* one row: name, voice, { ECHO SPACE FLUFF ROBOT | CUT RESO FTYPE GRIT | ATK PLUCK REL BOING | LSPD LDEP LWHAT LWAVE |
- * WAVE BUDDY BIG METAL | BEND STARS SIZE WIGGLE }, fm ratio * 4, noise, pitch start (semitones), over ms / 4, octave, level
- * The pitch start is where a note begins relative to itself: + starts high and falls (a bark), - starts low and rises
- * (a chirp, a ribbit, a bubble). */
+/* A world's sound is the neutral sound (preset_load: every parameter 0, except BEND, SIZE, DUTY, VOWEL, VIBS, AMR, CTIME, FMR, NZDEC, PINGT and
+ * CHATR, which have a middle) plus the parameters listed here. Pitch contours: CTYPE says which (CT_*), CAMT how far it goes (0..127 is
+ * 0..24 semitones), CTIME how long (or, for a siren, how slow). The knobs that show these are in ui.c, under each world's own names. */
+
+static const pv_t SET_BIRD[] = {
+    {P_ECHO, 26}, {P_SPACE, 40}, {P_FLUFF, 24}, {P_CUT, 112}, {P_RESO, 18}, {P_ATK, 3}, {P_PLUCK, 78}, {P_REL, 36},
+    {P_BOING, 30}, {P_LSPD, 104}, {P_LDEP, 46}, {P_WAVE, 8}, {P_METAL, 34}, {P_FMR, 42}, {P_NOISE, 8}, {P_CTYPE, 6},
+    {P_CAMT, 32}, {P_CTIME, 28},
+};
+static const pv_t SET_COW[] = {
+    {P_ECHO, 12}, {P_SPACE, 34}, {P_FLUFF, 10}, {P_CUT, 52}, {P_RESO, 60}, {P_GRIT, 6}, {P_ATK, 34}, {P_PLUCK, 8},
+    {P_REL, 50}, {P_BOING, 62}, {P_LSPD, 38}, {P_WAVE, 92}, {P_BUDDY, 24}, {P_BIG, 44}, {P_FMR, 17}, {P_NOISE, 10},
+    {P_NZDEC, 60}, {P_CTYPE, 1}, {P_CAMT, 16}, {P_CTIME, 91}, {P_FORM, 96}, {P_VOWEL, 16}, {P_VIBD, 34}, {P_VIBS, 40},
+    {P_VIBDLY, 70}, {P_BELL, 40},
+};
+static const pv_t SET_DOG[] = {
+    {P_ECHO, 74}, {P_SPACE, 72}, {P_CUT, 88}, {P_RESO, 26}, {P_ATK, 44}, {P_REL, 88}, {P_BOING, 34}, {P_LSPD, 30},
+    {P_LWAVE, 2}, {P_WAVE, 44}, {P_BUDDY, 22}, {P_BIG, 16}, {P_FMR, 8}, {P_CTYPE, 1}, {P_CAMT, 64}, {P_CTIME, 107},
+    {P_VIBD, 46}, {P_VIBS, 70}, {P_VIBDLY, 62}, {P_VOWEL, 10}, {P_FORM, 84}, {P_AMR, 70},
+};
+static const pv_t SET_FROG[] = {
+    {P_ECHO, 18}, {P_SPACE, 54}, {P_CUT, 70}, {P_RESO, 56}, {P_GRIT, 10}, {P_PLUCK, 88}, {P_REL, 26}, {P_BOING, 40},
+    {P_LWHAT, 2}, {P_LWAVE, 2}, {P_WAVE, 84}, {P_FMR, 17}, {P_NOISE, 8}, {P_NZDEC, 20}, {P_CTYPE, 8}, {P_CAMT, 37},
+    {P_CTIME, 62}, {P_AMR, 83}, {P_AMD, 104}, {P_VOWEL, 34}, {P_FORM, 84},
+};
+static const pv_t SET_SPACE[] = {
+    {P_ECHO, 66}, {P_SPACE, 96}, {P_FLUFF, 64}, {P_CUT, 58}, {P_RESO, 46}, {P_ATK, 74}, {P_REL, 88}, {P_BOING, 46},
+    {P_LSPD, 18}, {P_LDEP, 62}, {P_LWHAT, 1}, {P_WAVE, 84}, {P_BUDDY, 84}, {P_BIG, 44}, {P_METAL, 8}, {P_NZDEC, 127},
+    {P_CTYPE, 5}, {P_CTIME, 30},
+};
+static const pv_t SET_METEOR[] = {
+    {P_ECHO, 62}, {P_SPACE, 54}, {P_CUT, 104}, {P_RESO, 40}, {P_GRIT, 10}, {P_PLUCK, 100}, {P_REL, 70}, {P_BOING, 58},
+    {P_LSPD, 60}, {P_WAVE, 22}, {P_BUDDY, 20}, {P_BIG, 20}, {P_METAL, 112}, {P_FMR, 51}, {P_NOISE, 56}, {P_NZDEC, 93},
+    {P_CTYPE, 5}, {P_CAMT, 74}, {P_CTIME, 45}, {P_STOMP, 56}, {P_CHAT, 40}, {P_CHATR, 50},
+};
+static const pv_t SET_BLOCKS[] = {
+    {P_ECHO, 10}, {P_SPACE, 10}, {P_ROBOT, 44}, {P_CUT, 122}, {P_GRIT, 14}, {P_PLUCK, 76}, {P_REL, 18}, {P_LSPD, 70},
+    {P_LDEP, 14}, {P_LWAVE, 2}, {P_WAVE, 127}, {P_FMR, 8}, {P_DUTY, 44}, {P_PWMD, 48}, {P_CHIP, 1}, {P_CHIPS, 100},
+    {P_CTYPE, 5}, {P_CAMT, 21}, {P_CTIME, 39},
+};
+static const pv_t SET_DINO[] = {
+    {P_ECHO, 34}, {P_SPACE, 40}, {P_FLUFF, 20}, {P_CUT, 40}, {P_RESO, 62}, {P_GRIT, 70}, {P_ATK, 8}, {P_PLUCK, 28},
+    {P_REL, 60}, {P_BOING, 94}, {P_LSPD, 88}, {P_LDEP, 74}, {P_LWHAT, 2}, {P_LWAVE, 1}, {P_WAVE, 90}, {P_BUDDY, 100},
+    {P_BIG, 112}, {P_METAL, 18}, {P_FMR, 8}, {P_NOISE, 48}, {P_NZDEC, 100}, {P_CTYPE, 5}, {P_CAMT, 42}, {P_CTIME, 100},
+    {P_AMR, 66}, {P_AMD, 72}, {P_VOWEL, 58}, {P_FORM, 72}, {P_STOMP, 64},
+};
+static const pv_t SET_ROBOT[] = {
+    {P_ECHO, 26}, {P_SPACE, 20}, {P_ROBOT, 82}, {P_CUT, 88}, {P_RESO, 62}, {P_GRIT, 20}, {P_PLUCK, 72}, {P_REL, 18},
+    {P_BOING, 56}, {P_LSPD, 96}, {P_LDEP, 50}, {P_LWHAT, 1}, {P_LWAVE, 2}, {P_WAVE, 100}, {P_BUDDY, 30}, {P_BIG, 20},
+    {P_METAL, 26}, {P_CHAT, 52}, {P_CHATR, 70}, {P_VOWEL, 84}, {P_FORM, 58},
+};
+static const pv_t SET_OCEAN[] = {
+    {P_ECHO, 74}, {P_SPACE, 100}, {P_FLUFF, 92}, {P_CUT, 78}, {P_RESO, 24}, {P_ATK, 2}, {P_PLUCK, 100}, {P_REL, 52},
+    {P_BOING, 30}, {P_LSPD, 26}, {P_LDEP, 40}, {P_BUDDY, 22}, {P_BIG, 30}, {P_METAL, 36}, {P_FMR, 8}, {P_CTYPE, 6},
+    {P_CAMT, 37}, {P_CTIME, 104}, {P_VIBD, 22}, {P_VIBS, 30}, {P_VIBDLY, 84}, {P_PING, 44}, {P_PINGT, 64},
+    {P_CHAT, 30}, {P_CHATR, 30},
+};
+static const pv_t SET_CASTLE[] = {
+    {P_ECHO, 60}, {P_SPACE, 84}, {P_FLUFF, 40}, {P_CUT, 118}, {P_RESO, 14}, {P_PLUCK, 110}, {P_REL, 90}, {P_BOING, 24},
+    {P_LSPD, 44}, {P_LDEP, 20}, {P_LWHAT, 1}, {P_WAVE, 4}, {P_BUDDY, 28}, {P_METAL, 64}, {P_STARS, 38},
+};
+static const pv_t SET_JUNGLE[] = {
+    {P_ECHO, 22}, {P_SPACE, 40}, {P_FLUFF, 30}, {P_CUT, 56}, {P_RESO, 44}, {P_GRIT, 14}, {P_ATK, 44}, {P_REL, 54},
+    {P_BOING, 76}, {P_LSPD, 74}, {P_WAVE, 88}, {P_BUDDY, 54}, {P_BIG, 52}, {P_FMR, 8}, {P_NOISE, 16}, {P_NZDEC, 34},
+    {P_CTYPE, 6}, {P_CAMT, 26}, {P_CTIME, 62}, {P_VOWEL, 60}, {P_FORM, 52}, {P_VIBD, 22}, {P_VIBS, 64}, {P_VIBDLY, 60},
+    {P_STOMP, 34},
+};
+
+#define SET(n) SET_##n, (uint8_t)(sizeof SET_##n / sizeof SET_##n[0])
 const preset_t PRESETS[NPRESET] = {
-    /* 0 */ {"BIRD", "TWEET",
-             {26, 40, 24, 0,   112, 18, 0, 0,   3, 78, 36, 30,   104, 46, 0, 0,   8, 0, 0, 34,   64, 0, 64, 0},
-             12, 8, -6, 14, 1, 95},
-    /* 1 */ {"COW", "MOO",
-             {10, 30, 10, 0,   46, 78, 0, 6,    34, 8, 50, 62,    38, 30, 0, 0,    92, 34, 52, 0,   64, 0, 64, 0},
-             4, 6, -3, 40, -1, 68},
-    /* 2 */ {"DOG", "WOOF",
-             {8, 18, 0, 0,     76, 52, 0, 28,   0, 112, 18, 96,   30, 0, 0, 2,     108, 0, 40, 0,   64, 0, 64, 0},
-             4, 40, 8, 18, -1, 79},
-    /* 3 */ {"FROG", "RIBBIT",
-             {18, 50, 20, 0,   84, 44, 0, 0,    0, 92, 24, 56,    104, 74, 2, 2,   12, 0, 26, 92,   64, 0, 64, 0},
-             6, 10, -9, 22, 0, 82},
-    /* 4 */ {"SPACE", "WHOOSH",
-             {66, 96, 64, 0,   58, 46, 0, 0,    74, 0, 88, 46,    18, 62, 1, 0,    84, 84, 44, 8,   64, 0, 64, 0},
-             8, 4, 0, 0, 0, 80},
-    /* 5 */ {"METEOR", "ZAP",
-             {62, 54, 0, 0,    104, 40, 0, 10,  0, 100, 70, 58,   60, 0, 0, 0,     22, 20, 20, 112, 64, 0, 64, 0},
-             14, 12, 12, 16, 0, 68},
-    /* 6 */ {"BLOCKS", "BLOOP",
-             {12, 14, 0, 24,   104, 20, 0, 22,  0, 80, 22, 40,    70, 14, 0, 2,    127, 18, 8, 0,   64, 0, 64, 0},
-             4, 0, 0, 0, 0, 69},
-    /* 7 */ {"DINO", "ROAR",
-             {16, 36, 20, 0,   40, 62, 0, 84,   8, 28, 60, 94,    88, 74, 2, 1,    90, 100, 112, 18, 64, 0, 64, 0},
-             4, 60, 5, 60, -2, 91},
-    /* 8 */ {"ROBOT", "BEEP",
-             {26, 20, 0, 82,   88, 62, 0, 20,   0, 72, 18, 56,    96, 50, 1, 2,    100, 30, 20, 26,  64, 0, 64, 0},
-             8, 0, 0, 0, 0, 119},
-    /* 9 */ {"OCEAN", "BLUB",
-             {74, 100, 92, 0,  78, 24, 0, 0,    2, 100, 52, 30,   26, 40, 0, 0,    0, 22, 30, 36,   64, 0, 64, 0},
-             4, 0, -7, 18, 0, 123},
-    /* 10 */ {"CASTLE", "TINKLE",
-              {60, 84, 40, 0,   118, 14, 0, 0,   0, 110, 90, 24,  44, 20, 1, 0,    4, 28, 0, 64,    64, 38, 64, 0},
-              8, 0, 0, 0, 1, 88},
-    /* 11 */ {"JUNGLE", "TRUMPET",
-              {22, 40, 30, 0,   56, 44, 0, 14,  44, 0, 54, 76,    74, 20, 0, 0,    88, 54, 52, 0,   64, 0, 64, 0},
-              4, 12, -4, 36, -1, 65},
+    {"BIRD", "TWEET", SET(BIRD), 1, 95, 3},
+    {"COW", "MOO", SET(COW), -1, 60, 0},
+    {"DOG", "WOOF", SET(DOG), 0, 126, 0},
+    {"FROG", "RIBBIT", SET(FROG), -1, 94, 2},
+    {"SPACE", "WHOOSH", SET(SPACE), 0, 77, 1},
+    {"METEOR", "ZAP", SET(METEOR), 0, 54, 4},
+    {"BLOCKS", "BLOOP", SET(BLOCKS), 0, 55, 1},
+    {"DINO", "ROAR", SET(DINO), -2, 101, 0},
+    {"ROBOT", "BEEP", SET(ROBOT), 0, 111, 1},
+    {"OCEAN", "BLUB", SET(OCEAN), 0, 90, 2},
+    {"CASTLE", "TINKLE", SET(CASTLE), 1, 105, 4},
+    {"JUNGLE", "TRUMPET", SET(JUNGLE), -1, 62, 3},
 };
 
 /* a melody is a list of notes: letter, optional # or b, octave (c4 = middle C), length. Length: 0 a sixteenth, 1 an eighth,

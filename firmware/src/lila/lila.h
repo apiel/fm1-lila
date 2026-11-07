@@ -24,7 +24,19 @@ enum {
     P_ATK, P_PLUCK, P_REL, P_BOING,               /* ENV  (and what it does to the filter) */
     P_LSPD, P_LDEP, P_LWHAT, P_LWAVE,             /* LFO  */
     P_WAVE, P_BUDDY, P_BIG, P_METAL,              /* EDIT */
-    P_BEND, P_STARS, P_SIZE, P_WIGGLE,            /* HOME */
+    P_BEND, P_STARS, P_SIZE, P_WIGGLE,            /* the magic: universal fun */
+    /* what makes a world its own: the pages show some of these, under the world's own names (ui.c, WORLD_KNOBS) */
+    P_CTYPE, P_CAMT, P_CTIME,                     /* a note's pitch contour (CT_*), how far it goes, how fast */
+    P_VIBD, P_VIBS, P_VIBDLY,                     /* vibrato: depth, speed, how late it sets in (a howl, a whale) */
+    P_AMR, P_AMD,                                 /* a pulsing volume: rate and depth (a croak, a growl) */
+    P_DUTY, P_PWMD,                               /* pulse width and how much it sweeps (arcade) */
+    P_CHIP, P_CHIPS,                              /* a fast arpeggio inside every note (arcade): chord and speed */
+    P_VOWEL, P_FORM,                              /* a throat: which vowel, and how much of it (a moo, a roar, a robot) */
+    P_NOISE, P_NZDEC,                             /* breath, a crash: how much, how long */
+    P_STOMP, P_BELL,                              /* a thump and a cowbell with every note */
+    P_CHAT, P_CHATR,                              /* a chatter of little blips after a note: how many, how far apart in pitch */
+    P_PING, P_PINGT,                              /* the same note again and again, softer (sonar): how often, how far apart */
+    P_FMR,                                        /* the FM partner's ratio */
     NSND,
     P_TEMPO = NSND, P_KEY, P_EASY, P_FRIENDS,     /* GLO  */
     P_ARP, P_ARPSPD, P_ARPRNG, P_STICKY,          /* ARP  */
@@ -39,21 +51,23 @@ extern volatile uint8_t P[NP];
 
 #define BPM_OF(v) (50 + (int)(v))                  /* P_TEMPO 0..127 -> 50 .. 177 beats a minute */
 
+enum { CT_NONE, CT_HOWL, CT_WAIL, CT_HILO, CT_ALARM, CT_DIVE, CT_SWOOP, CT_COIN, CT_RIBBIT, NCT };
 enum { LW_SINE, LW_TRI, LW_SQUARE, LW_BUMPY };
 enum { LT_PITCH, LT_WAH, LT_TREM };
 enum { MOOD_DAY, MOOD_NIGHT, MOOD_MAGIC, MOOD_CRAZY, NMOOD };
 
 /* --------------------------------------------------------------- presets --- */
+/* a world's sound: the parameters that differ from neutral (preset_load starts from neutral), and its own trims */
+typedef struct { uint8_t id, v; } pv_t;
+enum { BL_NONE, BL_BEEP, BL_BUBBLE, BL_CHIRP, BL_TWINKLE, NBLIP };      /* what the chatter's blips are */
 typedef struct {
     const char *name;                 /* the world's name, <= 8 characters */
     const char *voice;                /* what it sounds like: "TWEET", "MOO" */
-    uint8_t d[NSND];                  /* the starting sound */
-    uint8_t fm_ratio4;                /* the FM partner's ratio, times 4 */
-    uint8_t noise;                    /* breath / growl, 0..127 */
-    int8_t pe_amt;                    /* pitch start offset, semitones, falling (+) or rising (-) back to the note */
-    uint8_t pe_ms;                    /* ... in this many ms * 4 */
+    const pv_t *set;                  /* the sound: parameters that are not neutral */
+    uint8_t nset;
     int8_t oct;                       /* the instrument's own octave shift */
     uint8_t vol;                      /* level trim, 100 = 1.0 */
+    uint8_t blip;                     /* BL_*: the chatter's blips */
 } preset_t;
 extern const preset_t PRESETS[NPRESET];
 
@@ -71,7 +85,7 @@ enum { EV_KEY_ON, EV_KEY_OFF, EV_PLAY, EV_STOP, EV_MELODY, EV_REC, EV_PANIC, EV_
 void ev_post(int type, int a, int b);                 /* main loop */
 
 /* ---------------------------------------------------------- audio -> UI --- */
-enum { VE_NOTE, VE_MELODY_NOTE, VE_ARP, VE_LOOP, VE_DRUM };
+enum { VE_NOTE, VE_MELODY_NOTE, VE_ARP, VE_LOOP, VE_DRUM, VE_BLIP };   /* a blip: src is what made it (0x40 fairy dust, 0x42 cowbell, 0x43 chatter, 0x44 ping) */
 typedef struct { uint8_t type, note, vel, src; } vev_t;
 int vis_pop(vev_t *e);                                /* the next note that sounded, 1 = got one */
 extern volatile uint8_t vis_level;                    /* the loudest voice's envelope * velocity, 0..255 */

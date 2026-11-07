@@ -364,7 +364,7 @@ static int find_name(const char *const *t, int n, const char *s)
 {
     int i;
     for (i = 0; i < n; i++)
-        if (!strcmp(t[i], s))
+        if (t[i] && !strcmp(t[i], s))
             return i;
     return -1;
 }
@@ -378,7 +378,8 @@ static int key_of(const char *s)
 }
 
 static const char *const PN[NP] = {"ECHO", "SPACE", "FLUFF", "ROBOT", "CUT", "RESO", "FTYPE", "GRIT", "ATK", "PLUCK", "REL", "BOING", "LSPD", "LDEP", "LWHAT", "LWAVE",
-                                   "WAVE", "BUDDY", "BIG", "METAL", "BEND", "STARS", "SIZE", "WIGGLE", "TEMPO", "KEY", "EASY", "FRIENDS", "ARP", "ARPSPD", "ARPRNG",
+                                   "WAVE", "BUDDY", "BIG", "METAL", "BEND", "STARS", "SIZE", "WIGGLE", "CTYPE", "CAMT", "CTIME", "VIBD", "VIBS", "VIBDLY", "AMR", "AMD",
+                                   "DUTY", "PWMD", "CHIP", "CHIPS", "VOWEL", "FORM", "NOISE", "NZDEC", "STOMP", "BELL", "CHAT", "CHATR", "PING", "PINGT", "FMR", "TEMPO", "KEY", "EASY", "FRIENDS", "ARP", "ARPSPD", "ARPRNG",
                                    "STICKY", "BEAT", "BEATVOL", "BOUNCE", "TUNING", "MSPEED", "MMODE", "MREPEAT", "MBAND", "RLEN", "RVOL", "RSPEED", "RFUNNY", "BOX",
                                    "ACT", "STICK", "COLOR", "MOOD", "PRESET", "MELODY", "OCT"};
 static int pidx(const char *s)                           /* a parameter by name (P_ECHO: "ECHO") or by number */

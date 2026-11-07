@@ -49,6 +49,7 @@ static struct {
     uint16_t fadecol;
     int night;          /* 0..16: the mood darkens and blues the world */
     int flash;          /* 0..16: a white flash (the kick, a note) */
+    int wr, wb;         /* a red and a blue wash: a siren's lights, a fire alarm */
 } look;
 
 static uint16_t K(int r, int g, int b)
@@ -91,6 +92,11 @@ static uint16_t K(int r, int g, int b)
         r = r * (16 - look.night * 6 / 10) >> 4;
         g = g * (16 - look.night * 5 / 10) >> 4;
         b = (b * (16 - look.night * 2 / 10) >> 4) + look.night * 2;
+    }
+    if (look.wr || look.wb) {
+        r += look.wr;
+        b += look.wb;
+        g += (look.wr + look.wb) / 8;
     }
     if (look.flash) {
         r += ((255 - r) * look.flash) >> 5;

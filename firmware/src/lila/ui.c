@@ -16,6 +16,7 @@ typedef struct {
     uint8_t id, max;                    /* the parameter (P_*), its top value; a switch has names */
     uint8_t fmt;                        /* FM_*: a number in words */
     const char *const *names;
+    const uint8_t *vals;                /* a switch whose choices are not 0, 1, 2 ...: the value of each */
 } knobdef_t;
 typedef struct {
     const char *title;
@@ -63,6 +64,101 @@ static const page_t PAGES[NPAGES] = {
 };
 static const char *const N_MOOD[NMOOD] = {"SUNNY", "NIGHT", "MAGIC", "CRAZY"};
 
+/* ---------------------------------------------------------------- each world's own knobs --- */
+/* A world takes over some knobs of the generic pages and gives them its own names and meanings: a dog's HOME page has its siren and
+ * its howl, a frog's EDIT page its croak, a robot's HOME page its chatter. (page, knob 0..3, definition) */
+static const char *const N_SIREN[] = {"WOLF", "POLICE", "HI-LO", "ALARM"};
+static const uint8_t V_SIREN[] = {CT_HOWL, CT_WAIL, CT_HILO, CT_ALARM};
+static const char *const N_FROGSTYLE[] = {"RIBBIT", "PEEP", "BOING", "PLAIN"};
+static const uint8_t V_FROGSTYLE[] = {CT_RIBBIT, CT_SWOOP, CT_DIVE, CT_NONE};
+static const char *const N_GAME[] = {"PEW", "COIN", "JUMP", "PLAIN"};
+static const uint8_t V_GAME[] = {CT_DIVE, CT_COIN, CT_SWOOP, CT_NONE};
+static const char *const N_CHIP[] = {"OFF", "MAJOR", "MINOR", "OCTAVE", "POWER", "SPOOKY"};
+static const char *const N_RSIREN[] = {"OFF", "BEEP-BOP", "SWEEP", "ALARM"};
+static const uint8_t V_RSIREN[] = {CT_NONE, CT_HILO, CT_WAIL, CT_ALARM};
+typedef struct { uint8_t page, k; knobdef_t d; } wk_t;
+#define WK(pg, k, ...) {pg, k, {__VA_ARGS__}}
+static const wk_t WK_BIRD[] = {
+    WK(PG_HOME, 3, "TWEETS", P_CHAT, 127, 0, 0, 0),
+    WK(PG_EDIT, 1, "CHIRP", P_CAMT, 127, 0, 0, 0), WK(PG_EDIT, 2, "LENGTH", P_CTIME, 127, 0, 0, 0)};
+static const wk_t WK_COW[] = {
+    WK(PG_HOME, 0, "MOO", P_VOWEL, 127, 0, 0, 0), WK(PG_HOME, 1, "BELL", P_BELL, 127, 0, 0, 0), WK(PG_HOME, 3, "WOBBLY", P_WIGGLE, 127, 0, 0, 0),
+    WK(PG_EDIT, 1, "THROAT", P_FORM, 127, 0, 0, 0), WK(PG_EDIT, 2, "DEEP", P_BIG, 127, 0, 0, 0), WK(PG_EDIT, 3, "BREATH", P_NOISE, 127, 0, 0, 0),
+    WK(PG_ENV, 3, "SWAY", P_VIBD, 127, 0, 0, 0),
+    WK(PG_FX, 0, "BARN", P_ECHO, 127, 0, 0, 0), WK(PG_FX, 1, "FIELD", P_SPACE, 127, 0, 0, 0)};
+static const wk_t WK_DOG[] = {
+    WK(PG_HOME, 0, "SIREN", P_CTYPE, 3, 0, N_SIREN, V_SIREN), WK(PG_HOME, 1, "HOWL", P_CAMT, 127, 0, 0, 0), WK(PG_HOME, 2, "SLOW", P_CTIME, 127, 0, 0, 0),
+    WK(PG_EDIT, 1, "OOOH", P_VOWEL, 127, 0, 0, 0), WK(PG_EDIT, 2, "THROAT", P_FORM, 127, 0, 0, 0), WK(PG_EDIT, 3, "SHAKE", P_VIBD, 127, 0, 0, 0),
+    WK(PG_FX, 0, "CANYON", P_ECHO, 127, 0, 0, 0), WK(PG_FX, 1, "NIGHT", P_SPACE, 127, 0, 0, 0), WK(PG_FX, 3, "TINNY", P_ROBOT, 127, 0, 0, 0)};
+static const wk_t WK_FROG[] = {
+    WK(PG_HOME, 0, "STYLE", P_CTYPE, 3, 0, N_FROGSTYLE, V_FROGSTYLE), WK(PG_HOME, 1, "GAP", P_CTIME, 127, 0, 0, 0), WK(PG_HOME, 2, "JUMP", P_CAMT, 127, 0, 0, 0),
+    WK(PG_HOME, 3, "SIZE", P_SIZE, 127, 0, 0, 0),
+    WK(PG_EDIT, 1, "CROAK", P_AMD, 127, 0, 0, 0), WK(PG_EDIT, 2, "RATTLE", P_AMR, 127, 0, 0, 0), WK(PG_EDIT, 3, "THROAT", P_VOWEL, 127, 0, 0, 0),
+    WK(PG_FX, 0, "POND", P_ECHO, 127, 0, 0, 0), WK(PG_FX, 1, "MARSH", P_SPACE, 127, 0, 0, 0), WK(PG_FX, 2, "BUBBLES", P_CHAT, 127, 0, 0, 0),
+    WK(PG_FX, 3, "CRUNCH", P_ROBOT, 127, 0, 0, 0)};
+static const wk_t WK_SPACE[] = {
+    WK(PG_HOME, 3, "ALIEN", P_VIBD, 127, 0, 0, 0),
+    WK(PG_EDIT, 1, "CREW", P_BUDDY, 127, 0, 0, 0), WK(PG_EDIT, 2, "ENGINE", P_NOISE, 127, 0, 0, 0), WK(PG_EDIT, 3, "LASER", P_CAMT, 127, 0, 0, 0),
+    WK(PG_FX, 1, "GALAXY", P_SPACE, 127, 0, 0, 0), WK(PG_FX, 3, "STATIC", P_ROBOT, 127, 0, 0, 0)};
+static const wk_t WK_METEOR[] = {
+    WK(PG_HOME, 0, "PEW", P_CAMT, 127, 0, 0, 0), WK(PG_HOME, 1, "BOOM", P_NOISE, 127, 0, 0, 0), WK(PG_HOME, 2, "CRASH", P_STOMP, 127, 0, 0, 0),
+    WK(PG_HOME, 3, "SPARKS", P_CHAT, 127, 0, 0, 0),
+    WK(PG_EDIT, 1, "ROCK", P_FMR, 127, 0, 0, 0), WK(PG_EDIT, 3, "SPEED", P_CTIME, 127, 0, 0, 0),
+    WK(PG_FX, 2, "SMOKE", P_FLUFF, 127, 0, 0, 0)};
+static const wk_t WK_BLOCKS[] = {
+    WK(PG_HOME, 0, "GAME", P_CTYPE, 3, 0, N_GAME, V_GAME), WK(PG_HOME, 1, "CHORD", P_CHIP, 5, 0, N_CHIP, 0), WK(PG_HOME, 2, "FAST", P_CHIPS, 127, 0, 0, 0),
+    WK(PG_HOME, 3, "SIZE", P_SIZE, 127, 0, 0, 0),
+    WK(PG_EDIT, 0, "DUTY", P_DUTY, 127, 0, 0, 0), WK(PG_EDIT, 1, "PWM", P_PWMD, 127, 0, 0, 0), WK(PG_EDIT, 2, "SHAPE", P_WAVE, 127, FM_WAVE, 0, 0),
+    WK(PG_EDIT, 3, "BOOM", P_NOISE, 127, 0, 0, 0),
+    WK(PG_FX, 3, "8-BIT", P_ROBOT, 127, 0, 0, 0)};
+static const wk_t WK_DINO[] = {
+    WK(PG_HOME, 0, "GROWL", P_AMD, 127, 0, 0, 0), WK(PG_HOME, 1, "RUMBLE", P_AMR, 127, 0, 0, 0), WK(PG_HOME, 2, "STOMP", P_STOMP, 127, 0, 0, 0),
+    WK(PG_HOME, 3, "SIZE", P_SIZE, 127, 0, 0, 0),
+    WK(PG_EDIT, 1, "SCREAM", P_VOWEL, 127, 0, 0, 0), WK(PG_EDIT, 2, "PACK", P_BUDDY, 127, 0, 0, 0), WK(PG_EDIT, 3, "SPIT", P_NOISE, 127, 0, 0, 0),
+    WK(PG_FX, 0, "CANYON", P_ECHO, 127, 0, 0, 0), WK(PG_FX, 3, "SNARL", P_ROBOT, 127, 0, 0, 0)};
+static const wk_t WK_ROBOT[] = {
+    WK(PG_HOME, 0, "CHATTER", P_CHAT, 127, 0, 0, 0), WK(PG_HOME, 1, "RANGE", P_CHATR, 127, 0, 0, 0), WK(PG_HOME, 2, "VOICE", P_VOWEL, 127, 0, 0, 0),
+    WK(PG_HOME, 3, "SIZE", P_SIZE, 127, 0, 0, 0),
+    WK(PG_EDIT, 1, "SIREN", P_CTYPE, 3, 0, N_RSIREN, V_RSIREN), WK(PG_EDIT, 2, "SLOW", P_CTIME, 127, 0, 0, 0), WK(PG_EDIT, 3, "FM", P_METAL, 127, 0, 0, 0),
+    WK(PG_FX, 2, "STUTTER", P_AMD, 127, 0, 0, 0), WK(PG_FX, 3, "CRUSH", P_ROBOT, 127, 0, 0, 0)};
+static const wk_t WK_OCEAN[] = {
+    WK(PG_HOME, 0, "BUBBLES", P_CHAT, 127, 0, 0, 0), WK(PG_HOME, 1, "SONAR", P_PING, 127, 0, 0, 0), WK(PG_HOME, 2, "WHALE", P_CAMT, 127, 0, 0, 0),
+    WK(PG_HOME, 3, "SIZE", P_SIZE, 127, 0, 0, 0),
+    WK(PG_EDIT, 1, "SINGING", P_VIBD, 127, 0, 0, 0), WK(PG_EDIT, 2, "DREAMY", P_VIBDLY, 127, 0, 0, 0),
+    WK(PG_FX, 1, "DEEP", P_SPACE, 127, 0, 0, 0), WK(PG_FX, 2, "CURRENT", P_FLUFF, 127, 0, 0, 0), WK(PG_FX, 3, "PING GAP", P_PINGT, 127, 0, 0, 0)};
+static const wk_t WK_CASTLE[] = {
+    WK(PG_HOME, 1, "DUST", P_STARS, 127, 0, 0, 0), WK(PG_HOME, 3, "WAND", P_CHIP, 5, 0, N_CHIP, 0),
+    WK(PG_EDIT, 2, "CHIME", P_PING, 127, 0, 0, 0)};
+static const wk_t WK_JUNGLE[] = {
+    WK(PG_HOME, 0, "TRUMPET", P_CAMT, 127, 0, 0, 0), WK(PG_HOME, 1, "BLOW", P_NOISE, 127, 0, 0, 0), WK(PG_HOME, 2, "STOMP", P_STOMP, 127, 0, 0, 0),
+    WK(PG_HOME, 3, "SIZE", P_SIZE, 127, 0, 0, 0),
+    WK(PG_EDIT, 1, "HONK", P_VOWEL, 127, 0, 0, 0), WK(PG_EDIT, 2, "HERD", P_BUDDY, 127, 0, 0, 0)};
+#define WKS(t) {t, (uint8_t)(sizeof t / sizeof t[0])}
+static const struct { const wk_t *t; uint8_t n; } WORLD_KNOBS[NPRESET] = {
+    WKS(WK_BIRD), WKS(WK_COW), WKS(WK_DOG), WKS(WK_FROG), WKS(WK_SPACE), WKS(WK_METEOR), WKS(WK_BLOCKS), WKS(WK_DINO), WKS(WK_ROBOT),
+    WKS(WK_OCEAN), WKS(WK_CASTLE), WKS(WK_JUNGLE)};
+
+/* the knob a page shows for this world: the world's own, or the generic one */
+static const knobdef_t *kdef(int page, int k)
+{
+    int i, w = P[P_PRESET] % NPRESET;
+    for (i = 0; i < WORLD_KNOBS[w].n; i++)
+        if (WORLD_KNOBS[w].t[i].page == page && WORLD_KNOBS[w].t[i].k == k)
+            return &WORLD_KNOBS[w].t[i].d;
+    return &PAGES[page].k[k];
+}
+/* a switch's position for the value it holds */
+static int kindex(const knobdef_t *k, int v)
+{
+    int i;
+    if (!k->vals)
+        return v > k->max ? k->max : v;
+    for (i = 0; i <= k->max; i++)
+        if (k->vals[i] == v)
+            return i;
+    return 0;
+}
+
 static struct {
     uint8_t page;
     int8_t touched;                     /* the knob last turned, -1 none */
@@ -100,7 +196,7 @@ typedef struct {
     uint8_t p[NP];
     box_t box[NBOX];
 } lila_save_t;
-#define LILA_MAGIC 0x4C494C31u          /* "LIL1" */
+#define LILA_MAGIC 0x4C494C32u          /* "LIL2": the sound grew to NSND parameters */
 
 static void toast(const char *a, const char *b, uint16_t col)
 {
@@ -201,22 +297,23 @@ static void box_action(void);
 
 static void knob_turn(int i, int d)
 {
-    const knobdef_t *k = &PAGES[ui.page].k[i];
-    int v = P[k->id], step, nv, mag = d < 0 ? -d : d;
-    if (k->names || k->max < 40)
+    const knobdef_t *k = kdef(ui.page, i);
+    int v = P[k->id], sw = k->names != 0 || k->max < 40, cur = kindex(k, v), step, nv, mag = d < 0 ? -d : d, pv;
+    if (sw)
         step = d;                                          /* a switch: one click, one step */
     else
         step = d * (mag >= 3 ? 8 : mag == 2 ? 4 : 2);     /* a number: two per click, more when it spins */
-    nv = v + step;
+    nv = cur + step;
     nv = nv < 0 ? 0 : nv > k->max ? k->max : nv;
-    if (nv != v || k->max < 40) {
-        P[k->id] = (uint8_t)nv;
-        if (k->id == P_ARP && v == 0 && nv)
+    pv = sw && k->vals ? k->vals[nv] : nv;
+    if (pv != v || sw) {
+        P[k->id] = (uint8_t)pv;
+        if (k->id == P_ARP && v == 0 && pv)
             ev_post(EV_ARP_CLEAR, 0, 0);
-        if (k->id == P_BEAT && !nv && v)
+        if (k->id == P_BEAT && !pv && v)
             ev_post(EV_BEAT_RESET, 0, 0);
     }
-    if (ui.page == PG_SAVE && i == 0 && nv != v)
+    if (ui.page == PG_SAVE && i == 0 && pv != v)
         ui.save_pop = 0;
     ui.touched = (int8_t)i;
     ui.pulse[i] = 8;
@@ -413,6 +510,7 @@ static void input(void)
 void ui_input_only(void) { input(); }
 
 /* ------------------------------------------------------------ the sound's look --- */
+static int look_chip;
 static void look_update(void)
 {
     int hue = ((int)P[P_KEY] - 6) * 64, mood = P[P_MOOD] & 3;
@@ -424,12 +522,23 @@ static void look_update(void)
     look.warm = P[P_FTYPE] == 0 ? 8 : P[P_FTYPE] == 2 ? -12 : 0;
     if (mood == MOOD_CRAZY)
         hue += (int)(plat_ms() / 14u);
+    hue += look_chip;
     while (hue < 0)
         hue += 768;
     look.hue = hue % 768;
     look.night = mood == MOOD_NIGHT ? 9 : 0;
     look.flash = sc.bounce > 220 ? 1 : 0;
     look.fade = 0;
+    look.wr = look.wb = 0;
+    if (sc.siren > 40) {                                 /* the siren's lights wash the whole picture: red, blue, red ... or an alarm's red */
+        int ph = (int)(plat_ms() / 190u) & 1;
+        if (sc.ctype == CT_ALARM)
+            look.wr = ph ? 110 : 0;
+        else if (ph)
+            look.wr = 100;
+        else
+            look.wb = 100;
+    }
 }
 
 /* ---------------------------------------------------- the world follows the sound --- */
@@ -449,7 +558,34 @@ static void world_events(void)
         int x, y;
         uint16_t col;
         note_origin(&x, &y);
+        if (e.type == VE_BLIP) {                         /* a little sound the world adds: fairy dust, the cowbell, a chatter, a ping */
+            uint16_t bc = e.src == 0x42 ? RGB(255, 210, 60) : e.src == 0x44 ? RGB(150, 230, 255) : RGB(255, 255, 255);
+            if (e.src == 0x42) {
+                sc.bellf = 255;
+            } else if (e.src == 0x44) {
+                sc.pingf = 255;
+                part_add(PK_RING, x - 20, y + 30, 0, 0, 30, 14, bc, 0);
+            } else if (e.src == 0x43) {
+                sc.blipf = 255;
+                if (sc.world == 3 || sc.world == 9)              /* a frog or the sea: bubbles */
+                    part_add(PK_BUBBLE, x + rnd_range(-50, 40), y + rnd_range(10, 70), rnd_range(-4, 4), rnd_range(-34, -18), 44, rnd_range(3, 7), RGB(220, 250, 255), 0);
+                else if (sc.world == 5)                          /* a meteor: sparks of debris */
+                    part_add(PK_SPARK, rnd_range(20, 220), rnd_range(190, 225), rnd_range(-20, 20), rnd_range(-50, -20), 26, 5, RGB(255, rnd_range(120, 220), 60), 0);
+                else if (sc.world == 8 || sc.world == 6)         /* a robot, an arcade: square pixels */
+                    part_add(PK_CONF, x + rnd_range(-50, 50), y + rnd_range(0, 50), rnd_range(-10, 10), rnd_range(-30, -10), 30, 2,
+                             RGB(rnd_range(80, 255), rnd_range(200, 255), rnd_range(80, 255)), 0);
+                else
+                    part_add(PK_NOTE, x + rnd_range(-50, 50), y + rnd_range(-20, 40), rnd_range(-10, 10), rnd_range(-34, -18), 40, 3,
+                             RGB(rnd_range(120, 255), rnd_range(160, 255), rnd_range(120, 255)), P[P_WAVE] * 3 / 127);
+            }
+            continue;
+        }
         sc.hit = 255;
+        sc.score += 10;
+        if (P[P_STOMP] > 8) {
+            sc.stompf = 255;
+            sc.shake = imax(sc.shake, 2 + P[P_STOMP] / 20);
+        }
         sc.pitch = iclamp(((int)e.note - 40) * 255 / 50, 0, 255);
         col = RGB(iclamp(120 + (e.note * 53) % 136, 0, 255), iclamp(110 + (e.note * 91) % 146, 0, 255), iclamp(130 + (e.note * 37) % 126, 0, 255));
         if (e.type != VE_ARP || (ui.frame & 1u))
@@ -520,10 +656,37 @@ static void sc_update(void)
     sc.friends = P[P_FRIENDS] & 3;
     sc.mood = P[P_MOOD];
     sc.grit = imin(P[P_GRIT], 127);
+    sc.ctype = P[P_CTYPE];
+    sc.camt = imin(P[P_CAMT], 127);
+    sc.noise = imin(P[P_NOISE], 127);
+    sc.am = imin(P[P_AMD], 127);
+    sc.chat = imin(P[P_CHAT], 127);
+    sc.ping = imin(P[P_PING], 127);
+    sc.stomp = imin(P[P_STOMP], 127);
+    sc.bell = imin(P[P_BELL], 127);
+    sc.vowel = imin(P[P_VOWEL], 127);
+    sc.form = imin(P[P_FORM], 127);
+    sc.vibd = imin(P[P_VIBD], 127);
+    sc.chip = P[P_CHIP];
+    sc.duty = imin(P[P_DUTY], 127);
+    sc.pwm = imin(P[P_PWMD], 127);
+    sc.siren = (P[P_CTYPE] >= CT_WAIL && P[P_CTYPE] <= CT_ALARM && vis_level > 12) ? 255 : sc.siren - sc.siren / 4;
+    sc.stompf -= sc.stompf / 4 + (sc.stompf ? 1 : 0);
+    sc.bellf -= sc.bellf / 4 + (sc.bellf ? 1 : 0);
+    sc.blipf -= sc.blipf / 4 + (sc.blipf ? 1 : 0);
+    sc.pingf -= sc.pingf / 6 + (sc.pingf ? 1 : 0);
+    sc.shake -= (sc.shake > 0) + (sc.shake > 4);
+    if (sc.shake < 0)
+        sc.shake = 0;
+    sc.shake_dx = sc.shake ? (int)(urand() % (uint32_t)(sc.shake * 2 + 1)) - sc.shake : 0;
     sc.sz = 58 + (int)P[P_SIZE] * 112 / 127 + (int)P[P_BIG] * 14 / 127;
     if (P[P_LWHAT] == LT_TREM && P[P_LDEP])
         sc.sz += (int)sc.lfo * sc.sz / 380;
+    if (sc.form > 20)                                    /* the throat's vowel: "oo" is a small round mouth, "ah" is wide open, "ee" a thin smile */
+        sc.mouth = sc.mouth * (46 + (127 - iabs(sc.vowel * 2 - 127)) * 54 / 127) / 100;
     sc.lean = ((int)P[P_BEND] - 64) * 26 / 64;
+    if (sc.vibd > 4)                                     /* vibrato: the singer sways */
+        sc.lean += isin((int)(t / 18)) * sc.vibd * (sc.mouth + 40) >> 15;
     sc.sq = 100 + ((int)P[P_BOING] * lvl >> 11) - (sc.hit * (6 + (int)P[P_BOING] / 12) >> 8);
     sc.jump = (sc.hit * 10 >> 8) + (sc.bounce * (6 + (int)P[P_BOUNCE] / 20) >> 8) + (((int)P[P_BEND] - 64) * 22 / 64);
     if (P[P_LWHAT] == LT_PITCH && P[P_LDEP])
@@ -553,6 +716,17 @@ static void sc_update(void)
         part_add(PK_NOTE, x + rnd_range(-60, 60), y + 60 + rnd_range(-20, 40), rnd_range(-4, 4), rnd_range(-30, -14), 50, 3,
                  RGB(rnd_range(120, 255), rnd_range(120, 255), rnd_range(120, 255)), sc.wave);
     }
+    if (sc.chip && sc.mouth > 20) {                      /* a chord played in a flash: the colours flash through it */
+        static const uint8_t CN[6] = {1, 3, 3, 2, 4, 4};
+        int idx = (int)((t * (uint32_t)(8 + (int)P[P_CHIPS] / 3)) / 1000u) % CN[sc.chip % 6];
+        look_chip = idx * 140;
+    } else
+        look_chip = 0;
+    if (sc.noise > 20 && sc.mouth > 40 && (urand() & 3u) == 0) {      /* breath, a crash, spit: puffs from the mouth */
+        int x, y;
+        note_origin(&x, &y);
+        part_add(PK_DOT, x + 20 + rnd_range(-6, 6), y + 40 + rnd_range(-6, 6), rnd_range(6, 18), rnd_range(-10, 4), 22, 3 + sc.noise / 30, RGB(200, 200, 210), 0);
+    }
     look_update();
     sc.rec = rec_state;
     ui.level_prev = lvl;
@@ -563,9 +737,9 @@ static void sc_update(void)
 static void hud_cell(int i, int x, int y)
 {
     const page_t *pg = &PAGES[ui.page];
-    const knobdef_t *k = &pg->k[i];
+    const knobdef_t *k = kdef(ui.page, i);
     uint16_t col = rgb24(pg->color), dark = RGB(14, 16, 34), hot = RGB(255, 255, 255);
-    int v = P[k->id], w = 56, h = HUD_H - 4, touched = ui.touched == i, pulse = ui.pulse[i];
+    int v = kindex(k, P[k->id]), w = 56, h = HUD_H - 4, touched = ui.touched == i, pulse = ui.pulse[i];
     char buf[16];
     if (v > k->max)
         v = k->max;                                    /* a damaged value must not index past a name list */
@@ -761,6 +935,19 @@ static void post_fx(void)
             uint16_t *row = cv_px + (uint32_t)r * 240u;
             if (!d)
                 continue;
+            if (d > 0) {
+                for (x = 239; x >= d; x--)
+                    row[x] = row[x - d];
+            } else {
+                for (x = 0; x < 240 + d; x++)
+                    row[x] = row[x - d];
+            }
+        }
+    }
+    if (sc.shake > 0) {                                  /* a stomp, a roar: the whole picture jumps */
+        int d = sc.shake_dx;
+        for (r = 0; r < (int)cv_h && d; r++) {
+            uint16_t *row = cv_px + (uint32_t)r * 240u;
             if (d > 0) {
                 for (x = 239; x >= d; x--)
                     row[x] = row[x - d];

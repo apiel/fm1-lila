@@ -8,7 +8,8 @@ Built for Lila, on the hardware layer of [fm1-tribe](../fm1-tribe) (X0X, Felucca
 It is a normal synth underneath: ten voices, two oscillators and a sub, an FM partner, a filter, an envelope, an LFO,
 echo, reverb, chorus and a robot crusher. On top, it is a toy: **twelve worlds** (a bird, a cow, a dog, a frog, a
 spaceship, meteors, a block world, dinosaurs, a robot, the ocean, a fairy castle and the jungle). Each world is its own
-instrument *and* its own animated picture, and **whatever knob is turned, the picture changes with it**: more echo
+instrument *and* its own animated picture, with **its own knobs** (the dog howls or sounds a police siren, the frog croaks, the
+arcade has a chip arpeggio, the whale sings and pings), and **whatever knob is turned, the picture changes with it**: more echo
 leaves ghosts, more filter makes the world brighter, the robot knob turns everything into big square pixels, the size knob
 makes the animal grow.
 

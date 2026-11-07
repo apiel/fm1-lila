@@ -10,7 +10,7 @@ CC="${CC:-cc}"
 mkdir -p build/gen build/desktop
 [ -f build/gen/felucca_font.h ] || python3 tools/gen_font.py build/gen/felucca_font.h >/dev/null
 U="firmware/src/lila/synth.c firmware/src/lila/data.c"
-FLAGS="-O2 -ffp-contract=off -std=gnu99 -Wall -Wextra -Wno-unused-function -Wno-unused-parameter -DX0X_HOST -Ifirmware/src -Ifirmware/src/dsp -Ibuild/gen"
+FLAGS="-O2 -ffp-contract=off -std=gnu99 -Wall -Wextra -Wno-unused-function -Wno-unused-parameter -Wno-missing-field-initializers -DX0X_HOST -Ifirmware/src -Ifirmware/src/dsp -Ibuild/gen"
 # shellcheck disable=SC2086
 $CC $FLAGS -c desktop/lila_core.c -o build/desktop/lila_core.o
 OBJS="build/desktop/lila_core.o"

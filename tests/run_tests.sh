@@ -7,7 +7,7 @@ set -e
 cd "$(dirname "$0")/.."
 mkdir -p build/t build/scen
 sh host/build_host.sh
-cc -O2 -ffp-contract=off -std=gnu99 -Wall -Wextra -Wno-unused-function -Wno-unused-parameter -DX0X_HOST -Ifirmware/src -Ifirmware/src/dsp \
+cc -O2 -ffp-contract=off -std=gnu99 -Wall -Wextra -Wno-unused-function -Wno-unused-parameter -Wno-missing-field-initializers -DX0X_HOST -Ifirmware/src -Ifirmware/src/dsp \
     -o build/t/synth_test tests/synth_test.c firmware/src/lila/synth.c firmware/src/lila/data.c -lm
 build/t/synth_test build/t
 for s in tests/scenarios/basics.lila tests/scenarios/music.lila tests/scenarios/pages.lila tests/scenarios/worlds.lila; do

@@ -122,15 +122,15 @@ static inline float blep(float t, float dt)
     return 0.0f;
 }
 static inline float saw_w(float ph, float dt) { return 2.0f * ph - 1.0f - blep(ph, dt); }
-static inline float sqr_w(float ph, float dt)
+static inline float sqr_w(float ph, float dt, float duty)
 {
-    float p2 = ph + 0.5f, s = ph < 0.5f ? 1.0f : -1.0f;
+    float p2 = ph + 1.0f - duty, s = ph < duty ? 1.0f : -1.0f;
     if (p2 >= 1.0f)
         p2 -= 1.0f;
     return s + blep(ph, dt) - blep(p2, dt);
 }
 /* the wave knob: sine, triangle, saw, square, morphing (w in 0 .. 3) */
-static inline float shape(float ph, float dt, float w)
+static inline float shape(float ph, float dt, float w, float duty)
 {
     if (w < 1.0f) {
         float s = sn(ph);
@@ -142,7 +142,7 @@ static inline float shape(float ph, float dt, float w)
     }
     {
         float s = saw_w(ph, dt);
-        return s + (sqr_w(ph, dt) - s) * (w - 2.0f);
+        return s + (sqr_w(ph, dt, duty) - s) * (w - 2.0f);
     }
 }
 static inline float sat(float x)                      /* a soft clip, -+1 at -+1.5, no division */
@@ -157,8 +157,15 @@ static inline float sat(float x)                      /* a soft clip, -+1 at -+1
 /* ------------------------------------------------------------- derived sound --- */
 typedef struct {
     float w;                                 /* wave 0..3 */
-    float buddy_ratio, buddy_lvl, sub, fm_idx, fm_ratio, noise;
-    float pe_amt, pe_c;                      /* pitch start offset, semitones; its decay per control step */
+    float buddy_ratio, buddy_lvl, sub, fm_idx, fm_ratio, noise, nz_c, nz_floor;
+    int ctype;                               /* the pitch contour (CT_*) */
+    float camt, c_c, c_tau, c_spd;           /* how far (semitones), the decay per control step, the time (s), the speed of a siren (Hz) */
+    float vib_d, vib_hz, vib_ramp;           /* vibrato: depth (semitones), speed, the step of its onset per control step */
+    float am_hz, am_d;                       /* a pulsing volume */
+    float duty, pwm_d;                       /* pulse width and its sweep */
+    int chip;                                /* the arpeggio inside a note: 0 off */
+    float chip_hz;
+    float form, vowel;                       /* the throat */
     float cut_oct, k, drive, boing, keytrk;
     int ftype;
     float atk_step, dec_c, sus, rel_c;
@@ -177,11 +184,27 @@ static void derive(vp_t *vp, const uint8_t *s, const preset_t *pr, float cut_shi
     vp->buddy_lvl = a * 12.0f > 1.0f ? 1.0f : a * 12.0f;
     vp->sub = knob(s, P_BIG) * 0.9f;
     vp->fm_idx = knob(s, P_METAL) * 1.2f;
-    vp->fm_ratio = (float)pr->fm_ratio4 * 0.25f;
-    vp->noise = (float)pr->noise * (1.0f / 127.0f) * 0.5f;
-    vp->pe_amt = (float)pr->pe_amt;
-    tau = (float)pr->pe_ms * 0.004f * 0.45f + 0.002f;
-    vp->pe_c = fm_expf(-(float)CTRL / (FS * tau));
+    vp->fm_ratio = 0.5f + knob(s, P_FMR) * 7.5f;
+    vp->noise = knob(s, P_NOISE) * 0.5f;
+    tau = 0.01f * fm_exp2f(knob(s, P_NZDEC) * 7.0f);
+    vp->nz_c = fm_expf(-(float)CTRL / (FS * tau));
+    vp->nz_floor = s[P_NZDEC] > 124 ? 1.0f : 0.3f;
+    vp->ctype = s[P_CTYPE] >= NCT ? 0 : s[P_CTYPE];
+    vp->camt = knob(s, P_CAMT) * 24.0f;
+    vp->c_tau = 0.01f * fm_exp2f(knob(s, P_CTIME) * 6.5f);
+    vp->c_c = fm_expf(-(float)CTRL / (FS * vp->c_tau));
+    vp->c_spd = 6.0f * fm_exp2f(-knob(s, P_CTIME) * 4.5f);
+    vp->vib_d = knob(s, P_VIBD) * 1.6f;
+    vp->vib_hz = 3.0f * fm_exp2f(knob(s, P_VIBS) * 1.6f);
+    vp->vib_ramp = s[P_VIBDLY] ? (float)CTRL / (FS * (0.03f + knob(s, P_VIBDLY) * 1.3f)) : 1.0f;
+    vp->am_hz = 5.0f * fm_exp2f(knob(s, P_AMR) * 4.6f);
+    vp->am_d = knob(s, P_AMD);
+    vp->duty = 0.05f + knob(s, P_DUTY) * 0.45f;
+    vp->pwm_d = knob(s, P_PWMD);
+    vp->chip = s[P_CHIP] > 5 ? 0 : s[P_CHIP];
+    vp->chip_hz = 8.0f * fm_exp2f(knob(s, P_CHIPS) * 2.65f);
+    vp->form = knob(s, P_FORM);
+    vp->vowel = knob(s, P_VOWEL);
     vp->cut_oct = 5.3219f + knob(s, P_CUT) * 8.2f + cut_shift;
     vp->k = 1.7f * (1.0f - knob(s, P_RESO)) + 0.07f;
     vp->ftype = s[P_FTYPE] > 2 ? 2 : s[P_FTYPE];
@@ -203,15 +226,19 @@ static void derive(vp_t *vp, const uint8_t *s, const preset_t *pr, float cut_shi
 static vp_t g_vp;                           /* the sound on the knobs, live */
 static vp_t zoo_vp[NPRESET];                /* every world's own sound, for the ZOO band */
 static vp_t spark_vp;                       /* the sparkles' bell */
+static vp_t blip_vp[NBLIP];                 /* the chatter's blips */
+static vp_t cowbell_vp;
 
 /* ------------------------------------------------------------------ voices --- */
 enum { SRC_KEY, SRC_ARP, SRC_MEL, SRC_LOOP, SRC_SPARK };
 typedef struct {
     uint8_t on, gate, stage, src;
     int16_t id;
-    float note, vel, env, pe, nz, gprev;
+    float note, vel, env, cdec, cs, nz, gprev, t, rel_t;
     float pa, pb, ps, pm;                    /* phases: wave, twin, sub, FM partner */
+    float vibph, amph, pwph;                 /* vibrato, pulse, pulse width */
     float s1, s2;                            /* the filter */
+    float f1a, f1b, f2a, f2b;                /* the two throat filters */
     uint32_t age;
     const vp_t *vp;
 } voice_t;
@@ -252,18 +279,21 @@ static void voice_on(int src, int id, float note, float vel, const vp_t *vp)
     v = &voice[pick];
     v->on = 1;
     v->gate = 1;
-    v->stage = 0;
     v->src = (uint8_t)src;
     v->id = (int16_t)id;
     v->note = note + vp->oct_st;
     v->vel = vel;
     v->env = vp->atk_step >= 1.0f ? 1.0f : 0.0f;
     v->stage = vp->atk_step >= 1.0f ? 1 : 0;
-    v->pe = 1.0f;
+    v->cdec = 1.0f;
+    v->cs = vp->ctype == CT_RIBBIT ? -vp->camt : 0.0f;
     v->nz = 1.0f;
     v->gprev = 0.0f;
+    v->t = v->rel_t = 0.0f;
     v->pa = v->pb = v->ps = v->pm = 0.0f;
+    v->vibph = v->amph = v->pwph = 0.0f;
     v->s1 = v->s2 = 0.0f;
+    v->f1a = v->f1b = v->f2a = v->f2b = 0.0f;
     v->age = ++age_n;
     v->vp = vp;
 }
@@ -287,13 +317,27 @@ static void voices_release_all(void)
         }
 }
 
+static const int8_t CHIP_N[6] = {1, 3, 3, 2, 4, 4};
+static const int8_t CHIP_TAB[6][4] = {{0, 0, 0, 0}, {0, 4, 7, 0}, {0, 3, 7, 0}, {0, 12, 0, 0}, {0, 7, 12, 7}, {0, 3, 6, 9}};
+/* the vowels of the throat: oo, ah, ee (formants F1, F2 in Hz); the position morphs between them */
+static void vowel_formants(float pos, float *f1, float *f2)
+{
+    static const float F1[3] = {300.0f, 730.0f, 270.0f}, F2[3] = {870.0f, 1090.0f, 2290.0f};
+    float x = pos * 2.0f;
+    int i = x >= 1.0f ? 1 : 0;
+    float f = x - (float)i;
+    *f1 = F1[i] + (F1[i + 1] - F1[i]) * f;
+    *f2 = F2[i] + (F2[i + 1] - F2[i]) * f;
+}
+
 /* one control step (8 samples) of a voice, added to out */
 static void voice_run(voice_t *v, float *out)
 {
     const vp_t *vp = v->vp;
-    float st, f, incA, incB, incS, incM, fc, g, a1, a2, a3, k, gain, dgain, fmi, e;
+    float st, f, incA, incB, incS, incM, fc, g, a1, a2, a3, k, gain, dgain, fmi, e, co = 0.0f, am = 1.0f, duty;
     float pa = v->pa, pb = v->pb, ps = v->ps, pm = v->pm, s1 = v->s1, s2 = v->s2, w = vp->w;
-    int i, nz_on, ft = vp->ftype, drv;
+    float fg1 = 0.0f, fa1 = 0.0f, fa2 = 0.0f, fa3 = 0.0f, fg2 = 0.0f, gb1 = 0.0f, gb2 = 0.0f, gb3 = 0.0f, fk = 0.0f;
+    int i, nz_on, ft = vp->ftype, drv, ct = vp->ctype;
 
     switch (v->stage) {
     case 0:
@@ -314,6 +358,7 @@ static void voice_run(voice_t *v, float *out)
         break;
     default:
         v->env *= vp->rel_c;
+        v->rel_t += (float)CTRL * (1.0f / FS);
         if (v->env < 0.0006f) {
             v->on = 0;
             return;
@@ -321,9 +366,72 @@ static void voice_run(voice_t *v, float *out)
         break;
     }
     e = v->env;
-    v->pe *= vp->pe_c;
-    v->nz *= 0.9985f * 0.9985f * 0.9985f * 0.9985f;
-    st = v->note + vp->pe_amt * v->pe + ctl.bend + ctl.wig + ctl.lfo_pitch;
+    v->t += (float)CTRL * (1.0f / FS);
+    v->cdec *= vp->c_c;
+    v->nz *= vp->nz_c;
+    /* the contour of the pitch */
+    switch (ct) {
+    case CT_HOWL:                                        /* climbs to the note, and sinks when it is let go */
+        co = -vp->camt * v->cdec;
+        if (v->stage == 2)
+            co -= vp->camt * 0.8f * (1.0f - fm_expf(-v->rel_t * 3.0f));
+        break;
+    case CT_WAIL: {                                      /* a siren: up and down */
+        float ph = v->t * vp->c_spd, tr;
+        ph -= (float)(int)ph;
+        tr = ph < 0.5f ? ph * 2.0f : 2.0f - ph * 2.0f;
+        co = vp->camt * tr;
+        break;
+    }
+    case CT_HILO: {                                      /* two tones, one after the other */
+        float target = (((int)(v->t * vp->c_spd * 2.0f)) & 1) ? vp->camt : 0.0f;
+        v->cs += (target - v->cs) * 0.35f;
+        co = v->cs;
+        break;
+    }
+    case CT_ALARM: {                                     /* beeps */
+        float ph = v->t * vp->c_spd * 2.5f;
+        ph -= (float)(int)ph;
+        co = vp->camt;
+        am = ph < 0.6f ? 1.0f : 0.0f;
+        break;
+    }
+    case CT_DIVE:
+        co = vp->camt * v->cdec;
+        break;
+    case CT_SWOOP:
+        co = -vp->camt * v->cdec;
+        break;
+    case CT_COIN:
+        v->cs += ((v->t < vp->c_tau ? 0.0f : vp->camt) - v->cs) * 0.6f;
+        co = v->cs;
+        break;
+    case CT_RIBBIT:
+        v->cs += ((v->t < vp->c_tau ? -vp->camt : 0.0f) - v->cs) * 0.5f;
+        co = v->cs;
+        break;
+    default:
+        break;
+    }
+    if (vp->vib_d > 0.0f) {                              /* vibrato, coming in late */
+        float ramp = v->t * vp->vib_ramp * (FS / (float)CTRL);
+        v->vibph += vp->vib_hz * (float)CTRL * (1.0f / FS);
+        if (v->vibph >= 1.0f)
+            v->vibph -= 1.0f;
+        co += sn_fast(v->vibph) * vp->vib_d * (ramp > 1.0f ? 1.0f : ramp);
+    }
+    if (vp->chip)                                        /* a chord played as a fast arpeggio */
+        co += (float)CHIP_TAB[vp->chip][(int)(v->t * vp->chip_hz) % CHIP_N[vp->chip]];
+    if (vp->am_d > 0.0f && ct != CT_ALARM) {             /* a pulsing volume: a croak, a growl */
+        float x;
+        v->amph += vp->am_hz * (float)CTRL * (1.0f / FS);
+        if (v->amph >= 1.0f)
+            v->amph -= 1.0f;
+        x = sn_fast(v->amph) * 2.4f;
+        x = x > 1.0f ? 1.0f : x < -1.0f ? -1.0f : x;
+        am = 1.0f - vp->am_d * (0.5f - 0.5f * x);
+    }
+    st = v->note + co + ctl.bend + ctl.wig + ctl.lfo_pitch;
     f = 440.0f * fm_exp2f((st - 69.0f) * (1.0f / 12.0f));
     incA = f * (1.0f / FS);
     if (incA > 0.45f)
@@ -336,6 +444,14 @@ static void voice_run(voice_t *v, float *out)
     if (incM > 0.49f)
         incM = 0.49f;
     fmi = vp->fm_idx * (0.3f + 0.7f * e) * (1.0f - 0.35f * (w * (1.0f / 3.0f)));
+    duty = vp->duty;
+    if (vp->pwm_d > 0.0f) {                              /* the pulse width sweeps */
+        v->pwph += 3.1f * (float)CTRL * (1.0f / FS);
+        if (v->pwph >= 1.0f)
+            v->pwph -= 1.0f;
+        duty += vp->pwm_d * 0.2f * sn_fast(v->pwph);
+        duty = duty < 0.06f ? 0.06f : duty > 0.5f ? 0.5f : duty;
+    }
     /* filter */
     fc = fm_exp2f(vp->cut_oct + vp->keytrk * (st - 60.0f) * (1.0f / 12.0f) + vp->boing * e * (0.5f + 0.5f * v->vel) +
                   ctl.lfo_filter + ctl.cut_mood);
@@ -348,15 +464,29 @@ static void voice_run(voice_t *v, float *out)
     a1 = 1.0f / (1.0f + g * (g + k));
     a2 = g * a1;
     a3 = g * a2;
-    gain = e * v->vel * vp->vol * ctl.trem * 0.34f;
+    if (vp->form > 0.01f) {                              /* the throat: two narrow filters at the vowel's formants, after the main filter */
+        float f1, f2;
+        vowel_formants(vp->vowel, &f1, &f2);
+        fg1 = fm_tanf(FM_PI * f1 * (1.0f / FS));
+        fg2 = fm_tanf(FM_PI * f2 * (1.0f / FS));
+        fk = 0.18f;
+        fa1 = 1.0f / (1.0f + fg1 * (fg1 + fk));
+        fa2 = fg1 * fa1;
+        fa3 = fg1 * fa2;
+        gb1 = 1.0f / (1.0f + fg2 * (fg2 + fk));
+        gb2 = fg2 * gb1;
+        gb3 = fg2 * gb2;
+    }
+    gain = e * v->vel * vp->vol * ctl.trem * am * 0.34f;
     dgain = (gain - v->gprev) * (1.0f / (float)CTRL);
     gain = v->gprev;
-    v->gprev = e * v->vel * vp->vol * ctl.trem * 0.34f;
+    v->gprev = e * v->vel * vp->vol * ctl.trem * am * 0.34f;
     nz_on = vp->noise > 0.0f;
     drv = vp->drive > 1.02f;
     {
-        float noise_a = vp->noise * (0.3f + 0.7f * v->nz), bl = vp->buddy_lvl, sub = vp->sub, norm = 1.0f / (1.0f + bl * 0.6f);
-        int use_b = bl > 0.001f, use_fm = fmi > 0.002f, use_sub = sub > 0.002f;
+        float noise_a = vp->noise * (vp->nz_floor + (1.0f - vp->nz_floor) * v->nz), bl = vp->buddy_lvl, sub = vp->sub,
+              norm = 1.0f / (1.0f + bl * 0.6f), fm_mix = vp->form, f1a = v->f1a, f1b = v->f1b, f2a = v->f2a, f2b = v->f2b;
+        int use_b = bl > 0.001f, use_fm = fmi > 0.002f, use_sub = sub > 0.002f, use_form = fm_mix > 0.01f;
         for (i = 0; i < CTRL; i++) {
             float x, ph, v1, v2, y;
             pa += incA;
@@ -372,12 +502,12 @@ static void voice_run(voice_t *v, float *out)
                 if (ph < 0.0f)
                     ph += 1.0f;
             }
-            x = shape(ph, incA, w);
+            x = shape(ph, incA, w, duty);
             if (use_b) {
                 pb += incB;
                 if (pb >= 1.0f)
                     pb -= 1.0f;
-                x = (x + shape(pb, incB, w) * bl) * norm;
+                x = (x + shape(pb, incB, w, duty) * bl) * norm;
             }
             if (use_sub) {
                 ps += incS;
@@ -400,9 +530,24 @@ static void voice_run(voice_t *v, float *out)
                 x = v1 * k;
             else
                 x = x - k * v1 - y;
+            if (use_form) {                              /* x through the vowel's two resonances */
+                float u1 = x - f1b, b1 = fa1 * f1a + fa2 * u1, l1 = f1b + fa2 * f1a + fa3 * u1;
+                float u2 = x - f2b, b2 = gb1 * f2a + gb2 * u2, l2 = f2b + gb2 * f2a + gb3 * u2;
+                f1a = 2.0f * b1 - f1a;
+                f1b = 2.0f * l1 - f1b;
+                f2a = 2.0f * b2 - f2a;
+                f2b = 2.0f * l2 - f2b;
+                x = x * (1.0f - fm_mix * 0.8f) + (b1 + b2 * 0.7f) * fk * 2.6f * fm_mix;
+                (void)l1;
+                (void)l2;
+            }
             out[i] += x * gain;
             gain += dgain;
         }
+        v->f1a = f1a;
+        v->f1b = f1b;
+        v->f2a = f2a;
+        v->f2b = f2b;
     }
     v->pa = pa;
     v->pb = pb;
@@ -459,6 +604,45 @@ static int key_note(int key)                           /* a key's note: octave, 
     return n + (int)P[P_KEY] - 6;
 }
 
+static void drum_hit(int mask, int vel);
+/* the things a world adds to a note of its own: a thump, a cowbell, a chatter of blips, the note again and again */
+static void world_extras(int note, int vel)
+{
+    uint32_t t = now_s;
+    int i;
+    if (P[P_STOMP])
+        drum_hit(1, vel * (int)P[P_STOMP] / 127);
+    if (P[P_BELL] && vel > 0) {
+        sched_add(t + 500u, SC_ON, SRC_SPARK, 0x420, 74, vel * (int)P[P_BELL] / 127, &cowbell_vp);
+        sched_add(t + 500u, SC_ON, SRC_SPARK, 0x421, 81, vel * (int)P[P_BELL] / 160, &cowbell_vp);
+        sched_add(t + 500u + 2400u, SC_OFF, SRC_SPARK, 0x420, 0, 0, 0);
+        sched_add(t + 500u + 2400u, SC_OFF, SRC_SPARK, 0x421, 0, 0, 0);
+    }
+    if (P[P_CHAT]) {
+        int count = ((int)P[P_CHAT] + 17) / 18, range = (int)P[P_CHATR] * 24 / 127, kind = PRESETS[P[P_PRESET] % NPRESET].blip;
+        uint32_t at = t + 2000u;
+        if (kind >= NBLIP)
+            kind = 0;
+        for (i = 0; i < count && kind; i++) {
+            int nn = note + 12 - range + (int)(rnd32() % (uint32_t)(2 * range + 1));
+            at += 1800u + (rnd32() % 2400u);
+            sched_add(at, SC_ON, SRC_SPARK, 0x430 + i, nn, vel * 6 / 10, kind == BL_TWINKLE ? &spark_vp : &blip_vp[kind]);
+            sched_add(at + 2600u, SC_OFF, SRC_SPARK, 0x430 + i, 0, 0, 0);
+        }
+    }
+    if (P[P_PING]) {
+        int count = (int)P[P_PING] * 4 / 127;
+        uint32_t gap = (uint32_t)(FS * (0.12f + (float)P[P_PINGT] * (0.78f / 127.0f))), at = t;
+        int vv = vel;
+        for (i = 0; i < count; i++) {
+            at += gap;
+            vv = vv * 6 / 10;
+            sched_add(at, SC_ON, SRC_SPARK, 0x440 + i, note, vv, &g_vp);
+            sched_add(at + gap * 6u / 10u, SC_OFF, SRC_SPARK, 0x440 + i, 0, 0, 0);
+        }
+    }
+}
+
 /* play a note on the keys, the arpeggiator, a melody or the loop: the friends come along */
 static void play_note(int src, int id, int note, int vel)
 {
@@ -474,6 +658,8 @@ static void play_note(int src, int id, int note, int vel)
             voice_on(src, id, (float)(note + FRIEND_B[n]), v * 0.85f, vp);
     }
     vis_push(src == SRC_MEL ? VE_MELODY_NOTE : src == SRC_ARP ? VE_ARP : src == SRC_LOOP ? VE_LOOP : VE_NOTE, note, vel, src);
+    if (src != SRC_SPARK && vp == &g_vp)
+        world_extras(note, vel);
     if (src != SRC_SPARK && P[P_STARS] && (int)(rnd32() & 127u) < (int)P[P_STARS]) {   /* a little fairy dust after the note */
         int step = (int)(FS * 0.07f);
         sched_add(now_s + (uint32_t)step, SC_ON, SRC_SPARK, 0x400 | (note & 127), note + 12, vel * 6 / 10, &spark_vp);
@@ -1304,6 +1490,68 @@ static void rebuild_sound(void)
     ctl.cut_mood = 0.0f;
 }
 
+/* the neutral sound, and a world's on top of it */
+static void preset_params(const preset_t *pr, uint8_t *o)
+{
+    int i;
+    for (i = 0; i < NSND; i++)
+        o[i] = 0;
+    o[P_BEND] = 64;
+    o[P_SIZE] = 64;
+    o[P_DUTY] = 127;
+    o[P_VOWEL] = 40;
+    o[P_VIBS] = 60;
+    o[P_AMR] = 60;
+    o[P_CTIME] = 40;
+    o[P_FMR] = 25;
+    o[P_NZDEC] = 29;
+    o[P_PINGT] = 50;
+    o[P_CHATR] = 60;
+    for (i = 0; i < pr->nset; i++)
+        o[pr->set[i].id] = pr->set[i].v;
+}
+
+void preset_load(int idx)
+{
+    uint8_t o[NSND];
+    int i;
+    const preset_t *pr = &PRESETS[(unsigned)idx % NPRESET];
+    preset_params(pr, o);
+    for (i = 0; i < NSND; i++)
+        P[i] = o[i];
+    P[P_PRESET] = (uint8_t)((unsigned)idx % NPRESET);
+}
+
+/* the little sounds a world's extras are made of */
+static void make_blips(void)
+{
+    static const preset_t PLAIN = {0, 0, 0, 0, 0, 100, 0};
+    uint8_t o[NSND];
+    int i;
+    for (i = 0; i < NSND; i++)
+        o[i] = 0;
+    o[P_BEND] = 64; o[P_SIZE] = 64; o[P_DUTY] = 127; o[P_VOWEL] = 40; o[P_VIBS] = 60; o[P_AMR] = 60; o[P_CTIME] = 40; o[P_FMR] = 25; o[P_NZDEC] = 29;
+    /* the beep of a robot or an arcade: a thin square */
+    o[P_WAVE] = 127; o[P_DUTY] = 80; o[P_CUT] = 120; o[P_PLUCK] = 118; o[P_REL] = 8; o[P_CTYPE] = CT_COIN; o[P_CAMT] = 26; o[P_CTIME] = 20;
+    derive(&blip_vp[BL_BEEP], o, &PLAIN, 0.0f, 1.0f);
+    blip_vp[BL_BEEP].vol = 0.45f;
+    /* a bubble: a sine that pops upward */
+    o[P_WAVE] = 0; o[P_CUT] = 124; o[P_PLUCK] = 120; o[P_REL] = 10; o[P_CTYPE] = CT_SWOOP; o[P_CAMT] = 60; o[P_CTIME] = 22; o[P_DUTY] = 127;
+    derive(&blip_vp[BL_BUBBLE], o, &PLAIN, 0.0f, 1.0f);
+    blip_vp[BL_BUBBLE].vol = 0.8f;
+    /* a chirp */
+    o[P_WAVE] = 14; o[P_CUT] = 122; o[P_PLUCK] = 110; o[P_REL] = 8; o[P_CTYPE] = CT_SWOOP; o[P_CAMT] = 40; o[P_CTIME] = 26;
+    derive(&blip_vp[BL_CHIRP], o, &PLAIN, 0.0f, 1.0f);
+    blip_vp[BL_CHIRP].vol = 0.6f;
+    /* the cowbell: two inharmonic square tones */
+    for (i = 0; i < NSND; i++)
+        o[i] = 0;
+    o[P_BEND] = 64; o[P_SIZE] = 64; o[P_DUTY] = 127; o[P_VOWEL] = 40; o[P_VIBS] = 60; o[P_AMR] = 60; o[P_CTIME] = 40; o[P_NZDEC] = 29;
+    o[P_WAVE] = 127; o[P_DUTY] = 100; o[P_CUT] = 96; o[P_RESO] = 30; o[P_PLUCK] = 122; o[P_REL] = 16; o[P_METAL] = 40; o[P_FMR] = 17;
+    derive(&cowbell_vp, o, &PLAIN, 0.0f, 1.0f);
+    cowbell_vp.vol = 0.6f;
+}
+
 void engine_init(void)
 {
     int i, m;
@@ -1330,33 +1578,28 @@ void engine_init(void)
         P[P_STICK] = 0;
     }
     {
-        uint8_t zero[NSND];
+        uint8_t o[NSND];
         const preset_t *bell = &PRESETS[10];
-        for (m = 0; m < NSND; m++)
-            zero[m] = bell->d[m];
-        for (m = 0; m < NPRESET; m++)
-            derive(&zoo_vp[m], PRESETS[m].d, &PRESETS[m], 0.0f, 1.0f);
-        zero[P_ATK] = 0;
-        zero[P_PLUCK] = 100;
-        zero[P_REL] = 70;
-        zero[P_METAL] = 70;
-        zero[P_WAVE] = 0;
-        zero[P_CUT] = 120;
-        zero[P_BIG] = 0;
-        zero[P_BUDDY] = 0;
-        derive(&spark_vp, zero, bell, 0.0f, 1.0f);
+        for (m = 0; m < NPRESET; m++) {
+            preset_params(&PRESETS[m], o);
+            derive(&zoo_vp[m], o, &PRESETS[m], 0.0f, 1.0f);
+        }
+        preset_params(bell, o);
+        o[P_ATK] = 0;
+        o[P_PLUCK] = 100;
+        o[P_REL] = 70;
+        o[P_METAL] = 70;
+        o[P_WAVE] = 0;
+        o[P_CUT] = 120;
+        o[P_BIG] = 0;
+        o[P_BUDDY] = 0;
+        o[P_PING] = 0;
+        o[P_CHAT] = 0;
+        derive(&spark_vp, o, bell, 0.0f, 1.0f);
         spark_vp.vol *= 0.7f;
+        make_blips();
     }
     rebuild_sound();
-}
-
-void preset_load(int idx)
-{
-    int i;
-    const preset_t *pr = &PRESETS[(unsigned)idx % NPRESET];
-    for (i = 0; i < NSND; i++)
-        P[i] = pr->d[i];
-    P[P_PRESET] = (uint8_t)((unsigned)idx % NPRESET);
 }
 
 void engine_render(int32_t *out, uint32_t n)
@@ -1392,9 +1635,11 @@ void engine_render(int32_t *out, uint32_t n)
         for (s = 0; s < NSCHED; s++)
             if (sched[s].used && (int32_t)(now_s - sched[s].t) >= 0) {
                 sched[s].used = 0;
-                if (sched[s].type == SC_ON)
+                if (sched[s].type == SC_ON) {
+                    if (sched[s].src == SRC_SPARK)
+                        vis_push(VE_BLIP, sched[s].note, sched[s].vel, sched[s].id >> 4);
                     voice_on(sched[s].src, sched[s].id, (float)sched[s].note, (float)sched[s].vel * (1.0f / 127.0f), sched[s].vp);
-                else if (sched[s].type == SC_OFF)
+                } else if (sched[s].type == SC_OFF)
                     voices_release(sched[s].id);
                 else
                     drum_hit(sched[s].note, sched[s].vel);

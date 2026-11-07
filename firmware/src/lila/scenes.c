@@ -16,6 +16,12 @@ static struct {
     int jump;                   /* px the character is up */
     int beatph;                 /* 0..255, the metronome's phase at the tempo */
     int play, rec, arp;         /* the melody plays, the loop records, the arpeggiator holds notes */
+    /* what the world's own knobs do: the pictures that go with them */
+    int ctype, camt, noise, am, chat, ping, stomp, bell, vowel, form, vibd, chip, duty, pwm;
+    int shake, shake_dx;        /* px the whole picture shakes (a stomp, a roar), and how far this frame */
+    int stompf, bellf, blipf, pingf;     /* 0..255 flashes: a stomp, the cowbell, a blip, a ping */
+    int score;                  /* notes played: the arcade's score */
+    int siren;                  /* 0..255: a siren or alarm sounds (the flashing lights) */
 } sc;
 static int g_sw = 100, g_sh = 100;
 #define X(v) ((v) * g_sw / 100)
@@ -142,7 +148,7 @@ static void world_draw(void)
         w->actor(cx + 18 * i - (isin((int)(TM / 9) + i * 80) * sc.fat >> 9), cy - 4 * i);
     }
     for (i = ghosts; i > 0; i--) {                       /* the echo: older and fainter copies, further away */
-        int d = i * (10 + sc.echo / 14);
+        int d = i * (22 + sc.echo / 6);
         g_sw = sw0 * (100 - i * 12) / 100;
         g_sh = sh0 * (100 - i * 12) / 100;
         look.fade = 6 + i * 3;
