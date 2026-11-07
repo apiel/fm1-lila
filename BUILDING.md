@@ -72,3 +72,12 @@ Installing firmware is at your own risk. If the FM-1 no longer starts but reache
 
 To add a world: a sound row in `data.c`, three drawing functions (backdrop, character, foreground) in a `scenes_*.c` file and one row in
 the `SCENES` table; raise `NPRESET`. To add a melody: a line in `data.c` (the notation is explained there) and raise `NMEL`.
+
+## The website (GitHub Pages)
+
+`.github/workflows/pages.yml` runs the tests, builds the browser emulator with Emscripten, and publishes a landing page, the manual and
+the emulator on every push to `main`. One-time setup: repository **Settings > Pages > Source: GitHub Actions**.
+
+Locally: `source ~/emsdk/emsdk_env.sh && web/emu/build.sh && node tests/web_emu_test.mjs`, then (with `pip install markdown`)
+`python3 tools/make_pages.py build/pages` and `cd build/pages && python3 -m http.server 8000`. The firmware package is not built by the
+Action (it needs the JieLi toolchain and SDK): attach `build/lila.fwsc` to a GitHub release by hand.

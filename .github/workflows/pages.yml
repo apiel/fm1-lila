@@ -1,0 +1,59 @@
+# Tests the app, builds the browser emulator and publishes the site (landing page, manual, emulator) to GitHub Pages.
+# One-time setup: repository Settings > Pages > Build and deployment > Source: "GitHub Actions".
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install Pillow
+      - name: Engine, scripted scenarios and fuzz
+        run: |
+          tests/run_tests.sh
+          tests/fuzz.sh
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install Pillow markdown
+      - uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 3.1.64
+      - name: Build the browser emulator
+        run: web/emu/build.sh
+      - name: Check it runs
+        run: node tests/web_emu_test.mjs
+      - name: Build the site
+        run: python3 tools/make_pages.py build/pages
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/pages
+      - id: deployment
+        uses: actions/deploy-pages@v4

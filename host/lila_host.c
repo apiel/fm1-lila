@@ -316,7 +316,7 @@ static void run_ms(uint32_t ms)
             uint32_t k;
             engine_render(blk, 256);
             engine_load(0, 256);
-#if defined(LILA_DESKTOP)
+#if defined(LILA_WEB) || defined(LILA_DESKTOP)
             audio_out(blk, 256);                         /* the desktop build: to the sound card */
 #endif
             for (k = 0; k < 256; k++) {
@@ -355,7 +355,7 @@ static void run_ms(uint32_t ms)
     }
 }
 
-#if !defined(LILA_DESKTOP)
+#if !defined(LILA_WEB) && !defined(LILA_DESKTOP)
 /* ---------------------------------------------------------- script --- */
 static const char *const BTN_N[NB] = {"FX", "SEL", "ENV", "LFO", "EDIT", "GLO", "HOME", "SAVE", "ARP", "SEQ",
                                       "PLAY", "REC", "OCT-", "OCT+"};
