@@ -122,6 +122,9 @@ int melody_notes(int i, const uint8_t **notes, const uint8_t **lens);   /* the p
 
 /* the stories: in a story world each key tells one part, PLAY tells them all (synth.c, from build/gen/story_data.h) */
 int story_parts(int s);
+/* which key tells which part: a story of 16 parts or fewer uses the white keys only (the black ones stay silent), a longer one every key */
+int story_part_of_key(int s, int key);                 /* -1: this key tells nothing */
+int story_key_of_part(int s, int part);
 const char *story_text(int s, int part);
 int story_scene(int s, int part);                      /* the scene behind a part (+ 0x80: its characters are there) */
 extern volatile int8_t story_part;                     /* the part being told, -1 none */

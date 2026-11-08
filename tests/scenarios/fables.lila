@@ -7,142 +7,142 @@ turn PRESET -1
 turn PRESET -1
 expectp PRESET 20
 wait 800
-key 0 down
+key w0 down
 wait 450
 shot fb_fx0.png
-key 0 up
+key w0 up
 wait 100
-key 1 down
+key w1 down
 wait 450
 shot fb_fx1.png
-key 1 up
+key w1 up
 wait 100
-key 2 down
+key w2 down
 wait 450
 shot fb_fx2.png
-key 2 up
+key w2 up
 wait 100
-key 3 down
+key w3 down
 wait 450
 shot fb_fx3.png
-key 3 up
+key w3 up
 wait 100
-key 4 down
+key w4 down
 wait 450
 shot fb_fx4.png
-key 4 up
+key w4 up
 wait 100
-key 5 down
+key w5 down
 wait 450
 shot fb_fx5.png
-key 5 up
+key w5 up
 wait 100
-key 6 down
+key w6 down
 wait 450
 shot fb_fx6.png
-key 6 up
+key w6 up
 wait 100
-key 7 down
+key w7 down
 wait 450
 shot fb_fx7.png
-key 7 up
+key w7 up
 wait 100
-key 8 down
+key w8 down
 wait 450
 shot fb_fx8.png
-key 8 up
+key w8 up
 wait 100
 turn PRESET 1
 wait 800
-key 0 down
+key w0 down
 wait 450
 shot fb_ox0.png
-key 0 up
+key w0 up
 wait 100
-key 1 down
+key w1 down
 wait 450
 shot fb_ox1.png
-key 1 up
+key w1 up
 wait 100
-key 2 down
+key w2 down
 wait 450
 shot fb_ox2.png
-key 2 up
+key w2 up
 wait 100
-key 3 down
+key w3 down
 wait 450
 shot fb_ox3.png
-key 3 up
+key w3 up
 wait 100
-key 4 down
+key w4 down
 wait 450
 shot fb_ox4.png
-key 4 up
+key w4 up
 wait 100
-key 5 down
+key w5 down
 wait 450
 shot fb_ox5.png
-key 5 up
+key w5 up
 wait 100
-key 6 down
+key w6 down
 wait 450
 shot fb_ox6.png
-key 6 up
+key w6 up
 wait 100
-key 7 down
+key w7 down
 wait 450
 shot fb_ox7.png
-key 7 up
+key w7 up
 wait 100
-key 8 down
+key w8 down
 wait 450
 shot fb_ox8.png
-key 8 up
+key w8 up
 wait 100
 turn PRESET 1
 wait 800
-key 0 down
+key w0 down
 wait 450
 shot fb_li0.png
-key 0 up
+key w0 up
 wait 100
-key 1 down
+key w1 down
 wait 450
 shot fb_li1.png
-key 1 up
+key w1 up
 wait 100
-key 2 down
+key w2 down
 wait 450
 shot fb_li2.png
-key 2 up
+key w2 up
 wait 100
-key 3 down
+key w3 down
 wait 450
 shot fb_li3.png
-key 3 up
+key w3 up
 wait 100
-key 4 down
+key w4 down
 wait 450
 shot fb_li4.png
-key 4 up
+key w4 up
 wait 100
-key 5 down
+key w5 down
 wait 450
 shot fb_li5.png
-key 5 up
+key w5 up
 wait 100
-key 6 down
+key w6 down
 wait 450
 shot fb_li6.png
-key 6 up
+key w6 up
 wait 100
-key 7 down
+key w7 down
 wait 450
 shot fb_li7.png
-key 7 up
+key w7 up
 wait 100
-key 8 down
+key w8 down
 wait 450
 shot fb_li8.png
-key 8 up
+key w8 up
 wait 100

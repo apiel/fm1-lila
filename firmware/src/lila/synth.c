@@ -1189,6 +1189,21 @@ int story_parts(int s) { return s >= 0 && s < NSTORY ? STORIES[s].parts : 0; }
 const char *story_text(int s, int part) { return s >= 0 && s < NSTORY && part >= 0 && part < STORIES[s].parts ? STORIES[s].txt[part] : ""; }
 int story_scene(int s, int part) { return s >= 0 && s < NSTORY && part >= 0 && part < STORIES[s].parts ? STORIES[s].scene[part] : 0; }
 static int story_of_preset(void) { return PRESETS[P[P_PRESET] % NPRESET].story; }
+static const uint8_t ST_WHITE[16] = {0, 2, 4, 6, 7, 9, 11, 12, 14, 16, 18, 19, 21, 23, 24, 26};      /* the panel's white keys */
+int story_key_of_part(int s, int part)
+{
+    return story_parts(s) <= 16 && part >= 0 && part < 16 ? ST_WHITE[part] : part;
+}
+int story_part_of_key(int s, int key)
+{
+    int i;
+    if (story_parts(s) > 16)
+        return key < story_parts(s) ? key : -1;
+    for (i = 0; i < story_parts(s); i++)
+        if (ST_WHITE[i] == key)
+            return i;
+    return -1;
+}
 
 typedef struct { float k[ST_ORDER + 1]; int gq, pq, vq; } stq_t;
 static unsigned st_bits(const uint8_t *b, int *pos, int n)
@@ -1454,8 +1469,11 @@ static void key_on(int key)
     keys_down++;
     rec_event(1, key);
     if (story_of_preset() >= 0) {                          /* a story world: the key tells its part */
+        int part = story_part_of_key(story_of_preset(), key);
+        if (part < 0)                                      /* a black key (or one past the end): no part */
+            return;
         story_all = 0;
-        story_start(key);
+        story_start(part);
         vis_push(VE_NOTE, n, 110, SRC_KEY);
         return;
     }

@@ -1122,10 +1122,10 @@ static void leds(void)
     k = ui.held_k;
     if (story_world() >= 0) {                           /* a story: every key has a part (faint); the part being told is lit */
         int np = story_parts(story_world());
-        for (i = 0; i < NKEYS_L && i < np; i++)
-            kf |= 1u << i;
+        for (i = 0; i < np; i++)
+            kf |= 1u << story_key_of_part(story_world(), i);
         if (story_part >= 0)
-            k |= 1u << story_part;
+            k |= 1u << story_key_of_part(story_world(), story_part);
         if (story_busy())
             b |= 1u << B_PLAY;
     }

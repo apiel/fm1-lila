@@ -18,7 +18,7 @@ echo, reverb, chorus and a robot crusher. On top, it is a toy: **25 worlds**, ea
   sends a coloured note rising), a xylophone, a harp, a ukulele (every key strums a chord), a flute and a kalimba.
 - **Five stories, in French**, told by the synth: three fables of La Fontaine (*Le Corbeau et le Renard* in his own words, *La Grenouille qui
   voulait se faire aussi grosse que le Bœuf*, *Le Lion et le Rat*), *Boucle d'or et les trois ours* and *Le Petit Chaperon rouge*. Each key tells
-  a part, PLAY tells it all (and it stops at the end), the words are written on the screen, and the voice goes through the synth, so the
+  a part (the white keys only, when the story is short), PLAY tells it all (and it stops at the end), the words are written on the screen, and the voice goes through the synth, so the
   filter, the effects and the LFO still work on it. The speech is coded at 100 frames a second with a smoothed glottal pulse and a little breath.
 
 **Whatever knob is turned, the picture changes with it**: more echo leaves ghosts, more filter makes the world brighter, the robot knob turns

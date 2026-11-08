@@ -16,6 +16,8 @@
  *   master N                     MASTER pot 0..4096
  *   wav FILE | wavstop           start / stop recording the output
  *   shot FILE.png                save the screen
+ *   video FILE.rgb | videostop   record the screen, 30 frames a second, raw RGB24 240x240 (tools/make_video.py turns it into a video)
+ *   mark LABEL                   print "MARK LABEL ms" (the time on the device's clock: tools/make_video.py times its captions with it)
  *   leds                         print the lit (#) and dim (o) buttons and keys
  *   expect WHAT VALUE            check state (page preset mood playing mel playing_pos rec arpnotes beat oct voices): exit 1 on mismatch
  *   peakreset | expect peak_db_min/max VALUE    the output's peak since
@@ -167,6 +169,21 @@ uint32_t plat_xruns(void) { return 0; }
 #include "../firmware/src/lila/splash.c"
 
 /* ---------------------------------------------------------- outputs --- */
+static FILE *vid;                       /* the video recording (command `video`) */
+static double vid_due;
+static void vid_frame(void)
+{
+    static uint8_t rgb[240 * 240 * 3];
+    uint32_t i, n = 0;
+    for (i = 0; i < 240u * 240u; i++) {
+        uint16_t p = fb[i];
+        p = (uint16_t)((p >> 8) | (p << 8));
+        rgb[n++] = (uint8_t)(((p >> 11) & 31) * 255 / 31);
+        rgb[n++] = (uint8_t)(((p >> 5) & 63) * 255 / 63);
+        rgb[n++] = (uint8_t)((p & 31) * 255 / 31);
+    }
+    fwrite(rgb, 1, sizeof rgb, vid);
+}
 static void png_write(const char *path)
 {
     /* RGB PNG with stored (uncompressed) deflate blocks: no zlib needed */
@@ -314,6 +331,10 @@ static void run_ms(uint32_t ms)
     uint32_t i;
     for (i = 0; i < ms; i++) {
         now_ms++;
+        if (vid && (double)now_ms >= vid_due) {
+            vid_frame();
+            vid_due += 1000.0 / 30.0;
+        }
         while (audio_due_ms <= (double)now_ms) {      /* 256-frame half buffers, as the I2S DMA */
             uint32_t k;
             engine_render(blk, 256);
@@ -501,6 +522,16 @@ int main(int argc, char **argv)
             wav_close();
         else if (!strcmp(a[0], "peakreset"))
             peak_out = 0.0f;
+        else if (!strcmp(a[0], "video")) {
+            snprintf(path, sizeof path, "%s/%s", outdir, a[1]);
+            vid = fopen(path, "wb");
+            vid_due = (double)now_ms;
+        } else if (!strcmp(a[0], "videostop")) {
+            if (vid)
+                fclose(vid);
+            vid = 0;
+        } else if (!strcmp(a[0], "mark"))
+            printf("MARK %s %u\n", a[1], (unsigned)now_ms);
         else if (!strcmp(a[0], "shot")) {
             run_ms(40);
             snprintf(path, sizeof path, "%s/%s", outdir, a[1]);

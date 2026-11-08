@@ -116,7 +116,7 @@ The choice is kept after the FM-1 is switched off.
 
 After the instruments, five stories in French, each with its own pictures: **CORBEAU** (*Le Corbeau et le Renard*, in La Fontaine's own words: a raven with his cheese and a fox), **BOEUF** (*La Grenouille qui voulait se faire aussi grosse que le Bœuf*: a frog that swells next to an ox), **LION** (*Le Lion et le Rat*), **BOUCLE** (*Boucle d'or et les trois ours*) and **CHAPERON** (*Le Petit Chaperon rouge*: the girl in her hood, the wolf, the grandmother's house and bed).
 
-- **Each key tells one part of the story**, in order from the lowest key (up to 27 parts: a fable has nine, so only nine keys glow). The keys that have a part glow faintly, the part being
+- **Each key tells one part of the story**, in order from the lowest key (up to 27 parts). A story of 16 parts or fewer uses **the white keys only**: the black keys stay silent and only the white keys that have a part glow (a fable has nine parts, Little Red Riding Hood twelve; Goldilocks has 27 and uses every key). The keys that have a part glow faintly, the part being
   told is lit, and its words are written at the top of the screen for whoever is reading along.
 - **PLAY** tells the whole story, part after part; PLAY again stops. While it plays, **SELECT** goes to the part before or after.
 - The voice is made like the old talking toys (LPC speech) and **played by the synth**, so everything still works on it:
