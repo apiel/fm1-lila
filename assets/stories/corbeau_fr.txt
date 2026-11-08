@@ -1,10 +1,10 @@
-# LE CORBEAU ET LE RENARD (fr): a fable of La Fontaine (public domain), retold in simple prose. # one line per key, in order (nine parts). A line: SCENE|text. The picture follows the part being told.
-SCENE|Le Corbeau et le Renard, une fable de monsieur de La Fontaine.
-SCENE|Maître Corbeau, perché sur un arbre, tenait dans son bec un beau fromage.
-SCENE|Maître Renard, attiré par l'odeur, vint lui parler à peu près ainsi.
-SCENE|Bonjour, monsieur du Corbeau ! Que vous êtes joli ! Que vous me semblez beau !
-SCENE|Si votre chant est aussi beau que vos plumes, vous êtes le roi des oiseaux !
-SCENE|Le corbeau ne se sentit plus de joie. Pour montrer sa belle voix, il ouvrit grand le bec.
-SCENE|Et le fromage tomba !
-SCENE|Le renard s'en saisit et dit : Mon bon monsieur, tout flatteur vit aux dépens de celui qui l'écoute.
-SCENE|Cette leçon vaut bien un fromage, sans doute. Le corbeau, honteux, jura qu'on ne l'y prendrait plus.
+# LE CORBEAU ET LE RENARD (fr): the fable of Jean de La Fontaine, in his own words (public domain), cut into nine parts. A line: SCENE|text. The picture follows the part being told.
+SCENE|Le Corbeau et le Renard, une fable de Jean de La Fontaine.
+SCENE|Maître Corbeau, sur un arbre perché, tenait en son bec un fromage.
+SCENE|Maître Renard, par l'odeur alléché, lui tint à peu près ce langage :
+SCENE|Et bonjour, Monsieur du Corbeau. Que vous êtes joli ! Que vous me semblez beau !
+SCENE|Sans mentir, si votre ramage se rapporte à votre plumage, vous êtes le Phénix des hôtes de ces bois.
+SCENE|À ces mots, le Corbeau ne se sent pas de joie ; et pour montrer sa belle voix, il ouvre un large bec, laisse tomber sa proie.
+SCENE|Le Renard s'en saisit, et dit : Mon bon Monsieur, apprenez que tout flatteur vit aux dépens de celui qui l'écoute.
+SCENE|Cette leçon vaut bien un fromage, sans doute.
+SCENE|Le Corbeau, honteux et confus, jura, mais un peu tard, qu'on ne l'y prendrait plus.

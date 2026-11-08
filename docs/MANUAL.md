@@ -107,7 +107,7 @@ The choice is kept when you save a treasure box and when the screen mode changes
 
 ## The two story worlds
 
-After the pianos: three fables of La Fontaine, **CORBEAU** (*Le Corbeau et le Renard*), **BOEUF** (*La Grenouille qui voulait se faire aussi grosse que le Bœuf*) and **LION** (*Le Lion et le Rat*), each with its own pictures (a raven with his cheese and a fox, a frog that swells next to an ox, a lion and a rat), and **BOUCLE** (*Boucle d'or et les trois ours*), all in French.
+After the pianos: three fables of La Fontaine, **CORBEAU** (*Le Corbeau et le Renard*), **BOEUF** (*La Grenouille qui voulait se faire aussi grosse que le Bœuf*) and **LION** (*Le Lion et le Rat*), (*Le Corbeau et le Renard* in La Fontaine's own words), each with its own pictures (a raven with his cheese and a fox, a frog that swells next to an ox, a lion and a rat), and **BOUCLE** (*Boucle d'or et les trois ours*), all in French.
 
 - **Each key tells one part of the story**, in order from the lowest key (up to 27 parts: a fable has nine, so only nine keys glow). The keys that have a part glow faintly, the part being
   told is lit, and its words are written at the top of the screen for whoever is reading along.

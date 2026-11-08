@@ -136,12 +136,12 @@ static void act_fable(int cx0, int cy0)
 {
     int w = sc.world - FABLE_WORLD0, part = iclamp(spart(w), 0, 8), cx = cx0, cy = cy0, g = sc.mouth, sw = g_sw, sh = g_sh;
     if (w == 0) {                                                /* the fox below, the raven on his branch */
-        int up = (part >= 2 && part <= 6) ? 100 : 0, talk = (part == 3 || part == 4 || part == 7 || part == 8) ? g : 0;
+        int up = (part >= 2 && part <= 5) ? 100 : 0, talk = (part == 3 || part == 4 || part == 6 || part == 7) ? g : 0;
         if (part >= 2)
-            fox_(cx, cy, up, talk, part >= 7);
+            fox_(cx, cy, up, talk, part >= 6);
         {
-            int rx = cx + X(106), ry = cy + Y(-48), ob = part == 5 || part == 6 ? 8 : 0;
-            raven_(rx, ry, ob, part <= 5, part >= 7);
+            int rx = cx + X(106), ry = cy + Y(-48), ob = part == 5 ? 8 : 0;
+            raven_(rx, ry, ob, part <= 4, part >= 6);
         }
     } else if (w == 1) {                                         /* the ox on the left, the frog who swells on the right */
         static const uint8_t SZ[9] = {55, 55, 62, 80, 80, 100, 118, 40, 55};
@@ -177,7 +177,7 @@ static void act_fable(int cx0, int cy0)
 static void fg_fable(void)
 {
     int w = sc.world - FABLE_WORLD0, part = iclamp(spart(w), 0, 8), i;
-    if (w == 0 && part == 6)                                     /* the cheese falls, straight into the fox's mouth */
+    if (w == 0 && part == 5)                                     /* the cheese falls, straight into the fox's mouth */
         cheese_(138, 106 + (int)((TM / 9u) % 36u));
     if (w == 1 && part == 7) {                                   /* pouf! */
         text_out(168, 100, &FONT_B, "POUF!", K(255, 255, 255), K(200, 40, 60));

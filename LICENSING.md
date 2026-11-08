@@ -14,8 +14,7 @@ source under the same licence.
 | `firmware/src/app/{slots,panel,main_fm1,plat_fm1}.c`, `plat.h`, `dsp/fastmath.h` | adapted from Felucca and X0X (Charles Vestal) | GPL-3.0-only |
 | `firmware/src/lila/`, `host/`, `desktop/`, `tests/`, the manual | LILA, written with the structure and tooling of fm1-tribe | GPL-3.0-only |
 
-The stories: Three fables of La Fontaine (*Le Corbeau et le Renard*, *La Grenouille qui voulait se faire aussi grosse que le Bœuf*, *Le Lion et
-le Rat*; public domain) and *Boucle d'or et les trois ours* (the traditional tale, public domain) are LILA's own retellings in simple French. Their speech (`assets/stories/*.lpc`) was made with Piper (https://github.com/OHF-Voice/piper1-gpl, run on a computer,
+The stories: *Le Corbeau et le Renard* is La Fontaine's own text (public domain); *La Grenouille qui voulait se faire aussi grosse que le Bœuf* and *Le Lion et le Rat* (La Fontaine, public domain) and *Boucle d'or et les trois ours* (the traditional tale, public domain) are LILA's own retellings in simple French. Their speech (`assets/stories/*.lpc`) was made with Piper (https://github.com/OHF-Voice/piper1-gpl, run on a computer,
 not part of the firmware) and these voices, and is distributed as LPC-coded data:
 
 - English: Piper voice `en_US-ljspeech-high`, trained on the LJ Speech dataset (Keith Ito, public domain).
