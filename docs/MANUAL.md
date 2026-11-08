@@ -27,8 +27,8 @@ This is the **generic** layout. Each world then takes over some of these knobs a
 | Button | Page | KNOB 1 | KNOB 2 | KNOB 3 | KNOB 4 |
 |---|---|---|---|---|---|
 | **HOME** | MAGIC | **BEND**: slides the pitch up or down (the animal leans and floats) | **STARS**: fairy dust after every note, stars in the sky | **SIZE**: tiny to giant: the animal grows and the sound gets deeper | **WIGGLE**: a drunken pitch and a jelly picture |
-| **FX** | FX | **ECHO**: ghosts of the animal repeat | **SPACE**: a big room; rings spread over the world | **FLUFFY**: a shimmering double (chorus) | **ROBOT**: crunchy sound, the whole world turns to big square pixels |
-| **SEL** | FILTER | **BRIGHT**: dark and muffled to bright and sunny (the colours follow) | **WOW**: a ringing, whistling filter: sparkles | **TYPE**: SOFT (warm), TALKY, THIN (cool) | **GRIT**: rough and dirty; static on the picture |
+| **FX** | FX | **ECHO**: ghosts of the animal repeat | **SPACE**: a big room; rings spread over the world | **FLUFFY**: a shimmering double (chorus); each world has its own kind: a doubler (cow, blocks), a flanger (dog, meteor), a phaser (frog, space), an auto-pan (jungle), a ring modulator (robot), fuzz (dinosaur) | **ROBOT**: crunchy sound, the whole world turns to big square pixels |
+| **SEL** | FILTER | **BRIGHT**: dark and muffled to bright and sunny (the colours follow) | **WOW**: a ringing, whistling filter: sparkles | **TYPE**: SOFT (warm), TALKY, THIN (cool), HOLLOW, HONK, VOCAL; every world starts with its own | **GRIT**: rough and dirty; static on the picture |
 | **ENV** | ENVELOPE | **FADE IN**: how slowly a note arrives (the animal sings in slowly) | **PLUCK**: from an organ that holds, to a pluck that dies at once | **FADE OUT**: how long it rings after you let go | **BOING**: the filter jumps open on each note; the animal squashes and stretches |
 | **LFO** | WOBBLE | **SPEED** | **WOBBLE**: how much | **WHAT**: SIREN (the pitch), WAH (the brightness), TREMBLE (the volume): the animal bobs, flashes or pulses | **WAVE**: SMOOTH, ZIGZAG, CHOPPY, BUMPY |
 | **EDIT** | SOUND | **SHAPE**: sine, triangle, saw, square: the notes that float up change shape too | **BUDDY**: a twin voice a little out of tune: a twin animal stands behind | **BIG**: a deep octave underneath; the ground shakes | **METAL**: bell and robot tones; the colours go silver |
@@ -87,10 +87,28 @@ This is the **generic** layout. Each world then takes over some of these knobs a
 | 11 | CASTLE | TINKLE: a music-box bell | a unicorn in front of a castle and a rainbow |
 | 12 | JUNGLE | TRUMPET: a brassy horn that scoops up, with a breath and a stomp | an elephant raising its trunk among palm trees |
 
+## The three piano worlds
+
+After the jungle: **PIANO** (a concert hall with red curtains), **E-PIANO** (a neon synthwave night) and **ORGAN** (a cathedral with a rose
+window and glowing pipes). The panel's 27 keys are drawn as a keyboard at the bottom of the screen: every key sinks and lights in its own
+colour when it sounds (pressed, or played by a song, the arpeggiator or the loop) and sends a coloured note rising. A little singing note
+floats above and takes everything the other animals take (size, boing, twins, echo ghosts, a shimmering double). Their knobs have piano
+names: HALL / ROOM / CHORUS (or PHASER, ROTARY), HAMMER and PEDAL, STRINGS, BASS, SHINE.
+
+## The screen: all, a name, none
+
+**SAVE + GLO pressed together** change the screen (a lone press of either still opens its page, a moment later):
+
+1. **all of it**, as it is;
+2. **a name**: the screen stays black and shows, for one second, the world you chose, the beat you chose or the song you chose;
+3. **none**: the backlight is off. The lights of the keys and buttons still tell what happens.
+
+The choice is kept when you save a treasure box and when the screen mode changes.
+
 ## The two story worlds
 
-Turn PRESETS past the jungle: **LILA** (in French: *Lila et les notes perdues*, a story where Lila travels through the worlds of the
-synth to find the lost music) and **GOLDILOCKS** (in English: *Goldilocks and the Three Bears*).
+After the pianos: **FABLES** (in French: three fables of La Fontaine, *Le Corbeau et le Renard*, *La Grenouille qui voulait se faire aussi grosse
+que le Bœuf* and *Le Lion et le Rat*, told in front of the worlds of the synth) and **BOUCLE** (in French: *Boucle d'or et les trois ours*).
 
 - **Each key tells one part of the story**, in order from the lowest key (27 parts). The keys that have a part glow faintly, the part being
   told is lit, and its words are written at the top of the screen for whoever is reading along.

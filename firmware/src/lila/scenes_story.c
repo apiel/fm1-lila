@@ -1,13 +1,13 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
-/* The two story worlds. Lila's story is told in front of the worlds of the synth (the part's scene picks the world, and its
- * character comes along when the scene says so); Goldilocks has her own forest, house, kitchen, chairs and bedroom, and the
+/* The two story worlds. The fables of La Fontaine are told in front of the worlds of the synth (the part's scene picks the world,
+ * and its animal comes along when the scene says so); Goldilocks has her own forest, house, kitchen, chairs and bedroom, and the
  * three bears. The picture is the part being told (story_part), or the last one told. Included by scenes.c after SCENES. */
 #pragma once
 
 static int story_last;                                  /* the part on screen when none is being told */
 static int spart(void) { return story_part >= 0 ? (story_last = story_part) : story_last; }
 
-/* a little girl, feet at (cx, cy): Lila (brown pigtails, a pink dress) or Goldilocks (golden curls, a blue dress) */
+/* a little girl, feet at (cx, cy): Goldilocks (golden curls, a blue dress; the other look is unused now) */
 static void girl(int cx, int cy, int golden)
 {
     int g = sc.mouth * 8 / 255, wave = sc.mouth > 60 ? isin((int)(TM / 4)) * 10 >> 7 : 0;
@@ -48,7 +48,7 @@ static void girl(int cx, int cy, int golden)
     }
 }
 
-/* ------------------------------------------------------------ Lila's story --- */
+/* ------------------------------------------------------------ the fables --- */
 static void bg_lila(void)
 {
     SCENES[story_scene(0, spart()) & 0x7F].bg();
@@ -56,14 +56,13 @@ static void bg_lila(void)
 static void act_lila(int cx, int cy)
 {
     int code = story_scene(0, spart()), w = code & 0x7F, sw = g_sw, sh = g_sh;
-    if ((code & 0x80) && w < NWORLD) {                          /* the world's character is in the story too */
-        g_sw = sw * 8 / 10;
-        g_sh = sh * 8 / 10;
-        SCENES[w].actor(SCENES[w].hx + 36 + (cx - 56), SCENES[w].hy - (cy < 180 ? 0 : 0));
+    if ((code & 0x80) && w < NWORLD) {                          /* the fable's animal is there: in its own world, where it stands */
+        g_sw = sw * 9 / 10;
+        g_sh = sh * 9 / 10;
+        SCENES[w].actor(SCENES[w].hx + (cx - 56), SCENES[w].hy);
         g_sw = sw;
         g_sh = sh;
     }
-    girl(cx, cy, 0);
 }
 static void fg_lila(void) {}
 

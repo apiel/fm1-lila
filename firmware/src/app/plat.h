@@ -32,6 +32,7 @@ uint32_t plat_master(void);            /* MASTER pot, 0..4096 gain Q12 */
 int plat_battery(void);                /* 0..3 bars, 4 = powered by a USB host, -1 = not read yet */
 void plat_leds(uint32_t buttons, uint32_t keys);   /* lit: bit B_*, bit key */
 void plat_buttons_dim(uint32_t buttons);   /* these buttons light dim (TRIBE: "available"; call before plat_leds) */
+void plat_backlight(int on);           /* the screen's light: 0 = off (the child's screen-free modes); lcd.c on the device */
 void plat_glow(int on);                /* the unlit buttons glow dimly, readable in the dark (call before plat_leds) */
 void plat_keys_dim(uint32_t keys);     /* these keys light dim (a second level; call before plat_leds) */
 void plat_keys_faint(uint32_t keys);   /* these keys light faint: half of dim (call before plat_leds) */

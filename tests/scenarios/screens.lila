@@ -1,0 +1,52 @@
+# the three screen modes: SAVE + GLO together go all -> minimal -> none -> all, and neither button does its own job
+wait 300
+expectp SCREEN 0
+expect page 0
+press SAVE
+wait 50
+press GLO
+wait 60
+release SAVE
+release GLO
+wait 300
+expectp SCREEN 1
+expect page 0                  # neither SAVE's nor GLO's page opened
+shot sc_mini_name.png
+wait 1500
+shot sc_mini_blank.png
+turn PRESET 1                  # a world's name, for one second
+wait 300
+shot sc_mini_world.png
+wait 1400
+shot sc_mini_blank2.png
+set BEAT 0
+tap SEQ
+wait 300
+shot sc_mini_beat.png
+press GLO                      # the other order: GLO first
+wait 50
+press SAVE
+wait 60
+release GLO
+release SAVE
+wait 300
+expectp SCREEN 2
+expect page 9                  # still the BEAT page: the combo opened nothing
+wait 1500
+shot sc_off.png
+turn PRESET 1
+wait 1500
+shot sc_off2.png
+press SAVE
+press GLO
+wait 60
+release SAVE
+release GLO
+wait 300
+expectp SCREEN 0
+shot sc_full.png
+# a lone tap of SAVE or GLO still opens its page, a moment later
+tap GLO
+expect page 6
+tap SAVE
+expect page 7

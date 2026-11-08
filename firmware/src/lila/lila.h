@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 /* LILA: a polyphonic toy synth for a young child, on the M-VAVE FM-1.
  *
- * Twelve worlds (presets): every one has its own instrument and its own animated world. Every button of the
+ * Twelve worlds (presets), three pianos and two stories: every one has its own instrument and its own animated world. Every button of the
  * panel has exactly one page and the four knobs always do something. The state is a flat array of small
  * integers (P[]): the UI (main loop) writes it, the audio ISR (synth.c) reads it. Keys, buttons that act and
  * melody changes travel through a small event queue; what the screen needs to dance to comes back through
@@ -10,7 +10,7 @@
 #include <stdint.h>
 
 #define NVOICE 10
-#define NPRESET 14                     /* twelve worlds and two stories */
+#define NPRESET 17                     /* twelve worlds, three pianos and two stories */
 #define NWORLD 12                      /* the worlds that are instruments (the ZOO band picks among them) */
 #define NMEL 12
 #define NKEYS_L 27                     /* F3 .. G5, as the panel's keys */
@@ -46,6 +46,7 @@ enum {
     P_RLEN, P_RVOL, P_RSPEED, P_RFUNNY,           /* REC  */
     P_BOX, P_ACT, P_STICK, P_COLOR,               /* SAVE */
     P_MOOD, P_PRESET, P_MELODY, P_OCT,            /* ALGO, PRESETS, SELECT, OCT +/- */
+    P_SCREEN,                                     /* SAVE + GLO together: SCREEN_FULL, SCREEN_MINI (a name for a second), SCREEN_OFF */
     NP
 };
 extern volatile uint8_t P[NP];
@@ -53,8 +54,11 @@ extern volatile uint8_t P[NP];
 #define BPM_OF(v) (50 + (int)(v))                  /* P_TEMPO 0..127 -> 50 .. 177 beats a minute */
 
 enum { CT_NONE, CT_HOWL, CT_WAIL, CT_HILO, CT_ALARM, CT_DIVE, CT_SWOOP, CT_COIN, CT_RIBBIT, NCT };
+#define NFTYPE 6                       /* filter kinds: SOFT TALKY THIN HOLLOW HONK VOCAL */
+enum { FXK_CHORUS, FXK_SLAP, FXK_FLANGE, FXK_PHASE, FXK_PAN, FXK_RING, FXK_DRIVE, NFXK };   /* what FLUFFY does, per world */
 enum { LW_SINE, LW_TRI, LW_SQUARE, LW_BUMPY };
 enum { LT_PITCH, LT_WAH, LT_TREM };
+enum { SCREEN_FULL, SCREEN_MINI, SCREEN_OFF, NSCREEN };
 enum { MOOD_DAY, MOOD_NIGHT, MOOD_MAGIC, MOOD_CRAZY, NMOOD };
 
 /* --------------------------------------------------------------- presets --- */
@@ -70,6 +74,7 @@ typedef struct {
     uint8_t vol;                      /* level trim, 100 = 1.0 */
     uint8_t blip;                     /* BL_*: the chatter's blips */
     int8_t story;                     /* a story world: which story the keys tell (-1: an instrument) */
+    uint8_t fx;                       /* FXK_*: the world's own effect on the FLUFFY knob */
 } preset_t;
 extern const preset_t PRESETS[NPRESET];
 

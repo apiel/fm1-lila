@@ -1,0 +1,29 @@
+# BOUCLE D'OR ET LES TROIS OURS (fr): a retelling of the traditional tale (public domain). One line per key (27), in order. A line: SCENE|text
+# SCENE: FOREST HOUSE KITCHEN CHAIRS BEDROOM, + "*" when the three bears are there too
+FOREST|Il était une fois une petite fille aux cheveux dorés. Elle s'appelait Boucle d'or.
+FOREST|Un beau matin, Boucle d'or partit se promener dans la forêt.
+HOUSE|Au fond des bois, elle trouva une petite maison. La porte était ouverte.
+HOUSE|Il y a quelqu'un ? appela-t-elle. Mais personne ne répondit.
+HOUSE*|Dans cette maison vivaient trois ours : Papa Ours, Maman Ours et Bébé Ours.
+HOUSE*|Ils étaient partis se promener, pendant que leur bouillie refroidissait.
+KITCHEN|Sur la table, Boucle d'or vit trois bols de bouillie.
+KITCHEN|Elle goûta le grand bol. Aïe ! Cette bouillie est trop chaude !
+KITCHEN|Elle goûta le bol du milieu. Brr ! Cette bouillie est trop froide !
+KITCHEN|Elle goûta le petit bol. Mmm ! Cette bouillie est juste comme il faut ! Et elle mangea tout.
+CHAIRS|Puis Boucle d'or aperçut trois chaises.
+CHAIRS|La grande chaise était trop dure. La chaise du milieu était trop molle.
+CHAIRS|La petite chaise était juste comme il faut. Mais crac ! Elle se cassa en mille morceaux !
+BEDROOM|Boucle d'or se sentit très fatiguée, alors elle monta à l'étage.
+BEDROOM|Il y avait trois lits. Le grand lit était trop haut.
+BEDROOM|Le lit du milieu était trop bas.
+BEDROOM|Le petit lit était juste comme il faut. Et Boucle d'or s'endormit profondément.
+FOREST*|Bientôt, les trois ours rentrèrent de leur promenade.
+KITCHEN*|Quelqu'un a mangé ma bouillie ! gronda Papa Ours.
+KITCHEN*|Quelqu'un a mangé ma bouillie ! dit Maman Ours.
+KITCHEN*|Quelqu'un a mangé ma bouillie, et il a tout mangé ! pleura Bébé Ours.
+CHAIRS*|Quelqu'un s'est assis sur ma chaise, et il l'a cassée ! pleura Bébé Ours.
+BEDROOM*|Les trois ours montèrent à l'étage, sur la pointe des pieds, tout doucement.
+BEDROOM*|Quelqu'un dort dans mon lit, et il est encore là ! s'écria Bébé Ours.
+BEDROOM*|Boucle d'or se réveilla et vit les trois ours. Oh ! cria-t-elle.
+FOREST|Elle sauta par la fenêtre et courut jusque chez elle.
+FOREST|Et elle ne retourna jamais chez les trois ours. Fin !

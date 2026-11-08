@@ -29,7 +29,7 @@ typedef struct {
 __attribute__((unused)) static const uint8_t WHITE_K[16] = {0, 2, 4, 6, 7, 9, 11, 12, 14, 16, 18, 19, 21, 23, 24, 26};
 __attribute__((unused)) static const uint8_t BLACK_K[11] = {1, 3, 5, 8, 10, 13, 15, 17, 20, 22, 25};
 
-static const char *const N_TYPE[] = {"SOFT", "TALKY", "THIN"};
+static const char *const N_TYPE[] = {"SOFT", "TALKY", "THIN", "HOLLOW", "HONK", "VOCAL"};
 static const char *const N_WHAT[] = {"SIREN", "WAH", "TREMBLE"};
 static const char *const N_LWAVE[] = {"SMOOTH", "ZIGZAG", "CHOPPY", "BUMPY"};
 static const char *const N_EASY[] = {"ANY", "PENTA", "MAJOR"};
@@ -51,7 +51,7 @@ static const char *const N_COLOR[] = {"RED", "ORANGE", "YELLOW", "GREEN", "TEAL"
 static const page_t PAGES[NPAGES] = {
     {"MAGIC", B_HOME, 0xFFD040, {{"BEND", P_BEND, 127, FM_BEND, 0}, {"STARS", P_STARS, 127, 0, 0}, {"SIZE", P_SIZE, 127, 0, 0}, {"WIGGLE", P_WIGGLE, 127, 0, 0}}},
     {"FX", B_FX, 0xFF70C0, {{"ECHO", P_ECHO, 127, 0, 0}, {"SPACE", P_SPACE, 127, 0, 0}, {"FLUFFY", P_FLUFF, 127, 0, 0}, {"ROBOT", P_ROBOT, 127, 0, 0}}},
-    {"FILTER", B_SEL, 0x50D0FF, {{"BRIGHT", P_CUT, 127, 0, 0}, {"WOW", P_RESO, 127, 0, 0}, {"TYPE", P_FTYPE, 2, 0, N_TYPE}, {"GRIT", P_GRIT, 127, 0, 0}}},
+    {"FILTER", B_SEL, 0x50D0FF, {{"BRIGHT", P_CUT, 127, 0, 0}, {"WOW", P_RESO, 127, 0, 0}, {"TYPE", P_FTYPE, NFTYPE - 1, 0, N_TYPE}, {"GRIT", P_GRIT, 127, 0, 0}}},
     {"ENVELOPE", B_ENV, 0x70E070, {{"FADE IN", P_ATK, 127, 0, 0}, {"PLUCK", P_PLUCK, 127, 0, 0}, {"FADE OUT", P_REL, 127, 0, 0}, {"BOING", P_BOING, 127, 0, 0}}},
     {"WOBBLE", B_LFO, 0xFFA040, {{"SPEED", P_LSPD, 127, 0, 0}, {"WOBBLE", P_LDEP, 127, 0, 0}, {"WHAT", P_LWHAT, 2, 0, N_WHAT}, {"WAVE", P_LWAVE, 3, 0, N_LWAVE}}},
     {"SOUND", B_EDIT, 0xB080FF, {{"SHAPE", P_WAVE, 127, FM_WAVE, 0}, {"BUDDY", P_BUDDY, 127, 0, 0}, {"BIG", P_BIG, 127, 0, 0}, {"METAL", P_METAL, 127, 0, 0}}},
@@ -85,42 +85,42 @@ static const wk_t WK_COW[] = {
     WK(PG_HOME, 0, "MOO", P_VOWEL, 127, 0, 0, 0), WK(PG_HOME, 1, "BELL", P_BELL, 127, 0, 0, 0), WK(PG_HOME, 3, "WOBBLY", P_WIGGLE, 127, 0, 0, 0),
     WK(PG_EDIT, 1, "THROAT", P_FORM, 127, 0, 0, 0), WK(PG_EDIT, 2, "DEEP", P_BIG, 127, 0, 0, 0), WK(PG_EDIT, 3, "BREATH", P_NOISE, 127, 0, 0, 0),
     WK(PG_ENV, 3, "SWAY", P_VIBD, 127, 0, 0, 0),
-    WK(PG_FX, 0, "BARN", P_ECHO, 127, 0, 0, 0), WK(PG_FX, 1, "FIELD", P_SPACE, 127, 0, 0, 0)};
+    WK(PG_FX, 0, "BARN", P_ECHO, 127, 0, 0, 0), WK(PG_FX, 1, "FIELD", P_SPACE, 127, 0, 0, 0), WK(PG_FX, 2, "DOUBLE", P_FLUFF, 127, 0, 0, 0)};
 static const wk_t WK_DOG[] = {
     WK(PG_HOME, 0, "SIREN", P_CTYPE, 3, 0, N_SIREN, V_SIREN), WK(PG_HOME, 1, "HOWL", P_CAMT, 127, 0, 0, 0), WK(PG_HOME, 2, "SLOW", P_CTIME, 127, 0, 0, 0),
     WK(PG_EDIT, 1, "OOOH", P_VOWEL, 127, 0, 0, 0), WK(PG_EDIT, 2, "THROAT", P_FORM, 127, 0, 0, 0), WK(PG_EDIT, 3, "SHAKE", P_VIBD, 127, 0, 0, 0),
-    WK(PG_FX, 0, "CANYON", P_ECHO, 127, 0, 0, 0), WK(PG_FX, 1, "NIGHT", P_SPACE, 127, 0, 0, 0), WK(PG_FX, 3, "TINNY", P_ROBOT, 127, 0, 0, 0)};
+    WK(PG_FX, 0, "CANYON", P_ECHO, 127, 0, 0, 0), WK(PG_FX, 1, "NIGHT", P_SPACE, 127, 0, 0, 0), WK(PG_FX, 2, "JET", P_FLUFF, 127, 0, 0, 0), WK(PG_FX, 3, "TINNY", P_ROBOT, 127, 0, 0, 0)};
 static const wk_t WK_FROG[] = {
     WK(PG_HOME, 0, "STYLE", P_CTYPE, 3, 0, N_FROGSTYLE, V_FROGSTYLE), WK(PG_HOME, 1, "GAP", P_CTIME, 127, 0, 0, 0), WK(PG_HOME, 2, "JUMP", P_CAMT, 127, 0, 0, 0),
     WK(PG_HOME, 3, "SIZE", P_SIZE, 127, 0, 0, 0),
-    WK(PG_EDIT, 1, "CROAK", P_AMD, 127, 0, 0, 0), WK(PG_EDIT, 2, "RATTLE", P_AMR, 127, 0, 0, 0), WK(PG_EDIT, 3, "THROAT", P_VOWEL, 127, 0, 0, 0),
-    WK(PG_FX, 0, "POND", P_ECHO, 127, 0, 0, 0), WK(PG_FX, 1, "MARSH", P_SPACE, 127, 0, 0, 0), WK(PG_FX, 2, "BUBBLES", P_CHAT, 127, 0, 0, 0),
+    WK(PG_EDIT, 0, "BUBBLES", P_CHAT, 127, 0, 0, 0), WK(PG_EDIT, 1, "CROAK", P_AMD, 127, 0, 0, 0), WK(PG_EDIT, 2, "RATTLE", P_AMR, 127, 0, 0, 0), WK(PG_EDIT, 3, "THROAT", P_VOWEL, 127, 0, 0, 0),
+    WK(PG_FX, 0, "POND", P_ECHO, 127, 0, 0, 0), WK(PG_FX, 1, "MARSH", P_SPACE, 127, 0, 0, 0), WK(PG_FX, 2, "SWIRL", P_FLUFF, 127, 0, 0, 0),
     WK(PG_FX, 3, "CRUNCH", P_ROBOT, 127, 0, 0, 0)};
 static const wk_t WK_SPACE[] = {
     WK(PG_HOME, 3, "ALIEN", P_VIBD, 127, 0, 0, 0),
     WK(PG_EDIT, 1, "CREW", P_BUDDY, 127, 0, 0, 0), WK(PG_EDIT, 2, "ENGINE", P_NOISE, 127, 0, 0, 0), WK(PG_EDIT, 3, "LASER", P_CAMT, 127, 0, 0, 0),
-    WK(PG_FX, 1, "GALAXY", P_SPACE, 127, 0, 0, 0), WK(PG_FX, 3, "STATIC", P_ROBOT, 127, 0, 0, 0)};
+    WK(PG_FX, 1, "GALAXY", P_SPACE, 127, 0, 0, 0), WK(PG_FX, 2, "SWIRL", P_FLUFF, 127, 0, 0, 0), WK(PG_FX, 3, "STATIC", P_ROBOT, 127, 0, 0, 0)};
 static const wk_t WK_METEOR[] = {
     WK(PG_HOME, 0, "PEW", P_CAMT, 127, 0, 0, 0), WK(PG_HOME, 1, "BOOM", P_NOISE, 127, 0, 0, 0), WK(PG_HOME, 2, "CRASH", P_STOMP, 127, 0, 0, 0),
     WK(PG_HOME, 3, "SPARKS", P_CHAT, 127, 0, 0, 0),
     WK(PG_EDIT, 1, "ROCK", P_FMR, 127, 0, 0, 0), WK(PG_EDIT, 3, "SPEED", P_CTIME, 127, 0, 0, 0),
-    WK(PG_FX, 2, "SMOKE", P_FLUFF, 127, 0, 0, 0)};
+    WK(PG_FX, 2, "JET", P_FLUFF, 127, 0, 0, 0)};
 static const wk_t WK_BLOCKS[] = {
     WK(PG_HOME, 0, "GAME", P_CTYPE, 3, 0, N_GAME, V_GAME), WK(PG_HOME, 1, "CHORD", P_CHIP, 5, 0, N_CHIP, 0), WK(PG_HOME, 2, "FAST", P_CHIPS, 127, 0, 0, 0),
     WK(PG_HOME, 3, "SIZE", P_SIZE, 127, 0, 0, 0),
     WK(PG_EDIT, 0, "DUTY", P_DUTY, 127, 0, 0, 0), WK(PG_EDIT, 1, "PWM", P_PWMD, 127, 0, 0, 0), WK(PG_EDIT, 2, "SHAPE", P_WAVE, 127, FM_WAVE, 0, 0),
     WK(PG_EDIT, 3, "BOOM", P_NOISE, 127, 0, 0, 0),
-    WK(PG_FX, 3, "8-BIT", P_ROBOT, 127, 0, 0, 0)};
+    WK(PG_FX, 2, "DOUBLE", P_FLUFF, 127, 0, 0, 0), WK(PG_FX, 3, "8-BIT", P_ROBOT, 127, 0, 0, 0)};
 static const wk_t WK_DINO[] = {
     WK(PG_HOME, 0, "GROWL", P_AMD, 127, 0, 0, 0), WK(PG_HOME, 1, "RUMBLE", P_AMR, 127, 0, 0, 0), WK(PG_HOME, 2, "STOMP", P_STOMP, 127, 0, 0, 0),
     WK(PG_HOME, 3, "SIZE", P_SIZE, 127, 0, 0, 0),
     WK(PG_EDIT, 1, "SCREAM", P_VOWEL, 127, 0, 0, 0), WK(PG_EDIT, 2, "PACK", P_BUDDY, 127, 0, 0, 0), WK(PG_EDIT, 3, "SPIT", P_NOISE, 127, 0, 0, 0),
-    WK(PG_FX, 0, "CANYON", P_ECHO, 127, 0, 0, 0), WK(PG_FX, 3, "SNARL", P_ROBOT, 127, 0, 0, 0)};
+    WK(PG_FX, 0, "CANYON", P_ECHO, 127, 0, 0, 0), WK(PG_FX, 2, "FUZZ", P_FLUFF, 127, 0, 0, 0), WK(PG_FX, 3, "SNARL", P_ROBOT, 127, 0, 0, 0)};
 static const wk_t WK_ROBOT[] = {
     WK(PG_HOME, 0, "CHATTER", P_CHAT, 127, 0, 0, 0), WK(PG_HOME, 1, "RANGE", P_CHATR, 127, 0, 0, 0), WK(PG_HOME, 2, "VOICE", P_VOWEL, 127, 0, 0, 0),
     WK(PG_HOME, 3, "SIZE", P_SIZE, 127, 0, 0, 0),
-    WK(PG_EDIT, 1, "SIREN", P_CTYPE, 3, 0, N_RSIREN, V_RSIREN), WK(PG_EDIT, 2, "SLOW", P_CTIME, 127, 0, 0, 0), WK(PG_EDIT, 3, "FM", P_METAL, 127, 0, 0, 0),
-    WK(PG_FX, 2, "STUTTER", P_AMD, 127, 0, 0, 0), WK(PG_FX, 3, "CRUSH", P_ROBOT, 127, 0, 0, 0)};
+    WK(PG_EDIT, 0, "STUTTER", P_AMD, 127, 0, 0, 0), WK(PG_EDIT, 1, "SIREN", P_CTYPE, 3, 0, N_RSIREN, V_RSIREN), WK(PG_EDIT, 2, "SLOW", P_CTIME, 127, 0, 0, 0), WK(PG_EDIT, 3, "FM", P_METAL, 127, 0, 0, 0),
+    WK(PG_FX, 2, "RING", P_FLUFF, 127, 0, 0, 0), WK(PG_FX, 3, "CRUSH", P_ROBOT, 127, 0, 0, 0)};
 static const wk_t WK_OCEAN[] = {
     WK(PG_HOME, 0, "BUBBLES", P_CHAT, 127, 0, 0, 0), WK(PG_HOME, 1, "SONAR", P_PING, 127, 0, 0, 0), WK(PG_HOME, 2, "WHALE", P_CAMT, 127, 0, 0, 0),
     WK(PG_HOME, 3, "SIZE", P_SIZE, 127, 0, 0, 0),
@@ -132,7 +132,25 @@ static const wk_t WK_CASTLE[] = {
 static const wk_t WK_JUNGLE[] = {
     WK(PG_HOME, 0, "TRUMPET", P_CAMT, 127, 0, 0, 0), WK(PG_HOME, 1, "BLOW", P_NOISE, 127, 0, 0, 0), WK(PG_HOME, 2, "STOMP", P_STOMP, 127, 0, 0, 0),
     WK(PG_HOME, 3, "SIZE", P_SIZE, 127, 0, 0, 0),
-    WK(PG_EDIT, 1, "HONK", P_VOWEL, 127, 0, 0, 0), WK(PG_EDIT, 2, "HERD", P_BUDDY, 127, 0, 0, 0)};
+    WK(PG_EDIT, 1, "HONK", P_VOWEL, 127, 0, 0, 0), WK(PG_EDIT, 2, "HERD", P_BUDDY, 127, 0, 0, 0),
+    WK(PG_FX, 2, "BREEZE", P_FLUFF, 127, 0, 0, 0)};
+static const wk_t WK_PIANO[] = {
+    WK(PG_HOME, 3, "WIGGLE", P_WIGGLE, 127, 0, 0, 0),
+    WK(PG_FX, 0, "HALL", P_ECHO, 127, 0, 0, 0), WK(PG_FX, 1, "ROOM", P_SPACE, 127, 0, 0, 0), WK(PG_FX, 2, "CHORUS", P_FLUFF, 127, 0, 0, 0),
+    WK(PG_ENV, 1, "HAMMER", P_PLUCK, 127, 0, 0, 0), WK(PG_ENV, 2, "PEDAL", P_REL, 127, 0, 0, 0),
+    WK(PG_EDIT, 0, "WOOD", P_WAVE, 127, FM_WAVE, 0, 0), WK(PG_EDIT, 1, "STRINGS", P_BUDDY, 127, 0, 0, 0), WK(PG_EDIT, 2, "BASS", P_BIG, 127, 0, 0, 0),
+    WK(PG_EDIT, 3, "SHINE", P_METAL, 127, 0, 0, 0)};
+static const wk_t WK_EPIANO[] = {
+    WK(PG_HOME, 3, "WIGGLE", P_WIGGLE, 127, 0, 0, 0),
+    WK(PG_FX, 0, "TAPE", P_ECHO, 127, 0, 0, 0), WK(PG_FX, 1, "ROOM", P_SPACE, 127, 0, 0, 0), WK(PG_FX, 2, "PHASER", P_FLUFF, 127, 0, 0, 0),
+    WK(PG_ENV, 1, "TINE", P_PLUCK, 127, 0, 0, 0), WK(PG_ENV, 2, "PEDAL", P_REL, 127, 0, 0, 0),
+    WK(PG_EDIT, 1, "WARM", P_BUDDY, 127, 0, 0, 0), WK(PG_EDIT, 2, "BASS", P_BIG, 127, 0, 0, 0), WK(PG_EDIT, 3, "BELL", P_METAL, 127, 0, 0, 0)};
+static const wk_t WK_ORGAN[] = {
+    WK(PG_HOME, 3, "VIBRATO", P_VIBD, 127, 0, 0, 0),
+    WK(PG_FX, 0, "NAVE", P_ECHO, 127, 0, 0, 0), WK(PG_FX, 1, "CHURCH", P_SPACE, 127, 0, 0, 0), WK(PG_FX, 2, "ROTARY", P_FLUFF, 127, 0, 0, 0),
+    WK(PG_ENV, 1, "PUFF", P_PLUCK, 127, 0, 0, 0), WK(PG_ENV, 2, "HOLD", P_REL, 127, 0, 0, 0),
+    WK(PG_EDIT, 0, "PIPES", P_WAVE, 127, FM_WAVE, 0, 0), WK(PG_EDIT, 1, "STOPS", P_BUDDY, 127, 0, 0, 0), WK(PG_EDIT, 2, "BASS", P_BIG, 127, 0, 0, 0),
+    WK(PG_EDIT, 3, "REED", P_METAL, 127, 0, 0, 0)};
 static const wk_t WK_STORY[] = {
     WK(PG_HOME, 0, "SPEED", P_CTIME, 127, FM_SPEED, 0, 0), WK(PG_HOME, 1, "ROBOT", P_CAMT, 127, 0, 0, 0), WK(PG_HOME, 2, "SIZE", P_SIZE, 127, 0, 0, 0),
     WK(PG_HOME, 3, "PITCH", P_BEND, 127, FM_BEND, 0, 0),
@@ -143,7 +161,7 @@ static const wk_t WK_STORY[] = {
 #define WKS(t) {t, (uint8_t)(sizeof t / sizeof t[0])}
 static const struct { const wk_t *t; uint8_t n; } WORLD_KNOBS[NPRESET] = {
     WKS(WK_BIRD), WKS(WK_COW), WKS(WK_DOG), WKS(WK_FROG), WKS(WK_SPACE), WKS(WK_METEOR), WKS(WK_BLOCKS), WKS(WK_DINO), WKS(WK_ROBOT),
-    WKS(WK_OCEAN), WKS(WK_CASTLE), WKS(WK_JUNGLE), WKS(WK_STORY), WKS(WK_STORY)};
+    WKS(WK_OCEAN), WKS(WK_CASTLE), WKS(WK_JUNGLE), WKS(WK_PIANO), WKS(WK_EPIANO), WKS(WK_ORGAN), WKS(WK_STORY), WKS(WK_STORY)};
 
 static int story_world(void) { return PRESETS[P[P_PRESET] % NPRESET].story; }
 static int story_busy(void) { return story_all || story_part >= 0; }
@@ -192,6 +210,9 @@ static struct {
     uint32_t last_ms;
     int level_prev;
     uint8_t oct_seen;
+    uint32_t pend;                      /* SAVE / GLO presses held back a moment: together they change the screen mode */
+    uint32_t pend_t, mini_until;        /* when they were pressed; the minimal screen shows its words until then */
+    uint8_t combo, dark;                /* both held now; the screen has been blanked */
 } ui;
 
 /* a saved sound: the box on the TREASURE page */
@@ -223,6 +244,13 @@ static void toast(const char *a, const char *b, uint16_t col)
 }
 static uint16_t rgb24(uint32_t c) { return RGB((c >> 16) & 255u, (c >> 8) & 255u, c & 255u); }
 void ui_say(const char *a, const char *b) { toast(a, b, RGB(255, 255, 255)); }
+/* the words the minimal screen is allowed to show, for one second: a world, a beat, a song */
+static void mini_toast(const char *a, const char *b, uint16_t col)
+{
+    toast(a, b, col);
+    ui.toast_until = ui.toast_t0 + 1000u;
+    ui.mini_until = ui.toast_until;
+}
 
 /* ------------------------------------------------------------ the saved state --- */
 static void lila_save_now(void)
@@ -259,6 +287,7 @@ static void lila_load(void)
         P[P_BEAT] = 0;                         /* a beat or an arpeggio that starts by itself would be a surprise */
         P[P_ARP] = 0;
         P[P_MOOD] &= 3;
+        P[P_SCREEN] = P[P_SCREEN] >= NSCREEN ? 0 : P[P_SCREEN];
     }
     /* else: engine_init() sets the defaults */
 }
@@ -332,6 +361,8 @@ static void knob_turn(int i, int d)
             ev_post(EV_ARP_CLEAR, 0, 0);
         if (k->id == P_BEAT && !pv && v)
             ev_post(EV_BEAT_RESET, 0, 0);
+        if (k->id == P_BEAT && pv != v)
+            mini_toast("BEAT", pv ? N_BEAT[pv % 9] : "OFF", RGB(255, 90, 80));
     }
     if (ui.page == PG_SAVE && i == 0 && pv != v)
         ui.save_pop = 0;
@@ -357,7 +388,7 @@ static void world_change(int idx, int immediate)
         ui.trans_done = 0;
         ui.trans_t0 = plat_ms();
     }
-    toast(PRESETS[idx].name, PRESETS[idx].voice, rgb24(SCENES[idx].accent));
+    mini_toast(PRESETS[idx].name, PRESETS[idx].voice, rgb24(SCENES[idx].accent));
     ui.touch_ms = plat_ms();
 }
 
@@ -397,6 +428,21 @@ static void box_action(void)
 /* ------------------------------------------------------------------- input --- */
 static const uint8_t PAGE_OF_BTN[NB] = {PG_FX, PG_SEL, PG_ENV, PG_LFO, PG_EDIT, PG_GLO, PG_HOME, PG_SAVE, PG_ARP, PG_SEQ, PG_PLAY, PG_REC, 255, 255};
 
+static void screen_cycle(void)
+{
+    static const char *const NM[NSCREEN] = {"SCREEN", "SCREEN", "SCREEN"};
+    static const char *const VL[NSCREEN] = {"ALL", "MINIMAL", "OFF"};
+    int m = ((int)P[P_SCREEN] + 1) % NSCREEN;
+    P[P_SCREEN] = (uint8_t)m;
+    ui.dark = 0;
+    plat_backlight(1);
+    toast(NM[m], VL[m], RGB(255, 255, 255));
+    ui.toast_until = ui.toast_t0 + 1000u;
+    ui.mini_until = ui.toast_until;                     /* the new mode's name is shown for a second, in every mode */
+    ui.touch_ms = plat_ms();
+    lila_save_now();
+}
+
 static void goto_page(int pg)
 {
     if (ui.page != pg)
@@ -413,6 +459,27 @@ static void input(void)
     int i, d;
     uint32_t now = plat_ms();
     engine_set_master(plat_master());
+    {   /* SAVE and GLO together change the screen: all (as it was), a name for a second, none. A lone press of either waits
+         * 140 ms to see whether the other comes, so the combo never saves a box or opens a page by accident. */
+        const uint32_t cm = (1u << B_SAVE) | (1u << B_GLO);
+        if ((b & cm) != cm)
+            ui.combo = 0;
+        if ((bd & cm) && (b & cm) == cm && !ui.combo) {
+            ui.combo = 1;
+            ui.pend = 0;
+            screen_cycle();
+            bd &= ~cm;
+        } else if (bd & cm) {
+            if (!ui.pend)
+                ui.pend_t = now;
+            ui.pend |= bd & cm;
+            bd &= ~cm;
+        }
+        if (ui.pend && now - ui.pend_t >= 140u) {
+            bd |= ui.pend;
+            ui.pend = 0;
+        }
+    }
     for (i = 0; i < NB; i++) {
         if (!((bd >> i) & 1u))
             continue;
@@ -455,7 +522,7 @@ static void input(void)
                     toast("STOP", 0, RGB(255, 200, 120));
                 } else {
                     ev_post(EV_PLAY, mel_idx, 0);
-                    toast(melody_name(mel_idx), "PLAYING", RGB(150, 255, 150));
+                    mini_toast(melody_name(mel_idx), "PLAYING", RGB(150, 255, 150));
                 }
                 ui.page = PG_PLAY;
                 ui.touched = -1;
@@ -494,7 +561,7 @@ static void input(void)
             if (pg == PG_ARP)
                 toast(PAGES[pg].title, P[P_ARP] ? "ON" : "OFF", rgb24(PAGES[pg].color));
             if (pg == PG_SEQ)
-                toast(PAGES[pg].title, P[P_BEAT] ? N_BEAT[P[P_BEAT] % 9] : "OFF", rgb24(PAGES[pg].color));
+                mini_toast(PAGES[pg].title, P[P_BEAT] ? N_BEAT[P[P_BEAT] % 9] : "OFF", rgb24(PAGES[pg].color));
             if (pg == PG_SAVE)
                 toast(PAGES[pg].title, "PRESS AGAIN", rgb24(PAGES[pg].color));
         }
@@ -542,7 +609,7 @@ static void input(void)
         if (mel_playing) {
             int m = ((int)mel_idx + (d > 0 ? 1 : -1) + NMEL) % NMEL;
             ev_post(EV_MELODY, m, 0);
-            toast(melody_name(m), "PLAYING", RGB(150, 255, 150));
+            mini_toast(melody_name(m), "PLAYING", RGB(150, 255, 150));
         } else
             toast("PRESS PLAY", "TO HEAR A SONG", RGB(180, 255, 180));
         ui.touch_ms = now;
@@ -623,6 +690,8 @@ static void world_events(void)
         }
         sc.hit = 255;
         sc.score += 10;
+        if (sc.world >= PIANO_WORLD0 && sc.world < PIANO_WORLD0 + 3)
+            piano_note(e.note, e.vel);
         if (P[P_STOMP] > 8) {
             sc.stompf = 255;
             sc.shake = imax(sc.shake, 2 + P[P_STOMP] / 20);
@@ -768,6 +837,8 @@ static void sc_update(void)
         note_origin(&x, &y);
         part_add(PK_DOT, x + 20 + rnd_range(-6, 6), y + 40 + rnd_range(-6, 6), rnd_range(6, 18), rnd_range(-10, 4), 22, 3 + sc.noise / 30, RGB(200, 200, 210), 0);
     }
+    if (sc.world >= PIANO_WORLD0 && sc.world < PIANO_WORLD0 + 3)
+        piano_step(ui.held_k);
     look_update();
     sc.rec = rec_state;
     ui.level_prev = lvl;
@@ -1059,9 +1130,50 @@ static void post_fx(void)
     }
 }
 
+/* the minimal screen: black, and the words of a choice for one second; the screen-free mode: dark, light off */
+static void mini_frame(void)
+{
+    uint32_t now = plat_ms();
+    int show = now < ui.mini_until && ui.toast[0];
+    if (!show && ui.dark)
+        return;
+    if (P[P_SCREEN] == SCREEN_OFF && !show) {
+        plat_backlight(0);
+        ui.dark = 1;
+        lcd_fill(0, 0, 240, 240, C_BLACK);
+        return;
+    }
+    plat_backlight(1);
+    ui.dark = !show;
+    {
+        int band;
+        for (band = 0; band < 2; band++) {
+            cv_px = cv_buf[band];
+            cv_begin(240, 120, C_BLACK);
+            cv_oy = -120 * band;
+            if (show) {
+                text_big(120, 70, &FONT_B, ui.toast, ui.toast_col, 2);
+                if (ui.toast2[0])
+                    text_c(120, 114, &FONT_S, ui.toast2, RGB(220, 220, 240));
+            }
+            cv_blit(0, (uint32_t)(band * 120));
+            if (!band)
+                input();
+        }
+    }
+}
+
 static void draw_frame(void)
 {
     int band, irisr = iris_radius();
+    if (P[P_SCREEN] != SCREEN_FULL) {
+        mini_frame();
+        return;
+    }
+    if (ui.dark) {
+        ui.dark = 0;
+        plat_backlight(1);
+    }
     for (band = 0; band < 2; band++) {
         cv_px = cv_buf[band];
         cv_begin(240, 120, C_BLACK);

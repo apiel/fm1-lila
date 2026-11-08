@@ -1,0 +1,49 @@
+# the three pianos: the keys light, notes rise, and the effects change the picture
+wait 300
+turn PRESET -1
+turn PRESET -1
+turn PRESET -1
+turn PRESET -1
+turn PRESET -1
+expectp PRESET 12
+wait 900
+tapkey 2
+wait 100
+key w0 down
+key w2 down
+key b1 down
+wait 260
+shot pi_piano.png
+key w0 up
+key w2 up
+key b1 up
+wait 300
+tapkey 9
+tapkey 11
+wait 100
+shot pi_piano_bars.png
+turn PRESET 1
+expectp PRESET 13
+wait 900
+key w4 down
+key w6 down
+wait 260
+shot pi_epiano.png
+key w4 up
+key w6 up
+turn PRESET 1
+expectp PRESET 14
+wait 900
+key w1 down
+key w5 down
+key b3 down
+wait 260
+shot pi_organ.png
+key w1 up
+key w5 up
+key b3 up
+wait 200
+expect page 0
+tap FX
+turn K3 6
+expectp FLUFF >60

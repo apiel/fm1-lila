@@ -173,6 +173,19 @@ typedef struct {
     float vol, oct_st;
 } vp_t;
 
+/* the filter's six kinds, from the state-variable filter's outputs: y low pass, v1 * k band pass, x - k * v1 - y high pass */
+static inline float filt_out(int ft, float x, float y, float v1, float k)
+{
+    switch (ft) {
+    case 0:  return y;                                   /* SOFT: low pass */
+    case 1:  return v1 * k * 2.2f;                       /* TALKY: band pass (a narrow band is quiet: more gain) */
+    case 2:  return x - k * v1 - y;                      /* THIN: high pass */
+    case 3:  return x - k * v1;                          /* HOLLOW: notch */
+    case 4:  return x * 0.6f + v1 * k * 1.6f;            /* HONK: a peak that rings */
+    default: return y * 0.75f + v1 * k * 0.9f;           /* VOCAL: low pass with a band's voice */
+    }
+}
+
 static float knob(const uint8_t *s, int i) { return (float)s[i] * (1.0f / 127.0f); }
 
 /* the sound's numbers from the knobs; cut_shift: octaves (the mood, the size); rel_mul: the release's length factor */
@@ -208,7 +221,7 @@ static void derive(vp_t *vp, const uint8_t *s, const preset_t *pr, float cut_shi
     vp->vowel = knob(s, P_VOWEL);
     vp->cut_oct = 5.3219f + knob(s, P_CUT) * 8.2f + cut_shift;
     vp->k = 1.7f * (1.0f - knob(s, P_RESO)) + 0.07f;
-    vp->ftype = s[P_FTYPE] > 2 ? 2 : s[P_FTYPE];
+    vp->ftype = s[P_FTYPE] >= NFTYPE ? NFTYPE - 1 : s[P_FTYPE];
     vp->drive = 1.0f + knob(s, P_GRIT) * 7.0f;
     vp->boing = knob(s, P_BOING) * 5.0f;
     vp->keytrk = 0.55f;
@@ -525,12 +538,7 @@ static void voice_run(voice_t *v, float *out)
             y = s2 + a2 * s1 + a3 * v2;
             s1 = 2.0f * v1 - s1;
             s2 = 2.0f * y - s2;
-            if (ft == 0)
-                x = y;
-            else if (ft == 1)
-                x = v1 * k;
-            else
-                x = x - k * v1 - y;
+            x = filt_out(ft, x, y, v1, k);
             if (use_form) {                              /* x through the vowel's two resonances */
                 float u1 = x - f1b, b1 = fa1 * f1a + fa2 * u1, l1 = f1b + fa2 * f1a + fa3 * u1;
                 float u2 = x - f2b, b2 = gb1 * f2a + gb2 * u2, l2 = f2b + gb2 * f2a + gb3 * u2;
@@ -1374,7 +1382,7 @@ static void story_run(float *out)
         y = s2 + a2 * s1 + a3 * v2;
         s1 = 2.0f * v1 - s1;
         s2 = 2.0f * y - s2;
-        x = ft == 0 ? y : ft == 1 ? v1 * k : x - k * v1 - y;
+        x = filt_out(ft, x, y, v1, k);
         out[i] += x * gain;
         gain += dgain;
     }
@@ -1526,7 +1534,7 @@ static float rv_comb[2][4][1400] X0X_POOL;
 static float rv_ap[2][2][600] X0X_POOL;
 static int rv_ci[2][4], rv_ai[2][2];
 static float rv_damp[2][4];
-static float rob_hold, rob_ph;
+static float rob_hold, rob_ph, fx_rph, ph_z[2][4], ph_al, ph_ar;
 static int rob_cnt;
 static float master_g = 0.5f;
 
@@ -1570,6 +1578,7 @@ static void fx_block(const float *mono, const float *drums, int32_t *out, int n,
     float beat = 60.0f / (float)BPM_OF(P[P_TEMPO]), dsec = beat * 0.75f, fb, wetE, wetR, fbR, mixC, bits, levels;
     int hold_n, ring_on;
     float ring_mix;
+    int fxk = PRESETS[P[P_PRESET] % NPRESET].fx;
     while (dsec > 0.5f)
         dsec *= 0.5f;
     ech_d = (int)(dsec * FS);
@@ -1585,8 +1594,16 @@ static void fx_block(const float *mono, const float *drums, int32_t *out, int n,
     hold_n = 1 + (int)((float)robot * (1.0f / 127.0f) * 7.0f);
     ring_on = robot > 70;
     ring_mix = ring_on ? (float)(robot - 70) * (1.0f / 57.0f) * 0.8f : 0.0f;
+    if (fxk == FXK_SLAP)                                   /* a short echo: a slap-back off the barn wall */
+        ech_d = (int)(0.13f * FS);
+    if (fxk == FXK_PHASE) {                                /* the sweep, once a block */
+        float fl = 280.0f * fm_exp2f(2.6f * (0.5f + 0.5f * sn(ch_ph1))), fr = 280.0f * fm_exp2f(2.6f * (0.5f + 0.5f * sn(ch_ph2)));
+        float tl = fm_tanf(FM_PI * fl * (1.0f / FS)), tr2 = fm_tanf(FM_PI * fr * (1.0f / FS));
+        ph_al = (1.0f - tl) / (1.0f + tl);
+        ph_ar = (1.0f - tr2) / (1.0f + tr2);
+    }
     for (i = 0; i < n; i++) {
-        float x = mono[i], l, r, rl, rr, e_l, e_r, in_r, d0, d1, c1, c2;
+        float x = mono[i], l, r, rl, rr, e_l, e_r, in_r, d0, d1, c1, c2 = 0.0f;
         int ri;
         if (robot > 0) {
             if (rob_cnt <= 0) {
@@ -1602,8 +1619,7 @@ static void fx_block(const float *mono, const float *drums, int32_t *out, int n,
                 x = x * (1.0f - ring_mix) + x * sn(rob_ph) * ring_mix * 1.4f;
             }
         }
-        /* chorus: two taps, one a side */
-        ch_buf[ch_w] = x;
+        /* the world's own effect on FLUFFY: chorus, a doubler, a flanger, a phaser, an auto-pan, a ring modulator, or drive */
         ch_ph1 += 0.45f / FS;
         ch_ph2 += 0.61f / FS;
         if (ch_ph1 >= 1.0f)
@@ -1612,17 +1628,63 @@ static void fx_block(const float *mono, const float *drums, int32_t *out, int n,
             ch_ph2 -= 1.0f;
         l = x;
         r = x;
-        if (fluff > 0) {
-            float t1 = (13.0f + 4.0f * sn(ch_ph1)) * 0.001f * FS, t2 = (19.0f + 5.0f * sn(ch_ph2)) * 0.001f * FS;
-            int i1 = (int)t1, i2 = (int)t2;
-            float f1 = t1 - (float)i1, f2 = t2 - (float)i2;
-            float a0 = ch_buf[(ch_w - i1) & (CH_N - 1)], a1 = ch_buf[(ch_w - i1 - 1) & (CH_N - 1)];
-            float b0 = ch_buf[(ch_w - i2) & (CH_N - 1)], b1 = ch_buf[(ch_w - i2 - 1) & (CH_N - 1)];
-            c1 = a0 + (a1 - a0) * f1;
-            c2 = b0 + (b1 - b0) * f2;
-            l = x * (1.0f - mixC * 0.4f) + c1 * mixC;
-            r = x * (1.0f - mixC * 0.4f) + c2 * mixC;
+        c1 = x;
+        if (fluff > 0 && fxk != FXK_PHASE && fxk != FXK_PAN && fxk != FXK_RING && fxk != FXK_DRIVE) {
+            float t1, t2;
+            if (fxk == FXK_FLANGE) {                           /* a jet: a very short, sweeping, feeding-back delay */
+                t1 = (0.0016f + 0.0013f * sn(ch_ph1)) * FS;
+                t2 = (0.0016f + 0.0013f * sn(ch_ph2)) * FS;
+            } else if (fxk == FXK_SLAP) {                      /* a doubler: two fixed, wider copies, a slow sway */
+                t1 = (0.022f + 0.0015f * sn(ch_ph1)) * FS;
+                t2 = (0.031f + 0.0015f * sn(ch_ph2)) * FS;
+            } else {                                           /* chorus: two taps, one a side */
+                t1 = (13.0f + 4.0f * sn(ch_ph1)) * 0.001f * FS;
+                t2 = (19.0f + 5.0f * sn(ch_ph2)) * 0.001f * FS;
+            }
+            {
+                int i1 = (int)t1, i2 = (int)t2;
+                float f1 = t1 - (float)i1, f2 = t2 - (float)i2;
+                float a0 = ch_buf[(ch_w - i1) & (CH_N - 1)], a1 = ch_buf[(ch_w - i1 - 1) & (CH_N - 1)];
+                float b0 = ch_buf[(ch_w - i2) & (CH_N - 1)], b1 = ch_buf[(ch_w - i2 - 1) & (CH_N - 1)];
+                c1 = a0 + (a1 - a0) * f1;
+                c2 = b0 + (b1 - b0) * f2;
+            }
+            if (fxk == FXK_FLANGE) {
+                l = x * (1.0f - mixC * 0.3f) + c1 * mixC * 1.15f;
+                r = x * (1.0f - mixC * 0.3f) + c2 * mixC * 1.15f;
+            } else {
+                l = x * (1.0f - mixC * 0.4f) + c1 * mixC;
+                r = x * (1.0f - mixC * 0.4f) + c2 * mixC;
+            }
+        } else if (fluff > 0 && fxk == FXK_PHASE) {            /* a swirl: four all-pass stages, a side each, swept */
+            float yl = x, yr = x;
+            for (c = 0; c < 4; c++) {
+                float ol = ph_al * yl + ph_z[0][c], or_ = ph_ar * yr + ph_z[1][c];
+                ph_z[0][c] = yl - ph_al * ol;
+                ph_z[1][c] = yr - ph_ar * or_;
+                yl = ol;
+                yr = or_;
+            }
+            l = x * (1.0f - mixC * 0.35f) + yl * mixC;
+            r = x * (1.0f - mixC * 0.35f) + yr * mixC;
+        } else if (fluff > 0 && fxk == FXK_PAN) {              /* a breeze: the sound drifts from side to side, with a little tremolo */
+            float pn = sn(ch_ph2) * mixC * 1.2f, tr = 1.0f - mixC * 0.25f * (0.5f + 0.5f * sn(ch_ph1 * 6.0f - (float)(int)(ch_ph1 * 6.0f)));
+            l = x * (1.0f - pn) * tr;
+            r = x * (1.0f + pn) * tr;
+        } else if (fluff > 0 && fxk == FXK_RING) {             /* a bell-like ring modulation, the knob also tunes it */
+            float rm = mixC * 1.3f > 0.9f ? 0.9f : mixC * 1.3f, car;
+            fx_rph += (140.0f + (float)fluff * 4.0f) * (1.0f / FS);
+            if (fx_rph >= 1.0f)
+                fx_rph -= 1.0f;
+            car = sn(fx_rph);
+            l = x * (1.0f - rm) + x * car * rm * 1.5f;
+            r = x * (1.0f - rm) - x * car * rm * 1.5f;
+        } else if (fluff > 0 && fxk == FXK_DRIVE) {            /* fuzz */
+            float d = 1.0f + (float)fluff * (1.0f / 127.0f) * 9.0f;
+            l = sat(x * d) * (1.0f / (0.6f + 0.4f * d * 0.5f));
+            r = l;
         }
+        ch_buf[ch_w] = (fxk == FXK_FLANGE && fluff > 0) ? x + c1 * 0.55f : x;
         ch_w = (ch_w + 1) & (CH_N - 1);
         /* echo: ping-pong */
         ri = echo_w - ech_d;

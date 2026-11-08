@@ -97,6 +97,7 @@ static void stars_sky(int n, int ymax, int speed, uint16_t c)
 #include "scenes_a.c"
 #include "scenes_b.c"
 #include "scenes_c.c"
+#include "scenes_piano.c"
 static void bg_lila(void);
 static void act_lila(int cx, int cy);
 static void fg_lila(void);
@@ -117,8 +118,11 @@ static const scene_t SCENES[NPRESET] = {
     {"OCEAN", bg_ocean, act_ocean, fg_ocean, 112, 112, 0x1C6EA0, 0x40C8FF},
     {"CASTLE", bg_castle, act_castle, fg_castle, 120, 176, 0xFFC8E8, 0xFF80D0},
     {"JUNGLE", bg_jungle, act_jungle, fg_jungle, 112, 178, 0xBDE8A0, 0x80E040},
-    {"LILA", bg_lila, act_lila, fg_lila, 56, 186, 0xCDEBFF, 0xFF80C0},
-    {"GOLDILOCKS", bg_goldy, act_goldy, fg_goldy, 56, 188, 0xD0F0D0, 0xFFD040},
+    {"PIANO", bg_piano, act_piano, fg_piano, 120, 128, 0x2A1030, 0xFFD450},
+    {"E-PIANO", bg_piano, act_piano, fg_piano, 120, 128, 0x20083A, 0x50F0FF},
+    {"ORGAN", bg_piano, act_piano, fg_piano, 120, 128, 0x40303C, 0xFFC080},
+    {"FABLES", bg_lila, act_lila, fg_lila, 56, 186, 0xCDEBFF, 0xFF80C0},
+    {"BOUCLE", bg_goldy, act_goldy, fg_goldy, 56, 188, 0xD0F0D0, 0xFFD040},
 };
 #include "scenes_story.c"
 

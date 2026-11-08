@@ -112,6 +112,9 @@ static const uint8_t LCD_SEQ[] = {
     0x13, 0,                     /* NORON */
 };
 
+/* the light is a pin, active low: the screen can be dark while the rest runs (the screen-free modes) */
+void plat_backlight(int on) { fm1_lcd_backlight(on); }
+
 static void lcd_init(void)
 {
     uint32_t r, x;

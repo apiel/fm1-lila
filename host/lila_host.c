@@ -81,6 +81,8 @@ void plat_leds(uint32_t b, uint32_t k)
     lit_keys = k;
 }
 void plat_glow(int on) { (void)on; }
+static int backlight = 1;
+void plat_backlight(int on) { backlight = on; }
 void plat_buttons_dim(uint32_t b) { dim_btn = b; }
 void plat_play_red(int red) { (void)red; }
 void plat_keys_dim(uint32_t k) { dim_keys = k; }
@@ -381,7 +383,7 @@ static const char *const PN[NP] = {"ECHO", "SPACE", "FLUFF", "ROBOT", "CUT", "RE
                                    "WAVE", "BUDDY", "BIG", "METAL", "BEND", "STARS", "SIZE", "WIGGLE", "CTYPE", "CAMT", "CTIME", "VIBD", "VIBS", "VIBDLY", "AMR", "AMD",
                                    "DUTY", "PWMD", "CHIP", "CHIPS", "VOWEL", "FORM", "NOISE", "NZDEC", "STOMP", "BELL", "CHAT", "CHATR", "PING", "PINGT", "FMR", "TEMPO", "KEY", "EASY", "FRIENDS", "ARP", "ARPSPD", "ARPRNG",
                                    "STICKY", "BEAT", "BEATVOL", "BOUNCE", "TUNING", "MSPEED", "MMODE", "MREPEAT", "MBAND", "RLEN", "RVOL", "RSPEED", "RFUNNY", "BOX",
-                                   "ACT", "STICK", "COLOR", "MOOD", "PRESET", "MELODY", "OCT"};
+                                   "ACT", "STICK", "COLOR", "MOOD", "PRESET", "MELODY", "OCT", "SCREEN"};
 static int pidx(const char *s)                           /* a parameter by name (P_ECHO: "ECHO") or by number */
 {
     int i = find_name(PN, NP, s);
@@ -458,6 +460,7 @@ int main(int argc, char **argv)
             if (a[0][0] != 'r') { held_btn |= 1u << i; }
             if (a[0][0] == 't') { run_ms(60); }
             if (a[0][0] != 'p') { held_btn &= ~(1u << i); run_ms(40); } else run_ms(20);
+            if (a[0][0] == 't' && (i == B_SAVE || i == B_GLO)) run_ms(160);   /* the app waits 140 ms for the other half of SAVE+GLO */
         } else if (!strcmp(a[0], "key")) {
             i = key_of(a[1]);
             if (!strcmp(a[2], "down")) held_keys |= 1u << i; else held_keys &= ~(1u << i);

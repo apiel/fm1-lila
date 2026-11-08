@@ -45,6 +45,15 @@ FM1_INLINE void fm1_lcd_hw_init(void)
     FM1_LCD_SPI_BAUD = 4u;
 }
 
+/* the backlight is a pin, active low */
+FM1_INLINE void fm1_lcd_backlight(int on)
+{
+    if (on)
+        FM1_LCD_PA_OUT &= ~FM1_LCD_BL;
+    else
+        FM1_LCD_PA_OUT |= FM1_LCD_BL;
+}
+
 FM1_INLINE void fm1_lcd_baud(uint32_t b) { FM1_LCD_SPI_BAUD = b; }
 
 static void fm1_lcd_wait(void)

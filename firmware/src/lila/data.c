@@ -12,66 +12,80 @@ static const pv_t SET_BIRD[] = {
     {P_CAMT, 32}, {P_CTIME, 28},
 };
 static const pv_t SET_COW[] = {
-    {P_ECHO, 12}, {P_SPACE, 34}, {P_FLUFF, 10}, {P_CUT, 52}, {P_RESO, 60}, {P_GRIT, 6}, {P_ATK, 34}, {P_PLUCK, 8},
+    {P_ECHO, 12}, {P_SPACE, 34}, {P_FLUFF, 40}, {P_CUT, 52}, {P_RESO, 60}, {P_GRIT, 6}, {P_ATK, 34}, {P_PLUCK, 8},
     {P_REL, 50}, {P_BOING, 62}, {P_LSPD, 38}, {P_WAVE, 92}, {P_BUDDY, 24}, {P_BIG, 44}, {P_FMR, 17}, {P_NOISE, 10},
     {P_NZDEC, 60}, {P_CTYPE, 1}, {P_CAMT, 16}, {P_CTIME, 91}, {P_FORM, 96}, {P_VOWEL, 16}, {P_VIBD, 34}, {P_VIBS, 40},
-    {P_VIBDLY, 70}, {P_BELL, 40},
+    {P_VIBDLY, 70}, {P_BELL, 40}, {P_FTYPE, 5},
 };
 static const pv_t SET_DOG[] = {
     {P_ECHO, 74}, {P_SPACE, 72}, {P_CUT, 88}, {P_RESO, 26}, {P_ATK, 44}, {P_REL, 88}, {P_BOING, 34}, {P_LSPD, 30},
     {P_LWAVE, 2}, {P_WAVE, 44}, {P_BUDDY, 22}, {P_BIG, 16}, {P_FMR, 8}, {P_CTYPE, 1}, {P_CAMT, 64}, {P_CTIME, 107},
-    {P_VIBD, 46}, {P_VIBS, 70}, {P_VIBDLY, 62}, {P_VOWEL, 10}, {P_FORM, 84}, {P_AMR, 70},
+    {P_VIBD, 46}, {P_VIBS, 70}, {P_VIBDLY, 62}, {P_VOWEL, 10}, {P_FORM, 84}, {P_AMR, 70}, {P_FLUFF, 54}, {P_FTYPE, 3},
 };
 static const pv_t SET_FROG[] = {
     {P_ECHO, 18}, {P_SPACE, 54}, {P_CUT, 70}, {P_RESO, 56}, {P_GRIT, 10}, {P_PLUCK, 88}, {P_REL, 26}, {P_BOING, 40},
     {P_LWHAT, 2}, {P_LWAVE, 2}, {P_WAVE, 84}, {P_FMR, 17}, {P_NOISE, 8}, {P_NZDEC, 20}, {P_CTYPE, 8}, {P_CAMT, 37},
-    {P_CTIME, 62}, {P_AMR, 83}, {P_AMD, 104}, {P_VOWEL, 34}, {P_FORM, 84},
+    {P_CTIME, 62}, {P_AMR, 83}, {P_AMD, 104}, {P_VOWEL, 34}, {P_FORM, 84}, {P_FLUFF, 66}, {P_FTYPE, 4},
 };
 static const pv_t SET_SPACE[] = {
     {P_ECHO, 66}, {P_SPACE, 96}, {P_FLUFF, 64}, {P_CUT, 58}, {P_RESO, 46}, {P_ATK, 74}, {P_REL, 88}, {P_BOING, 46},
     {P_LSPD, 18}, {P_LDEP, 62}, {P_LWHAT, 1}, {P_WAVE, 84}, {P_BUDDY, 84}, {P_BIG, 44}, {P_METAL, 8}, {P_NZDEC, 127},
-    {P_CTYPE, 5}, {P_CTIME, 30},
+    {P_CTYPE, 5}, {P_CTIME, 30}, {P_FTYPE, 3},
 };
 static const pv_t SET_METEOR[] = {
     {P_ECHO, 62}, {P_SPACE, 54}, {P_CUT, 104}, {P_RESO, 40}, {P_GRIT, 10}, {P_PLUCK, 100}, {P_REL, 70}, {P_BOING, 58},
     {P_LSPD, 60}, {P_WAVE, 22}, {P_BUDDY, 20}, {P_BIG, 20}, {P_METAL, 112}, {P_FMR, 51}, {P_NOISE, 56}, {P_NZDEC, 93},
-    {P_CTYPE, 5}, {P_CAMT, 74}, {P_CTIME, 45}, {P_STOMP, 56}, {P_CHAT, 40}, {P_CHATR, 50},
+    {P_CTYPE, 5}, {P_CAMT, 74}, {P_CTIME, 45}, {P_STOMP, 56}, {P_CHAT, 40}, {P_CHATR, 50}, {P_FLUFF, 74}, {P_FTYPE, 2},
 };
 static const pv_t SET_BLOCKS[] = {
     {P_ECHO, 10}, {P_SPACE, 10}, {P_ROBOT, 44}, {P_CUT, 122}, {P_GRIT, 14}, {P_PLUCK, 76}, {P_REL, 18}, {P_LSPD, 70},
     {P_LDEP, 14}, {P_LWAVE, 2}, {P_WAVE, 127}, {P_FMR, 8}, {P_DUTY, 44}, {P_PWMD, 48}, {P_CHIP, 1}, {P_CHIPS, 100},
-    {P_CTYPE, 5}, {P_CAMT, 21}, {P_CTIME, 39},
+    {P_CTYPE, 5}, {P_CAMT, 21}, {P_CTIME, 39}, {P_FLUFF, 48}, {P_FTYPE, 1},
 };
 static const pv_t SET_DINO[] = {
-    {P_ECHO, 34}, {P_SPACE, 40}, {P_FLUFF, 20}, {P_CUT, 40}, {P_RESO, 62}, {P_GRIT, 70}, {P_ATK, 8}, {P_PLUCK, 28},
+    {P_ECHO, 34}, {P_SPACE, 40}, {P_FLUFF, 70}, {P_CUT, 40}, {P_RESO, 62}, {P_GRIT, 70}, {P_ATK, 8}, {P_PLUCK, 28},
     {P_REL, 60}, {P_BOING, 94}, {P_LSPD, 88}, {P_LDEP, 74}, {P_LWHAT, 2}, {P_LWAVE, 1}, {P_WAVE, 90}, {P_BUDDY, 100},
     {P_BIG, 112}, {P_METAL, 18}, {P_FMR, 8}, {P_NOISE, 48}, {P_NZDEC, 100}, {P_CTYPE, 5}, {P_CAMT, 42}, {P_CTIME, 100},
-    {P_AMR, 66}, {P_AMD, 72}, {P_VOWEL, 58}, {P_FORM, 72}, {P_STOMP, 64},
+    {P_AMR, 66}, {P_AMD, 72}, {P_VOWEL, 58}, {P_FORM, 72}, {P_STOMP, 64}, {P_FTYPE, 3},
 };
 static const pv_t SET_ROBOT[] = {
     {P_ECHO, 26}, {P_SPACE, 20}, {P_ROBOT, 82}, {P_CUT, 88}, {P_RESO, 62}, {P_GRIT, 20}, {P_PLUCK, 72}, {P_REL, 18},
     {P_BOING, 56}, {P_LSPD, 96}, {P_LDEP, 50}, {P_LWHAT, 1}, {P_LWAVE, 2}, {P_WAVE, 100}, {P_BUDDY, 30}, {P_BIG, 20},
-    {P_METAL, 26}, {P_CHAT, 52}, {P_CHATR, 70}, {P_VOWEL, 84}, {P_FORM, 58},
+    {P_METAL, 26}, {P_CHAT, 52}, {P_CHATR, 70}, {P_VOWEL, 84}, {P_FORM, 58}, {P_FLUFF, 56}, {P_FTYPE, 4},
 };
 static const pv_t SET_OCEAN[] = {
     {P_ECHO, 74}, {P_SPACE, 100}, {P_FLUFF, 92}, {P_CUT, 78}, {P_RESO, 24}, {P_ATK, 2}, {P_PLUCK, 100}, {P_REL, 52},
     {P_BOING, 30}, {P_LSPD, 26}, {P_LDEP, 40}, {P_BUDDY, 22}, {P_BIG, 30}, {P_METAL, 36}, {P_FMR, 8}, {P_CTYPE, 6},
     {P_CAMT, 37}, {P_CTIME, 104}, {P_VIBD, 22}, {P_VIBS, 30}, {P_VIBDLY, 84}, {P_PING, 44}, {P_PINGT, 64},
-    {P_CHAT, 30}, {P_CHATR, 30},
+    {P_CHAT, 30}, {P_CHATR, 30}, {P_FTYPE, 5},
 };
 static const pv_t SET_CASTLE[] = {
     {P_ECHO, 60}, {P_SPACE, 84}, {P_FLUFF, 40}, {P_CUT, 118}, {P_RESO, 14}, {P_PLUCK, 110}, {P_REL, 90}, {P_BOING, 24},
     {P_LSPD, 44}, {P_LDEP, 20}, {P_LWHAT, 1}, {P_WAVE, 4}, {P_BUDDY, 28}, {P_METAL, 64}, {P_STARS, 38},
 };
 static const pv_t SET_JUNGLE[] = {
-    {P_ECHO, 22}, {P_SPACE, 40}, {P_FLUFF, 30}, {P_CUT, 56}, {P_RESO, 44}, {P_GRIT, 14}, {P_ATK, 44}, {P_REL, 54},
+    {P_ECHO, 22}, {P_SPACE, 40}, {P_FLUFF, 64}, {P_CUT, 56}, {P_RESO, 44}, {P_GRIT, 14}, {P_ATK, 44}, {P_REL, 54},
     {P_BOING, 76}, {P_LSPD, 74}, {P_WAVE, 88}, {P_BUDDY, 54}, {P_BIG, 52}, {P_FMR, 8}, {P_NOISE, 16}, {P_NZDEC, 34},
     {P_CTYPE, 6}, {P_CAMT, 26}, {P_CTIME, 62}, {P_VOWEL, 60}, {P_FORM, 52}, {P_VIBD, 22}, {P_VIBS, 64}, {P_VIBDLY, 60},
-    {P_STOMP, 34},
+    {P_STOMP, 34}, {P_FTYPE, 4},
+};
+
+/* the three pianos: a hammer, a tine, a pipe */
+static const pv_t SET_PIANO[] = {
+    {P_ECHO, 8}, {P_SPACE, 50}, {P_FLUFF, 16}, {P_CUT, 106}, {P_RESO, 6}, {P_PLUCK, 84}, {P_REL, 52}, {P_BOING, 46}, {P_WAVE, 14},
+    {P_BUDDY, 12}, {P_BIG, 14}, {P_METAL, 34}, {P_FMR, 25}, {P_WIGGLE, 0},
+};
+static const pv_t SET_EPIANO[] = {
+    {P_ECHO, 22}, {P_SPACE, 38}, {P_FLUFF, 62}, {P_CUT, 96}, {P_RESO, 14}, {P_FTYPE, 5}, {P_PLUCK, 72}, {P_REL, 56}, {P_BOING, 36},
+    {P_LSPD, 38}, {P_LDEP, 30}, {P_LWHAT, 2}, {P_BUDDY, 22}, {P_BIG, 10}, {P_METAL, 58}, {P_FMR, 8},
+};
+static const pv_t SET_ORGAN[] = {
+    {P_ECHO, 6}, {P_SPACE, 74}, {P_FLUFF, 70}, {P_CUT, 86}, {P_RESO, 18}, {P_FTYPE, 4}, {P_ATK, 8}, {P_PLUCK, 0}, {P_REL, 14},
+    {P_BOING, 10}, {P_WAVE, 56}, {P_BUDDY, 10}, {P_BIG, 52}, {P_METAL, 22}, {P_FMR, 17}, {P_VIBD, 14}, {P_VIBS, 70}, {P_VIBDLY, 40},
 };
 
 /* the two story worlds: a clear voice, a little room */
-static const pv_t SET_LILA[] = {
+static const pv_t SET_FABLE[] = {
     {P_CUT, 112}, {P_RESO, 8}, {P_REL, 34}, {P_SPACE, 34}, {P_ECHO, 8}, {P_CTIME, 64}, {P_BUDDY, 0}, {P_WAVE, 0}, {P_PINGT, 30},
 };
 static const pv_t SET_GOLDY[] = {
@@ -80,20 +94,23 @@ static const pv_t SET_GOLDY[] = {
 
 #define SET(n) SET_##n, (uint8_t)(sizeof SET_##n / sizeof SET_##n[0])
 const preset_t PRESETS[NPRESET] = {
-    {"BIRD", "TWEET", SET(BIRD), 1, 95, 3, -1},
-    {"COW", "MOO", SET(COW), -1, 60, 0, -1},
-    {"DOG", "WOOF", SET(DOG), 0, 126, 0, -1},
-    {"FROG", "RIBBIT", SET(FROG), -1, 94, 2, -1},
-    {"SPACE", "WHOOSH", SET(SPACE), 0, 77, 1, -1},
-    {"METEOR", "ZAP", SET(METEOR), 0, 54, 4, -1},
-    {"BLOCKS", "BLOOP", SET(BLOCKS), 0, 55, 1, -1},
-    {"DINO", "ROAR", SET(DINO), -2, 101, 0, -1},
-    {"ROBOT", "BEEP", SET(ROBOT), 0, 111, 1, -1},
-    {"OCEAN", "BLUB", SET(OCEAN), 0, 90, 2, -1},
-    {"CASTLE", "TINKLE", SET(CASTLE), 1, 105, 4, -1},
-    {"JUNGLE", "TRUMPET", SET(JUNGLE), -1, 62, 3, -1},
-    {"LILA", "UNE HISTOIRE", SET(LILA), 0, 75, 0, 0},
-    {"GOLDILOCKS", "A STORY", SET(GOLDY), 0, 80, 0, 1},
+    {"BIRD", "TWEET", SET(BIRD), 1, 95, 3, -1, FXK_CHORUS},
+    {"COW", "MOO", SET(COW), -1, 60, 0, -1, FXK_SLAP},
+    {"DOG", "WOOF", SET(DOG), 0, 126, 0, -1, FXK_FLANGE},
+    {"FROG", "RIBBIT", SET(FROG), -1, 82, 2, -1, FXK_PHASE},
+    {"SPACE", "WHOOSH", SET(SPACE), 0, 77, 1, -1, FXK_PHASE},
+    {"METEOR", "ZAP", SET(METEOR), 0, 66, 4, -1, FXK_FLANGE},
+    {"BLOCKS", "BLOOP", SET(BLOCKS), 0, 110, 1, -1, FXK_SLAP},
+    {"DINO", "ROAR", SET(DINO), -2, 64, 0, -1, FXK_DRIVE},
+    {"ROBOT", "BEEP", SET(ROBOT), 0, 150, 1, -1, FXK_RING},
+    {"OCEAN", "BLUB", SET(OCEAN), 0, 90, 2, -1, FXK_CHORUS},
+    {"CASTLE", "TINKLE", SET(CASTLE), 1, 105, 4, -1, FXK_CHORUS},
+    {"JUNGLE", "TRUMPET", SET(JUNGLE), -1, 54, 3, -1, FXK_PAN},
+    {"PIANO", "PLINK", SET(PIANO), 0, 92, 0, -1, FXK_CHORUS},
+    {"E-PIANO", "DOO-WAH", SET(EPIANO), 0, 90, 0, -1, FXK_PHASE},
+    {"ORGAN", "HMMM", SET(ORGAN), 0, 78, 0, -1, FXK_PAN},
+    {"FABLES", "UNE HISTOIRE", SET(FABLE), 0, 75, 0, 0, FXK_CHORUS},
+    {"BOUCLE", "UNE HISTOIRE", SET(GOLDY), 0, 80, 0, 1, FXK_CHORUS},
 };
 
 /* a melody is a list of notes: letter, optional # or b, octave (c4 = middle C), length. Length: 0 a sixteenth, 1 an eighth,
