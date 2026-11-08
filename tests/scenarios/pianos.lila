@@ -5,6 +5,8 @@ turn PRESET -1
 turn PRESET -1
 turn PRESET -1
 turn PRESET -1
+turn PRESET -1
+turn PRESET -1
 expectp PRESET 12
 wait 900
 tapkey 2

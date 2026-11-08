@@ -98,9 +98,9 @@ static void stars_sky(int n, int ymax, int speed, uint16_t c)
 #include "scenes_b.c"
 #include "scenes_c.c"
 #include "scenes_piano.c"
-static void bg_lila(void);
-static void act_lila(int cx, int cy);
-static void fg_lila(void);
+static void bg_fable(void);
+static void act_fable(int cx, int cy);
+static void fg_fable(void);
 static void bg_goldy(void);
 static void act_goldy(int cx, int cy);
 static void fg_goldy(void);
@@ -108,7 +108,7 @@ static void fg_goldy(void);
 static const scene_t SCENES[NPRESET] = {
     {"BIRD", bg_bird, act_bird, fg_bird, 112, 150, 0xCDEBFF, 0xFFC83C},
     {"COW", bg_cow, act_cow, fg_cow, 120, 176, 0xB8E8FF, 0xFFFFFF},
-    {"DOG", bg_dog, act_dog, fg_dog, 120, 178, 0xBFE6FF, 0xE8A050},
+    {"WOLF", bg_dog, act_dog, fg_dog, 120, 178, 0xBFE6FF, 0xE8A050},
     {"FROG", bg_frog, act_frog, fg_frog, 120, 176, 0x4F9A90, 0x6EDC50},
     {"SPACE", bg_space, act_space, fg_space, 120, 112, 0x10163A, 0xA070FF},
     {"METEOR", bg_meteor, act_meteor, fg_meteor, 120, 116, 0x20102A, 0xFF8030},
@@ -121,10 +121,13 @@ static const scene_t SCENES[NPRESET] = {
     {"PIANO", bg_piano, act_piano, fg_piano, 120, 128, 0x2A1030, 0xFFD450},
     {"E-PIANO", bg_piano, act_piano, fg_piano, 120, 128, 0x20083A, 0x50F0FF},
     {"ORGAN", bg_piano, act_piano, fg_piano, 120, 128, 0x40303C, 0xFFC080},
-    {"FABLES", bg_lila, act_lila, fg_lila, 56, 186, 0xCDEBFF, 0xFF80C0},
+    {"CORBEAU", bg_fable, act_fable, fg_fable, 80, 200, 0xCDEBFF, 0x8080B0},
+    {"BOEUF", bg_fable, act_fable, fg_fable, 120, 176, 0xB8E8FF, 0x6EDC50},
+    {"LION", bg_fable, act_fable, fg_fable, 90, 190, 0xBDE8A0, 0xFFA830},
     {"BOUCLE", bg_goldy, act_goldy, fg_goldy, 56, 188, 0xD0F0D0, 0xFFD040},
 };
 #include "scenes_story.c"
+#include "scenes_fables.c"
 
 /* the world and everything the sound does to it, into the band that is set up */
 static void world_draw(void)

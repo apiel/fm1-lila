@@ -18,7 +18,7 @@ makes the animal grow.
 Each world also has **its own effect** on the FLUFFY knob (chorus, doubler, flanger, phaser, auto-pan, ring modulator or fuzz) and **its
 own kind of filter** (soft, talky, thin, hollow, honk, vocal). Three **piano worlds** (a piano, an electric piano, an organ) turn the keys
 into a keyboard on the screen: every key lights up and sends a coloured note rising. And **two story worlds**: each key tells a part of a
-story (in French: three fables of La Fontaine, and *Boucle d'or et les trois ours*), PLAY tells it all, and the voice is played by the
+story (in French: three fables of La Fontaine, each its own world with its own pictures, and *Boucle d'or et les trois ours*), PLAY tells it all, and the voice is played by the
 synth, so the filter, the effects and the LFO still work on it.
 
 For a child who is too young for a screen: **SAVE + GLO together** change the screen: all of it, then only the name of a world, a beat or a

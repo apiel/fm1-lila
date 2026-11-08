@@ -1,0 +1,10 @@
+# LE CORBEAU ET LE RENARD (fr): a fable of La Fontaine (public domain), retold in simple prose. # one line per key, in order (nine parts). A line: SCENE|text. The picture follows the part being told.
+SCENE|Le Corbeau et le Renard, une fable de monsieur de La Fontaine.
+SCENE|Maître Corbeau, perché sur un arbre, tenait dans son bec un beau fromage.
+SCENE|Maître Renard, attiré par l'odeur, vint lui parler à peu près ainsi.
+SCENE|Bonjour, monsieur du Corbeau ! Que vous êtes joli ! Que vous me semblez beau !
+SCENE|Si votre chant est aussi beau que vos plumes, vous êtes le roi des oiseaux !
+SCENE|Le corbeau ne se sentit plus de joie. Pour montrer sa belle voix, il ouvrit grand le bec.
+SCENE|Et le fromage tomba !
+SCENE|Le renard s'en saisit et dit : Mon bon monsieur, tout flatteur vit aux dépens de celui qui l'écoute.
+SCENE|Cette leçon vaut bien un fromage, sans doute. Le corbeau, honteux, jura qu'on ne l'y prendrait plus.

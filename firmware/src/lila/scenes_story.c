@@ -1,11 +1,10 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
-/* The two story worlds. The fables of La Fontaine are told in front of the worlds of the synth (the part's scene picks the world,
- * and its animal comes along when the scene says so); Goldilocks has her own forest, house, kitchen, chairs and bedroom, and the
+/* The two story worlds. Goldilocks has her own forest, house, kitchen, chairs and bedroom, and the
  * three bears. The picture is the part being told (story_part), or the last one told. Included by scenes.c after SCENES. */
 #pragma once
 
-static int story_last;                                  /* the part on screen when none is being told */
-static int spart(void) { return story_part >= 0 ? (story_last = story_part) : story_last; }
+static int story_last[4];                               /* per story: the part on screen when none is being told */
+static int spart(int s) { return story_part >= 0 ? (story_last[s] = story_part) : story_last[s]; }
 
 /* a little girl, feet at (cx, cy): Goldilocks (golden curls, a blue dress; the other look is unused now) */
 static void girl(int cx, int cy, int golden)
@@ -47,24 +46,6 @@ static void girl(int cx, int cy, int golden)
         AL(0, -65, 5, -68, 1, ink);
     }
 }
-
-/* ------------------------------------------------------------ the fables --- */
-static void bg_lila(void)
-{
-    SCENES[story_scene(0, spart()) & 0x7F].bg();
-}
-static void act_lila(int cx, int cy)
-{
-    int code = story_scene(0, spart()), w = code & 0x7F, sw = g_sw, sh = g_sh;
-    if ((code & 0x80) && w < NWORLD) {                          /* the fable's animal is there: in its own world, where it stands */
-        g_sw = sw * 9 / 10;
-        g_sh = sh * 9 / 10;
-        SCENES[w].actor(SCENES[w].hx + (cx - 56), SCENES[w].hy);
-        g_sw = sw;
-        g_sh = sh;
-    }
-}
-static void fg_lila(void) {}
 
 /* ------------------------------------------------------------- Goldilocks --- */
 enum { GS_FOREST, GS_HOUSE, GS_KITCHEN, GS_CHAIRS, GS_BEDROOM };
@@ -126,7 +107,7 @@ static void bear(int x, int y, int s, uint16_t fur, int bow)    /* feet at (x, y
 }
 static void bg_goldy(void)
 {
-    int code = story_scene(1, spart()) & 0x7F, part = spart(), i;
+    int code = story_scene(3, spart(3)) & 0x7F, part = spart(3), i;
     if (code == GS_FOREST) {
         forest();
     } else if (code == GS_HOUSE) {
@@ -191,7 +172,7 @@ static void bg_goldy(void)
 }
 static void act_goldy(int cx, int cy)
 {
-    int code = story_scene(1, spart()), part = spart();
+    int code = story_scene(3, spart(3)), part = spart(3);
     if (code & 0x80) {                                            /* the three bears */
         int far = (code & 0x7F) == GS_HOUSE || (code & 0x7F) == GS_FOREST;
         bear(150, 186, far ? 70 : 84, K(140, 90, 50), 0);

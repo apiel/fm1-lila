@@ -1,0 +1,10 @@
+# LA GRENOUILLE QUI VOULAIT SE FAIRE AUSSI GROSSE QUE LE BOEUF (fr): a fable of La Fontaine (public domain), retold. # one line per key, in order (nine parts). A line: SCENE|text. The picture follows the part being told.
+SCENE|La Grenouille qui voulait se faire aussi grosse que le Bœuf, une fable de La Fontaine.
+SCENE|Une grenouille vit un bœuf qui lui sembla de bien belle taille.
+SCENE|Elle, qui n'était pas plus grosse qu'un œuf, voulut devenir aussi grosse que lui.
+SCENE|Elle s'étendit, s'enfla, se gonfla : Regardez ! Suis-je aussi grosse que lui ?
+SCENE|Nenni, dit le bœuf. Vous n'y êtes pas du tout !
+SCENE|La petite grenouille s'enfla encore plus, et prit un air bien fier.
+SCENE|Elle s'enfla tellement, tellement, qu'elle n'en pouvait plus !
+SCENE|Pouf ! Elle se dégonfla, toute petite et toute honteuse.
+SCENE|Moralité : chacun doit rester comme il est. Le bœuf, lui, mâchait tranquillement son herbe.

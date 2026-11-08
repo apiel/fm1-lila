@@ -139,7 +139,7 @@ turn PRESET 1
 expectp PRESET 1
 turn PRESET -1
 turn PRESET -1
-expectp PRESET 16
+expectp PRESET 18
 turn PRESET 1
 expectp PRESET 0
 turn ALGO 1

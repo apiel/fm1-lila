@@ -92,7 +92,7 @@ codes it (`tools/lpc_enc.c`: 12th-order LPC at 11025 Hz, 50 frames of 10 bytes a
 ```
 python3 -m venv ~/piper && ~/piper/bin/pip install piper-tts
 curl -LO https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/fr/fr_FR/siwis/medium/fr_FR-siwis-medium.onnx      # and its .onnx.json
-python3 tools/story_make.py assets/stories/fables_fr.txt fr_FR-siwis-medium.onnx --piper ~/piper/bin/piper
+python3 tools/story_make.py assets/stories/corbeau_fr.txt fr_FR-siwis-medium.onnx --piper ~/piper/bin/piper
 ```
 
 `build/t/lpc_enc -d NAME.lpc out.raw` decodes a coding with a plain pulse, to listen to it alone (11025 Hz mono 16-bit).

@@ -89,7 +89,7 @@ static const wk_t WK_COW[] = {
 static const wk_t WK_DOG[] = {
     WK(PG_HOME, 0, "SIREN", P_CTYPE, 3, 0, N_SIREN, V_SIREN), WK(PG_HOME, 1, "HOWL", P_CAMT, 127, 0, 0, 0), WK(PG_HOME, 2, "SLOW", P_CTIME, 127, 0, 0, 0),
     WK(PG_EDIT, 1, "OOOH", P_VOWEL, 127, 0, 0, 0), WK(PG_EDIT, 2, "THROAT", P_FORM, 127, 0, 0, 0), WK(PG_EDIT, 3, "SHAKE", P_VIBD, 127, 0, 0, 0),
-    WK(PG_FX, 0, "CANYON", P_ECHO, 127, 0, 0, 0), WK(PG_FX, 1, "NIGHT", P_SPACE, 127, 0, 0, 0), WK(PG_FX, 2, "JET", P_FLUFF, 127, 0, 0, 0), WK(PG_FX, 3, "TINNY", P_ROBOT, 127, 0, 0, 0)};
+    WK(PG_FX, 0, "CANYON", P_ECHO, 127, 0, 0, 0), WK(PG_FX, 1, "NIGHT", P_SPACE, 127, 0, 0, 0), WK(PG_FX, 2, "PACK", P_FLUFF, 127, 0, 0, 0), WK(PG_FX, 3, "TINNY", P_ROBOT, 127, 0, 0, 0)};
 static const wk_t WK_FROG[] = {
     WK(PG_HOME, 0, "STYLE", P_CTYPE, 3, 0, N_FROGSTYLE, V_FROGSTYLE), WK(PG_HOME, 1, "GAP", P_CTIME, 127, 0, 0, 0), WK(PG_HOME, 2, "JUMP", P_CAMT, 127, 0, 0, 0),
     WK(PG_HOME, 3, "SIZE", P_SIZE, 127, 0, 0, 0),
@@ -161,7 +161,7 @@ static const wk_t WK_STORY[] = {
 #define WKS(t) {t, (uint8_t)(sizeof t / sizeof t[0])}
 static const struct { const wk_t *t; uint8_t n; } WORLD_KNOBS[NPRESET] = {
     WKS(WK_BIRD), WKS(WK_COW), WKS(WK_DOG), WKS(WK_FROG), WKS(WK_SPACE), WKS(WK_METEOR), WKS(WK_BLOCKS), WKS(WK_DINO), WKS(WK_ROBOT),
-    WKS(WK_OCEAN), WKS(WK_CASTLE), WKS(WK_JUNGLE), WKS(WK_PIANO), WKS(WK_EPIANO), WKS(WK_ORGAN), WKS(WK_STORY), WKS(WK_STORY)};
+    WKS(WK_OCEAN), WKS(WK_CASTLE), WKS(WK_JUNGLE), WKS(WK_PIANO), WKS(WK_EPIANO), WKS(WK_ORGAN), WKS(WK_STORY), WKS(WK_STORY), WKS(WK_STORY), WKS(WK_STORY)};
 
 static int story_world(void) { return PRESETS[P[P_PRESET] % NPRESET].story; }
 static int story_busy(void) { return story_all || story_part >= 0; }

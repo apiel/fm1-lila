@@ -1,0 +1,10 @@
+# LE LION ET LE RAT (fr): a fable of La Fontaine (public domain), retold in simple prose. # one line per key, in order (nine parts). A line: SCENE|text. The picture follows the part being told.
+SCENE|Le Lion et le Rat, une fable de La Fontaine.
+SCENE|Un lion dormait dans la jungle. Un petit rat, qui passait par là, lui courut sur le dos.
+SCENE|Le lion se réveilla en colère et attrapa le rat dans sa grosse patte.
+SCENE|Pardon, grand roi ! dit le rat. Laissez-moi partir, et un jour je vous le rendrai.
+SCENE|Le lion éclata de rire. Toi, si petit, m'aider, moi ? Allez, va-t'en !
+SCENE|Quelque temps après, le lion tomba dans un filet de chasseurs. Il rugit de toutes ses forces.
+SCENE|Le petit rat entendit ses cris. Il accourut, et rongea les cordes, une à une.
+SCENE|Le filet s'ouvrit, et le lion fut libre. Merci, petit rat ! dit-il.
+SCENE|Moralité : on a souvent besoin d'un plus petit que soi. Fin !

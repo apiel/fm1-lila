@@ -3,15 +3,15 @@
 """gen_stories.py OUT.h: the stories (assets/stories/*.txt and the .lpc made from them by tools/story_make.py) as C, for synth.c.
 
 The texts become the captions (ASCII: the screen's font has no accents) and each line's scene code: the world drawn behind it
-(the fables: a world index; Goldilocks: a room), + 0x80 when the scene's characters are there too."""
+(the fables: unused, the picture follows the part; Goldilocks: a room), + 0x80 when the scene's characters are there too."""
 import struct
 import sys
 import unicodedata
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-STORIES = ["fables_fr", "goldilocks_fr"]          # story 0, 1: the presets' `story` field
-SCENES = {"fables_fr": "BIRD COW DOG FROG SPACE METEOR BLOCKS DINO ROBOT OCEAN CASTLE JUNGLE".split(),
+STORIES = ["corbeau_fr", "boeuf_fr", "lion_fr", "goldilocks_fr"]          # story 0..3: the presets' `story` field
+SCENES = {"corbeau_fr": ["SCENE"], "boeuf_fr": ["SCENE"], "lion_fr": ["SCENE"],
           "goldilocks_fr": "FOREST HOUSE KITCHEN CHAIRS BEDROOM".split()}
 
 

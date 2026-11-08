@@ -178,8 +178,8 @@ static void act_dog(int cx, int cy)
 {
     int howl = sc.ctype == CT_HOWL, tilt = sc.mouth * (howl ? 62 : 14) / 255, open = sc.mouth * 40 / 255, wag = isin((int)(TM / 6) + sc.bounce) * 12 >> 7;
     int ang = -6 + tilt, ln = sc.lean / 2, hx = 12 + ln, hy = -92 - tilt / 5, a256 = ang * 256 / 360, sx, sy, jx, jy;
-    uint16_t tan = K(206, 140, 76), dk = K(150, 92, 46), lt = K(246, 216, 166), ink = K(30, 24, 30), wh = K(255, 255, 255);
-    uint16_t pk = K(255, 120, 140), red = K(230, 40, 50);
+    uint16_t tan = K(150, 156, 172), dk = K(96, 102, 122), lt = K(226, 230, 238), ink = K(30, 24, 30), wh = K(255, 255, 255);
+    uint16_t pk = K(255, 120, 140), red = K(150, 156, 172);
     int len = 28, dirx = icos(a256), diry = isin(a256), jang = a256 - open * 256 / 360;
     AL(-34, -16, -54 + wag, -34 - wag / 2, 5, tan);                 /* the tail */
     AE(-18, -26, 24, 24, dk);                                       /* the haunch */
@@ -190,7 +190,7 @@ static void act_dog(int cx, int cy)
     AE(14, -3, 11, 5, lt);
     AL(6, -74, hx - 2, hy + 8, 11, tan);                            /* the neck */
     AB(-6, -78, 24, 6, red);                                        /* the collar */
-    AE(hx - 12, hy - 4, 11, 22, dk);                                /* the floppy ear, behind the head */
+    AT(hx - 16, hy - 8, hx - 4, hy - 12, hx - 14, hy - 34, dk);     /* the pointed ear, behind the head */
     AE(hx, hy, 18, 17, tan);
     sx = hx + dirx * len / 127;
     sy = hy + 4 - diry * len / 127;
@@ -221,7 +221,7 @@ static void fg_dog(void)
     int w;
     grass_tufts(224, 14, K(50, 110, 70), 7);
     if (sc.mouth > 70) {
-        word = sc.ctype == CT_HOWL ? "AWOOO!" : sc.ctype == CT_WAIL ? "WEE-OOO" : sc.ctype == CT_HILO ? "NEE-NAW" : sc.ctype == CT_ALARM ? "BRRING!" : "WOOF!";
+        word = sc.ctype == CT_HOWL ? "AWOOO!" : sc.ctype == CT_WAIL ? "WEE-OOO" : sc.ctype == CT_HILO ? "NEE-NAW" : sc.ctype == CT_ALARM ? "BRRING!" : "AWOO!";
         w = (int)strlen_(word) * 16 + 20;
         bubble(124 - w / 2 + 30, 30, w, 44, word, 150, 86);
     }

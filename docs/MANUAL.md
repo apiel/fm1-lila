@@ -59,7 +59,7 @@ This is the **generic** layout. Each world then takes over some of these knobs a
 |---|---|---|---|
 | **BIRD** | BEND, STARS, SIZE, **TWEETS** (a chatter of little chirps after each note) | SHAPE, **CHIRP** (how far it swoops), **LENGTH**, METAL | |
 | **COW** | **MOO** (the vowel: "oo" to "ah" to "ee"), **BELL** (a cowbell clank), SIZE, WOBBLY | SHAPE, **THROAT** (how much vowel), **DEEP**, **BREATH** | ENV K4 **SWAY** (a late vibrato); FX **BARN**, **FIELD** |
-| **DOG** | **SIREN** (WOLF howl, POLICE wail, HI-LO, fire ALARM), **HOWL** (how far the pitch goes), **SLOW**, WIGGLE | SHAPE, **OOOH** (the vowel), **THROAT**, **SHAKE** (vibrato) | FX **CANYON** (echo), **NIGHT**, TINNY. The sirens flash the whole screen red and blue |
+| **WOLF** | **SIREN** (WOLF howl, POLICE wail, HI-LO, fire ALARM), **HOWL** (how far the pitch goes), **SLOW**, WIGGLE | SHAPE, **OOOH** (the vowel), **THROAT**, **SHAKE** (vibrato) | FX **CANYON** (echo), **NIGHT**, **PACK** (a choir of wolves), TINNY. The sirens flash the whole screen red and blue |
 | **FROG** | **STYLE** (RIBBIT, PEEP, BOING, PLAIN), **GAP** (between "rib" and "bit"), **JUMP**, SIZE | SHAPE, **CROAK** (how pulsing), **RATTLE** (how fast), **THROAT** | FX **POND**, **MARSH**, **BUBBLES**, **CRUNCH** |
 | **SPACE** | BEND, STARS, SIZE, **ALIEN** (a wobbling voice) | SHAPE, **CREW** (the buddy ships), **ENGINE** (a rumble), **LASER** | FX **GALAXY**, **STATIC** |
 | **METEOR** | **PEW** (a falling zap), **BOOM** (a crash of noise), **CRASH** (a thump and a shock wave), **SPARKS** (a spray of tiny blips) | SHAPE, **ROCK** (the metal's colour), METAL, **SPEED** | FX **SMOKE** |
@@ -76,7 +76,7 @@ This is the **generic** layout. Each world then takes over some of these knobs a
 |---|---|---|---|
 | 1 | BIRD | TWEET: a bright chirp that swoops up | a canary on a branch in the sun; it opens its beak and flutters |
 | 2 | COW | MOO: a closed mouth that opens to a round "oo", the pitch rising and sinking, a cowbell | a cow on the farm in front of the barn, with a speech bubble |
-| 3 | DOG | AWOOO: a wolf's howl under the moon, or a police siren, an ambulance, a fire alarm | a dog sitting up and howling at the moon; the whole screen flashes red and blue for the sirens |
+| 3 | WOLF | AWOOO: a wolf's long, slow howl under the moon, or a police siren, an ambulance, a fire alarm | a grey wolf sitting up and howling at the moon; the whole screen flashes red and blue for the sirens |
 | 4 | FROG | RIBBIT: a pulsing croak, low "rib" then high "bit" | a frog on a lily pad; the throat swells; fireflies and ripples |
 | 5 | SPACE | WHOOSH: big, slow, shimmering pads | a rocket in the galaxy; the stars speed up on the beat |
 | 6 | METEOR | ZAP: a falling "pew", a boom, a thump, a spray of debris | a cute rock with a flaming tail; more meteors with the boom, shock waves with the crash |
@@ -107,10 +107,9 @@ The choice is kept when you save a treasure box and when the screen mode changes
 
 ## The two story worlds
 
-After the pianos: **FABLES** (in French: three fables of La Fontaine, *Le Corbeau et le Renard*, *La Grenouille qui voulait se faire aussi grosse
-que le Bœuf* and *Le Lion et le Rat*, told in front of the worlds of the synth) and **BOUCLE** (in French: *Boucle d'or et les trois ours*).
+After the pianos: three fables of La Fontaine, **CORBEAU** (*Le Corbeau et le Renard*), **BOEUF** (*La Grenouille qui voulait se faire aussi grosse que le Bœuf*) and **LION** (*Le Lion et le Rat*), each with its own pictures (a raven with his cheese and a fox, a frog that swells next to an ox, a lion and a rat), and **BOUCLE** (*Boucle d'or et les trois ours*), all in French.
 
-- **Each key tells one part of the story**, in order from the lowest key (27 parts). The keys that have a part glow faintly, the part being
+- **Each key tells one part of the story**, in order from the lowest key (up to 27 parts: a fable has nine, so only nine keys glow). The keys that have a part glow faintly, the part being
   told is lit, and its words are written at the top of the screen for whoever is reading along.
 - **PLAY** tells the whole story, part after part; PLAY again stops. While it plays, **SELECT** goes to the part before or after.
 - The voice is made like the old talking toys (LPC speech) and **played by the synth**, so everything still works on it:

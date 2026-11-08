@@ -17,10 +17,10 @@ static const pv_t SET_COW[] = {
     {P_NZDEC, 60}, {P_CTYPE, 1}, {P_CAMT, 16}, {P_CTIME, 91}, {P_FORM, 96}, {P_VOWEL, 16}, {P_VIBD, 34}, {P_VIBS, 40},
     {P_VIBDLY, 70}, {P_BELL, 40}, {P_FTYPE, 5},
 };
-static const pv_t SET_DOG[] = {
-    {P_ECHO, 74}, {P_SPACE, 72}, {P_CUT, 88}, {P_RESO, 26}, {P_ATK, 44}, {P_REL, 88}, {P_BOING, 34}, {P_LSPD, 30},
-    {P_LWAVE, 2}, {P_WAVE, 44}, {P_BUDDY, 22}, {P_BIG, 16}, {P_FMR, 8}, {P_CTYPE, 1}, {P_CAMT, 64}, {P_CTIME, 107},
-    {P_VIBD, 46}, {P_VIBS, 70}, {P_VIBDLY, 62}, {P_VOWEL, 10}, {P_FORM, 84}, {P_AMR, 70}, {P_FLUFF, 54}, {P_FTYPE, 3},
+static const pv_t SET_DOG[] = {                         /* a wolf: a slow climb to a long, hollow "oooo", a late vibrato, breath, a pack, a canyon */
+    {P_ECHO, 66}, {P_SPACE, 88}, {P_FLUFF, 30}, {P_CUT, 82}, {P_RESO, 14}, {P_ATK, 70}, {P_REL, 96}, {P_BOING, 18},
+    {P_WAVE, 24}, {P_BUDDY, 30}, {P_BIG, 10}, {P_NOISE, 12}, {P_NZDEC, 70}, {P_CTYPE, 1}, {P_CAMT, 46}, {P_CTIME, 112},
+    {P_VIBD, 40}, {P_VIBS, 62}, {P_VIBDLY, 80}, {P_VOWEL, 6}, {P_FORM, 72},
 };
 static const pv_t SET_FROG[] = {
     {P_ECHO, 18}, {P_SPACE, 54}, {P_CUT, 70}, {P_RESO, 56}, {P_GRIT, 10}, {P_PLUCK, 88}, {P_REL, 26}, {P_BOING, 40},
@@ -96,11 +96,11 @@ static const pv_t SET_GOLDY[] = {
 const preset_t PRESETS[NPRESET] = {
     {"BIRD", "TWEET", SET(BIRD), 1, 95, 3, -1, FXK_CHORUS},
     {"COW", "MOO", SET(COW), -1, 60, 0, -1, FXK_SLAP},
-    {"DOG", "WOOF", SET(DOG), 0, 126, 0, -1, FXK_FLANGE},
+    {"WOLF", "AWOOO", SET(DOG), 0, 70, 0, -1, FXK_CHORUS},
     {"FROG", "RIBBIT", SET(FROG), -1, 82, 2, -1, FXK_PHASE},
     {"SPACE", "WHOOSH", SET(SPACE), 0, 77, 1, -1, FXK_PHASE},
     {"METEOR", "ZAP", SET(METEOR), 0, 66, 4, -1, FXK_FLANGE},
-    {"BLOCKS", "BLOOP", SET(BLOCKS), 0, 110, 1, -1, FXK_SLAP},
+    {"BLOCKS", "BLOOP", SET(BLOCKS), 0, 90, 1, -1, FXK_SLAP},
     {"DINO", "ROAR", SET(DINO), -2, 64, 0, -1, FXK_DRIVE},
     {"ROBOT", "BEEP", SET(ROBOT), 0, 150, 1, -1, FXK_RING},
     {"OCEAN", "BLUB", SET(OCEAN), 0, 90, 2, -1, FXK_CHORUS},
@@ -109,8 +109,10 @@ const preset_t PRESETS[NPRESET] = {
     {"PIANO", "PLINK", SET(PIANO), 0, 92, 0, -1, FXK_CHORUS},
     {"E-PIANO", "DOO-WAH", SET(EPIANO), 0, 90, 0, -1, FXK_PHASE},
     {"ORGAN", "HMMM", SET(ORGAN), 0, 78, 0, -1, FXK_PAN},
-    {"FABLES", "UNE HISTOIRE", SET(FABLE), 0, 75, 0, 0, FXK_CHORUS},
-    {"BOUCLE", "UNE HISTOIRE", SET(GOLDY), 0, 80, 0, 1, FXK_CHORUS},
+    {"CORBEAU", "UNE FABLE", SET(FABLE), 0, 75, 0, 0, FXK_CHORUS},
+    {"BOEUF", "UNE FABLE", SET(FABLE), 0, 75, 0, 1, FXK_CHORUS},
+    {"LION", "UNE FABLE", SET(FABLE), 0, 75, 0, 2, FXK_CHORUS},
+    {"BOUCLE", "UNE HISTOIRE", SET(GOLDY), 0, 80, 0, 3, FXK_CHORUS},
 };
 
 /* a melody is a list of notes: letter, optional # or b, octave (c4 = middle C), length. Length: 0 a sixteenth, 1 an eighth,
