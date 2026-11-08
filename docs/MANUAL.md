@@ -27,13 +27,12 @@ This is the **generic** layout. Each world then takes over some of these knobs a
 | Button | Page | KNOB 1 | KNOB 2 | KNOB 3 | KNOB 4 |
 |---|---|---|---|---|---|
 | **HOME** | MAGIC | **BEND**: slides the pitch up or down (the animal leans and floats) | **STARS**: fairy dust after every note, stars in the sky | **SIZE**: tiny to giant: the animal grows and the sound gets deeper | **WIGGLE**: a drunken pitch and a jelly picture |
-| **FX** | FX | **ECHO**: ghosts of the animal repeat | **SPACE**: a big room; rings spread over the world | **FLUFFY**: a shimmering double (chorus); each world has its own kind: a doubler (cow, blocks), a flanger (dog, meteor), a phaser (frog, space), an auto-pan (jungle), a ring modulator (robot), fuzz (dinosaur) | **ROBOT**: crunchy sound, the whole world turns to big square pixels |
+| **FX** | FX | **ECHO**: ghosts of the animal repeat | **SPACE**: a big room; rings spread over the world | **FLUFFY**: a shimmering double (chorus); each world has its own kind: a doubler (cow, blocks), a flanger (meteor), a chorus for the wolf's pack, a phaser (frog, space), an auto-pan (jungle), a ring modulator (robot), fuzz (dinosaur) | **ROBOT**: crunchy sound, the whole world turns to big square pixels |
 | **SEL** | FILTER | **BRIGHT**: dark and muffled to bright and sunny (the colours follow) | **WOW**: a ringing, whistling filter: sparkles | **TYPE**: SOFT (warm), TALKY, THIN (cool), HOLLOW, HONK, VOCAL; every world starts with its own | **GRIT**: rough and dirty; static on the picture |
 | **ENV** | ENVELOPE | **FADE IN**: how slowly a note arrives (the animal sings in slowly) | **PLUCK**: from an organ that holds, to a pluck that dies at once | **FADE OUT**: how long it rings after you let go | **BOING**: the filter jumps open on each note; the animal squashes and stretches |
 | **LFO** | WOBBLE | **SPEED** | **WOBBLE**: how much | **WHAT**: SIREN (the pitch), WAH (the brightness), TREMBLE (the volume): the animal bobs, flashes or pulses | **WAVE**: SMOOTH, ZIGZAG, CHOPPY, BUMPY |
 | **EDIT** | SOUND | **SHAPE**: sine, triangle, saw, square: the notes that float up change shape too | **BUDDY**: a twin voice a little out of tune: a twin animal stands behind | **BIG**: a deep octave underneath; the ground shakes | **METAL**: bell and robot tones; the colours go silver |
 | **GLO** | PARTY | **TEMPO** of the beat, the arpeggio, the songs and the loop | **KEY**: up or down by up to 6 semitones; the colours turn | **EASY**: ANY note, PENTA or MAJOR: only notes that always sound right (the keys of the scale light faintly) | **FRIENDS**: ALONE, TWINS (octave), POWER (fifth), FAMILY (a chord): friends of the animal appear beside it |
-| **SAVE** | TREASURE | **BOX**: one of eight | **DO**: SAVE, LOAD or TRASH | **STICKER**: twelve pictures | **COLOR**: eight colours |
 | **ARP** | ARPEGGIO | **MODE**: OFF, UP, DOWN, UP-DOWN, RANDOM | **SPEED**: SNAIL, TURTLE, RABBIT, CHEETAH | **RANGE**: 1, 2 or 3 octaves | **STICKY**: YES keeps the notes going after you let go |
 | **SEQ** | BEAT | **STYLE**: OFF, MARCH, ROCK, DISCO, REGGAE, HIP HOP, POLKA, ROBOT, PARTY | **LOUD** | **BOUNCE**: from straight to swingy | **TUNING**: the drums from deep to tiny |
 | **PLAY** | SONG | **SPEED** (the same as TEMPO) | **MODE**: LISTEN, or FOLLOW: the song waits and the next key lights up | **REPEAT**: ONCE, REPEAT, or ALL (one song after another) | **BAND**: SOLO, or ZOO: every note is a different animal |
@@ -41,9 +40,7 @@ This is the **generic** layout. Each world then takes over some of these knobs a
 
 ### Buttons that do something when you press them
 
-- **SAVE**: the first press shows the eight treasure boxes. Choose a box (KNOB 1), what to do (KNOB 2: SAVE the sound you made, LOAD
-  a box, or TRASH it), a sticker and a colour for it, then **press SAVE again**. Boxes (and the sound you had when you saved) are
-  still there after the FM-1 is switched off.
+- **SAVE**: has no page of its own; pressed **together with GLO** it changes the screen (see below).
 - **ARP**: turns the arpeggiator on (UP) and shows its page. Press ARP again to turn it off. Hold some keys: they play one after another.
 - **SEQ**: starts the MARCH beat and shows its page. Press SEQ again to stop it. The drum pads on the screen light up as they hit.
 - **PLAY / STOP**: plays the current song in the current world; press again to stop. The beat (if on) starts with it. While it plays,
@@ -103,7 +100,7 @@ names: HALL / ROOM / CHORUS (or PHASER, ROTARY), HAMMER and PEDAL, STRINGS, BASS
 2. **a name**: the screen stays black and shows, for one second, the world you chose, the beat you chose or the song you chose;
 3. **none**: the backlight is off. The lights of the keys and buttons still tell what happens.
 
-The choice is kept when you save a treasure box and when the screen mode changes.
+The choice is kept after the FM-1 is switched off.
 
 ## The two story worlds
 
@@ -118,7 +115,7 @@ After the pianos: three fables of La Fontaine, **CORBEAU** (*Le Corbeau et le Re
 |---|---|---|---|---|
 | HOME | **SPEED** (slower or faster, the pitch stays) | **ROBOT** (the voice goes flat, like a robot) | **SIZE** (a mouse's voice to a giant's) | **PITCH** |
 | EDIT | **VOICE** (CLASSIC: the old talking toy; or the synth's sine, triangle, saw, square) | **CHOIR** (a second voice, out of tune) | **BIG** (a deep voice underneath) | **WHISPER** |
-| PLAY | **SPEED** | **REPEAT** (start again at the end) | **PAUSE** (between the parts) | **CAVE** (reverb) |
+| PLAY | **SPEED** | **ECHO** (the story ends and stops: it never starts again) | **PAUSE** (between the parts) | **CAVE** (reverb) |
 
 FX (echo, space, chorus, robot), SEL (the filter), ENV (fade in, fade out), LFO (a wobbling voice), GLO's KEY and FRIENDS (the voice sings
 in chords), the octave buttons, the beat, and REC (record which parts you press, and loop them) all work on the story too.
@@ -126,10 +123,10 @@ in chords), the octave buttons, the beat, and REC (record which parts you press,
 The voices are made on a computer with Piper, free text-to-speech: LJ Speech for English (public domain) and SIWIS for French
 (CC BY 4.0). See BUILDING.md to tell a story of your own.
 
-## The twelve songs
+## The nineteen songs
 
 TWINKLE STAR, FRERE JACQUES, ODE TO JOY, MARY'S LAMB, OLD MACDONALD, AU CLAIR LUNE, JINGLE BELLS, HAPPY BIRTHDAY, LONDON BRIDGE,
-HOT CROSS BUNS, ROW YOUR BOAT and STAIRS (a scale up and down). They play in whichever world you are in; at the end the screen throws confetti.
+HOT CROSS BUNS, ROW YOUR BOAT, SILENT NIGHT, FUR ELISE, OH SUSANNA, LA CUCARACHA, GREENSLEEVES, CANON, JOY TO THE WORLD and STAIRS (a scale up and down). They play in whichever world you are in; at the end the screen throws confetti.
 
 ## For grown-ups
 

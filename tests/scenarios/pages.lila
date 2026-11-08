@@ -2,16 +2,6 @@
 wait 500
 turn PRESET 3
 wait 800
-tap SAVE
-set BOX 1
-set STICK 4
-set COLOR 5
-wait 100
-tap SAVE
-wait 300
-set BOX 3
-set STICK 7
-shot p_save.png
 tap ARP
 tapkey 7
 key w3 down

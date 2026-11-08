@@ -1337,11 +1337,7 @@ static void story_run(float *out)
             else if (st.gap <= CTRL) {
                 int nx = story_part + 1;
                 st.gap = 0;
-                if (nx >= story_parts(st.s) && P[P_MREPEAT]) {   /* REPEAT: from the beginning again */
-                    mel_done++;
-                    nx = 0;
-                }
-                if (nx < story_parts(st.s)) {
+                                if (nx < story_parts(st.s)) {
                     story_start(nx);
                     vis_push(VE_MELODY_NOTE, 60 + nx, 100, SRC_MEL);
                 } else {
@@ -1912,7 +1908,6 @@ void engine_init(void)
         P[P_TUNING] = 64;
         P[P_MREPEAT] = 1;
         P[P_MBAND] = 0;
-        P[P_STICK] = 0;
     }
     {
         uint8_t o[NSND];

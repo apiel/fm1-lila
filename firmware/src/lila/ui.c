@@ -8,7 +8,7 @@
 #include "lila.h"
 #include "../app/plat.h"
 
-enum { PG_HOME, PG_FX, PG_SEL, PG_ENV, PG_LFO, PG_EDIT, PG_GLO, PG_SAVE, PG_ARP, PG_SEQ, PG_PLAY, PG_REC, NPAGES };
+enum { PG_HOME, PG_FX, PG_SEL, PG_ENV, PG_LFO, PG_EDIT, PG_GLO, PG_ARP, PG_SEQ, PG_PLAY, PG_REC, NPAGES };
 enum { FM_NONE, FM_BPM, FM_KEY, FM_SEMI, FM_WAVE, FM_BEND, FM_BARS, FM_VOICE, FM_SPEED };
 
 typedef struct {
@@ -42,11 +42,7 @@ static const char *const N_BEAT[] = {"OFF", "MARCH", "ROCK", "DISCO", "REGGAE", 
 static const char *const N_MMODE[] = {"LISTEN", "FOLLOW"};
 static const char *const N_MREP[] = {"ONCE", "REPEAT", "ALL"};
 static const char *const N_MBAND[] = {"SOLO", "ZOO"};
-static const char *const N_ACT[] = {"SAVE", "LOAD", "TRASH"};
 static const char *const N_RSPD[] = {"HALF", "NORMAL", "DOUBLE"};
-static const char *const N_BOX[] = {"BOX 1", "BOX 2", "BOX 3", "BOX 4", "BOX 5", "BOX 6", "BOX 7", "BOX 8"};
-static const char *const N_STICK[] = {"STAR", "HEART", "MOON", "SUN", "FLOWER", "NOTE", "DROP", "BOLT", "FISH", "CROWN", "LEAF", "SMILE"};
-static const char *const N_COLOR[] = {"RED", "ORANGE", "YELLOW", "GREEN", "TEAL", "BLUE", "PURPLE", "PINK"};
 
 static const page_t PAGES[NPAGES] = {
     {"MAGIC", B_HOME, 0xFFD040, {{"BEND", P_BEND, 127, FM_BEND, 0}, {"STARS", P_STARS, 127, 0, 0}, {"SIZE", P_SIZE, 127, 0, 0}, {"WIGGLE", P_WIGGLE, 127, 0, 0}}},
@@ -56,7 +52,6 @@ static const page_t PAGES[NPAGES] = {
     {"WOBBLE", B_LFO, 0xFFA040, {{"SPEED", P_LSPD, 127, 0, 0}, {"WOBBLE", P_LDEP, 127, 0, 0}, {"WHAT", P_LWHAT, 2, 0, N_WHAT}, {"WAVE", P_LWAVE, 3, 0, N_LWAVE}}},
     {"SOUND", B_EDIT, 0xB080FF, {{"SHAPE", P_WAVE, 127, FM_WAVE, 0}, {"BUDDY", P_BUDDY, 127, 0, 0}, {"BIG", P_BIG, 127, 0, 0}, {"METAL", P_METAL, 127, 0, 0}}},
     {"PARTY", B_GLO, 0x60FFB0, {{"TEMPO", P_TEMPO, 127, FM_BPM, 0}, {"KEY", P_KEY, 12, FM_KEY, 0}, {"EASY", P_EASY, 2, 0, N_EASY}, {"FRIENDS", P_FRIENDS, 3, 0, N_FRIENDS}}},
-    {"TREASURE", B_SAVE, 0xFFE070, {{"BOX", P_BOX, 7, 0, N_BOX}, {"DO", P_ACT, 2, 0, N_ACT}, {"STICKER", P_STICK, 11, 0, N_STICK}, {"COLOR", P_COLOR, 7, 0, N_COLOR}}},
     {"ARPEGGIO", B_ARP, 0xFF8060, {{"MODE", P_ARP, 4, 0, N_ARP}, {"SPEED", P_ARPSPD, 3, 0, N_ARPSPD}, {"RANGE", P_ARPRNG, 2, 0, N_ARPRNG}, {"STICKY", P_STICKY, 1, 0, N_YESNO}}},
     {"BEAT", B_SEQ, 0xFF5050, {{"STYLE", P_BEAT, 8, 0, N_BEAT}, {"LOUD", P_BEATVOL, 127, 0, 0}, {"BOUNCE", P_BOUNCE, 127, 0, 0}, {"TUNING", P_TUNING, 127, 0, 0}}},
     {"SONG", B_PLAY, 0x80FF80, {{"SPEED", P_TEMPO, 127, FM_BPM, 0}, {"MODE", P_MMODE, 1, 0, N_MMODE}, {"REPEAT", P_MREPEAT, 2, 0, N_MREP}, {"BAND", P_MBAND, 1, 0, N_MBAND}}},
@@ -156,7 +151,7 @@ static const wk_t WK_STORY[] = {
     WK(PG_HOME, 3, "PITCH", P_BEND, 127, FM_BEND, 0, 0),
     WK(PG_EDIT, 0, "VOICE", P_WAVE, 127, FM_VOICE, 0, 0), WK(PG_EDIT, 1, "CHOIR", P_BUDDY, 127, 0, 0, 0), WK(PG_EDIT, 2, "BIG", P_BIG, 127, 0, 0, 0),
     WK(PG_EDIT, 3, "WHISPER", P_NOISE, 127, 0, 0, 0),
-    WK(PG_PLAY, 0, "SPEED", P_CTIME, 127, FM_SPEED, 0, 0), WK(PG_PLAY, 1, "REPEAT", P_MREPEAT, 1, 0, N_YESNO, 0), WK(PG_PLAY, 2, "PAUSE", P_PINGT, 127, 0, 0, 0),
+    WK(PG_PLAY, 0, "SPEED", P_CTIME, 127, FM_SPEED, 0, 0), WK(PG_PLAY, 1, "ECHO", P_ECHO, 127, 0, 0, 0), WK(PG_PLAY, 2, "PAUSE", P_PINGT, 127, 0, 0, 0),
     WK(PG_PLAY, 3, "CAVE", P_SPACE, 127, 0, 0, 0)};
 #define WKS(t) {t, (uint8_t)(sizeof t / sizeof t[0])}
 static const struct { const wk_t *t; uint8_t n; } WORLD_KNOBS[NPRESET] = {
@@ -205,7 +200,6 @@ static struct {
     uint8_t arp_seen;
     uint32_t held_k;                    /* keys held now */
     int8_t pulse[4];
-    uint8_t save_pop;                   /* the treasure boxes' celebration */
     int8_t beat_wave;
     uint32_t last_ms;
     int level_prev;
@@ -215,19 +209,12 @@ static struct {
     uint8_t combo, dark;                /* both held now; the screen has been blanked */
 } ui;
 
-/* a saved sound: the box on the TREASURE page */
-typedef struct {
-    uint8_t used, preset, sticker, color;
-    uint8_t snd[NSND];
-} box_t;
-#define NBOX 8
-static box_t boxes[NBOX];
+/* what is kept when the toy is switched off: the settings (the screen mode among them) */
 typedef struct {
     uint32_t magic;
     uint8_t p[NP];
-    box_t box[NBOX];
 } lila_save_t;
-#define LILA_MAGIC 0x4C494C32u          /* "LIL2": the sound grew to NSND parameters */
+#define LILA_MAGIC 0x4C494C33u          /* "LIL3": the treasure boxes are gone */
 
 static void toast(const char *a, const char *b, uint16_t col)
 {
@@ -260,8 +247,6 @@ static void lila_save_now(void)
     s.magic = LILA_MAGIC;
     for (i = 0; i < NP; i++)
         s.p[i] = P[i];
-    for (i = 0; i < NBOX; i++)
-        s.box[i] = boxes[i];
     plat_store_save(OBJ_SET, &s, sizeof s);
 }
 static void lila_load(void)
@@ -271,8 +256,6 @@ static void lila_load(void)
     if (plat_store_load(OBJ_SET, &s, sizeof s) == (int)sizeof s && s.magic == LILA_MAGIC) {
         for (i = 0; i < NP; i++)
             P[i] = s.p[i];
-        for (i = 0; i < NBOX; i++)
-            boxes[i] = s.box[i];
         if (P[P_PRESET] >= NPRESET)
             P[P_PRESET] = 0;
         for (i = 0; i < NP; i++)               /* a damaged record must not leave a knob out of range */
@@ -342,7 +325,6 @@ static void fmt_value(const knobdef_t *k, int v, char *out)
 }
 
 static void world_change(int idx, int immediate);
-static void box_action(void);
 
 static void knob_turn(int i, int d)
 {
@@ -364,8 +346,6 @@ static void knob_turn(int i, int d)
         if (k->id == P_BEAT && pv != v)
             mini_toast("BEAT", pv ? N_BEAT[pv % 9] : "OFF", RGB(255, 90, 80));
     }
-    if (ui.page == PG_SAVE && i == 0 && pv != v)
-        ui.save_pop = 0;
     ui.touched = (int8_t)i;
     ui.pulse[i] = 8;
     ui.touch_ms = plat_ms();
@@ -392,41 +372,8 @@ static void world_change(int idx, int immediate)
     ui.touch_ms = plat_ms();
 }
 
-static void box_action(void)
-{
-    int b = P[P_BOX], act = P[P_ACT], i;
-    box_t *bx = &boxes[b & 7];
-    if (act == 0) {
-        bx->used = 1;
-        bx->preset = P[P_PRESET];
-        bx->sticker = P[P_STICK];
-        bx->color = P[P_COLOR];
-        for (i = 0; i < NSND; i++)
-            bx->snd[i] = P[i];
-        lila_save_now();
-        toast("SAVED!", N_BOX[b & 7], RGB(255, 230, 90));
-        ui.save_pop = 30;
-    } else if (act == 1) {
-        if (!bx->used) {
-            toast("EMPTY BOX", 0, RGB(255, 150, 150));
-            return;
-        }
-        if (bx->preset != P[P_PRESET])
-            world_change(bx->preset, 0);
-        for (i = 0; i < NSND; i++)
-            P[i] = bx->snd[i];
-        P[P_PRESET] = bx->preset;
-        toast("OPENED!", PRESETS[bx->preset % NPRESET].name, RGB(150, 255, 150));
-        ui.save_pop = 30;
-    } else {
-        bx->used = 0;
-        lila_save_now();
-        toast("EMPTY NOW", N_BOX[b & 7], RGB(200, 200, 255));
-    }
-}
-
 /* ------------------------------------------------------------------- input --- */
-static const uint8_t PAGE_OF_BTN[NB] = {PG_FX, PG_SEL, PG_ENV, PG_LFO, PG_EDIT, PG_GLO, PG_HOME, PG_SAVE, PG_ARP, PG_SEQ, PG_PLAY, PG_REC, 255, 255};
+static const uint8_t PAGE_OF_BTN[NB] = {PG_FX, PG_SEL, PG_ENV, PG_LFO, PG_EDIT, PG_GLO, PG_HOME, 255, PG_ARP, PG_SEQ, PG_PLAY, PG_REC, 255, 255};
 
 static void screen_cycle(void)
 {
@@ -460,7 +407,7 @@ static void input(void)
     uint32_t now = plat_ms();
     engine_set_master(plat_master());
     {   /* SAVE and GLO together change the screen: all (as it was), a name for a second, none. A lone press of either waits
-         * 140 ms to see whether the other comes, so the combo never saves a box or opens a page by accident. */
+         * 140 ms to see whether the other comes, so the combo never opens a page by accident. */
         const uint32_t cm = (1u << B_SAVE) | (1u << B_GLO);
         if ((b & cm) != cm)
             ui.combo = 0;
@@ -500,6 +447,11 @@ static void input(void)
             ui.touch_ms = now;
             continue;
         }
+        if (PAGE_OF_BTN[i] == 255) {                        /* SAVE has no page: with PARTY (GLO) it changes the screen */
+            toast("WITH PARTY", "CHANGES THE SCREEN", RGB(255, 255, 255));
+            ui.touch_ms = now;
+            continue;
+        }
         {
             int pg = PAGE_OF_BTN[i];
             int same = ui.page == pg;
@@ -536,11 +488,6 @@ static void input(void)
                 ui.touch_ms = now;
                 continue;
             }
-            if (pg == PG_SAVE && same) {
-                box_action();
-                ui.touch_ms = now;
-                continue;
-            }
             if (pg == PG_ARP) {
                 if (same)
                     P[P_ARP] = P[P_ARP] ? 0 : 1;
@@ -562,8 +509,6 @@ static void input(void)
                 toast(PAGES[pg].title, P[P_ARP] ? "ON" : "OFF", rgb24(PAGES[pg].color));
             if (pg == PG_SEQ)
                 mini_toast(PAGES[pg].title, P[P_BEAT] ? N_BEAT[P[P_BEAT] % 9] : "OFF", rgb24(PAGES[pg].color));
-            if (pg == PG_SAVE)
-                toast(PAGES[pg].title, "PRESS AGAIN", rgb24(PAGES[pg].color));
         }
     }
     for (i = 0; i < NKEYS_L; i++) {
@@ -886,73 +831,10 @@ static void hud_draw(void)
         hud_cell(i, 4 + i * 59, y);
 }
 
-/* the treasure boxes' stickers: twelve little pictures, s is their radius */
-static void sticker(int x, int y, int s, int idx, uint16_t c, uint16_t ink)
-{
-    int i;
-    switch (idx % 12) {
-    case 0:  sparkle(x, y, s + 3, c); fill_circle(x, y, s / 2, c); break;                           /* star */
-    case 1:  heart(x, y + 1, s + 1, c); break;
-    case 2:  fill_circle(x, y, s, c); fill_circle(x + s / 2 + 1, y - s / 4, s - 1, ink); break;      /* moon */
-    case 3:  fill_circle(x, y, s * 2 / 3, c);
-             for (i = 0; i < 8; i++)
-                 fill_circle(x + icos(i * 32) * (s + 1) / 127, y + isin(i * 32) * (s + 1) / 127, 1, c);
-             break;                                                                                  /* sun */
-    case 4:  for (i = 0; i < 5; i++)
-                 fill_circle(x + icos(i * 51) * s / 2 / 127 * 1 + 0, y + isin(i * 51) * s / 2 / 127, s / 2, c);
-             fill_circle(x, y, s / 3, RGB(255, 230, 80)); break;                                      /* flower */
-    case 5:  note_glyph(x - 2, y + s / 2, s / 2 + 1, c, 0); break;                                   /* a note */
-    case 6:  fill_tri(x, y - s - 1, x - s + 1, y + 1, x + s - 1, y + 1, c); fill_circle(x, y + 2, s - 1, c); break;   /* a drop */
-    case 7:  fill_poly((const int16_t[]){(int16_t)(x + 2), (int16_t)(y - s - 1), (int16_t)(x - s / 2 - 1), (int16_t)(y + 1), (int16_t)x, (int16_t)(y + 1),
-                       (int16_t)(x - 2), (int16_t)(y + s + 1), (int16_t)(x + s / 2 + 1), (int16_t)(y - 1), (int16_t)x, (int16_t)(y - 1)}, 6, c); break;   /* a bolt */
-    case 8:  fill_ellipse(x, y, s, s * 2 / 3, c); fill_tri(x + s - 2, y, x + s + 4, y - s / 2, x + s + 4, y + s / 2, c); cv_pset(x - s / 2, y - 1, ink); break;   /* a fish */
-    case 9:  fill_poly((const int16_t[]){(int16_t)(x - s), (int16_t)(y + s / 2), (int16_t)(x - s), (int16_t)(y - s / 2), (int16_t)(x - s / 2), (int16_t)y,
-                       (int16_t)x, (int16_t)(y - s), (int16_t)(x + s / 2), (int16_t)y, (int16_t)(x + s), (int16_t)(y - s / 2), (int16_t)(x + s), (int16_t)(y + s / 2)}, 7, c); break;   /* a crown */
-    case 10: fill_ellipse(x, y, s, s / 2 + 1, c); cv_pset(x, y, ink); fat_line(x - s, y + s / 2, x + s, y - s / 2, 1, ink); break;   /* a leaf */
-    default: fill_circle(x, y, s, c); fill_circle(x - s / 3, y - s / 4, 1, ink); fill_circle(x + s / 3, y - s / 4, 1, ink);
-             ring_(x, y + 1, s / 2 + 1, 1, ink); box_(x - s, y - s, s * 2 + 1, s - 1, c); fill_circle(x, y, s, c);
-             fill_circle(x - s / 3, y - s / 4, 1, ink); fill_circle(x + s / 3, y - s / 4, 1, ink); box_(x - s / 3, y + s / 3, s * 2 / 3 + 1, 1, ink); break;   /* a smile */
-    }
-}
-static const uint32_t BOX_COL[8] = {0xFF5050, 0xFF9A30, 0xFFE040, 0x60DD60, 0x40D0C0, 0x5090FF, 0xA070FF, 0xFF80C8};
-
-/* the TREASURE page: eight boxes on shelves; the one the knob picks bounces, a filled one shows its sticker */
-static void treasure_draw(void)
-{
-    int i;
-    uint32_t t = plat_ms();
-    fill_rbox(8, 22, 224, 150, 12, RGB(30, 20, 60));
-    fill_rbox(10, 24, 220, 146, 10, RGB(60, 40, 110));
-    for (i = 0; i < NBOX; i++) {
-        int col = i & 3, row = i >> 2, x = 14 + col * 54, y = 32 + row * 70, sel = (i == (int)P[P_BOX]);
-        int bob = sel ? (isin((int)(t / 6)) * 3 >> 7) - 2 : 0;
-        uint16_t base = rgb24(BOX_COL[(boxes[i].used ? boxes[i].color : i) & 7]);
-        if (sel)
-            fill_rbox(x - 3, y - 3 + bob, 54, 64, 10, RGB(255, 255, 255));
-        fill_rbox(x, y + bob, 48, 58, 8, boxes[i].used ? base : RGB(40, 30, 80));
-        if (!boxes[i].used) {
-            ring_(x + 24, y + 28 + bob, 15, 2, RGB(110, 90, 170));
-            text_c(x + 24, y + 20 + bob, &FONT_B, "?", RGB(130, 110, 190));
-        } else {
-            box_(x, y + 40 + bob, 48, 5, blend(base, RGB(0, 0, 0), 5));
-            sticker(x + 24, y + 22 + bob, 11, boxes[i].sticker, RGB(255, 255, 255), base);
-            text_c(x + 24, y + 44 + bob, &FONT_XS, PRESETS[boxes[i].preset % NPRESET].name, RGB(255, 255, 255));
-        }
-        if (sel) {                                         /* what turning the other knobs will give it: the sticker and the colour */
-            uint16_t pc = rgb24(BOX_COL[P[P_COLOR] & 7]);
-            fill_rbox(x + 30, y + 40 + bob, 16, 16, 4, pc);
-            sticker(x + 38, y + 48 + bob, 5, P[P_STICK], RGB(255, 255, 255), pc);
-        }
-    }
-    text_c(120, 176, &FONT_B, N_ACT[P[P_ACT] % 3], RGB(255, 240, 120));
-}
-
 /* the things the music adds on top: the song, the loop, the beat, the arpeggio */
 static void overlays_draw(void)
 {
     int i;
-    if (ui.page == PG_SAVE && plat_ms() - ui.touch_ms < 12000u)
-        treasure_draw();
     if (mel_playing) {                                   /* song progress and, in FOLLOW, the hint */
         int n = mel_len ? mel_len : 1, w = 150 * mel_pos / n;
         fill_rbox(45, 6, 150, 7, 3, RGB(30, 40, 60));
@@ -1278,13 +1160,6 @@ void ui_frame(void)
     for (i = 0; i < 4; i++)
         if (ui.pulse[i] > 0)
             ui.pulse[i]--;
-    if (ui.save_pop > 0) {                               /* a box was filled or opened: a shower of stars */
-        int n;
-        for (n = 0; n < 2; n++)
-            part_add(PK_STAR, rnd_range(10, 230), rnd_range(0, 40), rnd_range(-8, 8), rnd_range(12, 28), 40, rnd_range(3, 7),
-                     RGB(255, rnd_range(180, 255), rnd_range(60, 200)), 0);
-        ui.save_pop--;
-    }
     {   /* the HUD slides up when the panel is touched, and down after a while */
         int want = (t - ui.touch_ms < 4500u) ? 240 - HUD_H - 2 : 240;
         ui.hud_y += (want - ui.hud_y) / 3 + (want > ui.hud_y ? 1 : -1) * (iabs(want - ui.hud_y) > 0);

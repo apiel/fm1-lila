@@ -145,6 +145,26 @@ const melody_t MELODIES[NMEL] = {
      "e42 d42 c44  e42 d42 c44  c41 c41 c41 c41 d41 d41 d41 d41  e42 d42 c44"},
     {"ROW YOUR BOAT",
      "c42 c42 c43 d41 e42  e43 d41 e43 f41 g46  c51 c51 c51 g41 g41 g41 e41 e41 e41 c41 c41 c41  g43 f41 e43 d41 c46"},
+    {"SILENT NIGHT",
+     "g43 a41 g42 e46  g43 a41 g42 e46  d54 d52 b46  c54 c52 g46  a54 a52 c53 b41 a42  g43 a41 g42 e46  "
+     "a54 a52 c53 b41 a42  g43 a41 g42 e46  d54 d52 f53 d41 b42 c56  e53 c41 g42 e43 g41 f42 d46 c46"},
+    {"FUR ELISE",
+     "e51 d#51 e51 d#51 e51 b41 d51 c51 a42  r1 c41 e41 a41 b42  r1 e41 g#41 b41 c52  r1 e41 "
+     "e51 d#51 e51 d#51 e51 b41 d51 c51 a42  r1 c41 e41 a41 b42  r1 e41 c51 b41 a44"},
+    {"OH SUSANNA",
+     "c41 d41 e42 g42 g43 a41 g42 e42 c43 d41 e42 e42 d42 c42 d44  "
+     "c41 d41 e42 g42 g43 a41 g42 e42 c43 d41 e42 e42 d42 d42 c44"},
+    {"LA CUCARACHA",
+     "c41 c41 c41 f43 a42  c41 c41 c41 f43 a42  f43 f41 e43 e41 d41 d41 c44  "
+     "c41 c41 c41 f43 a42  f43 f41 e43 e41 d41 d41 c44"},
+    {"GREENSLEEVES",
+     "a41 c52 d54 e53 f51 e52 d54 b43 g41 a42 b42 c52 a43 a41 g#42 a41 b42 g#44 e44  "
+     "a41 c52 d54 e53 f51 e52 d54 b43 g41 a42 b42 c52 b43 b41 a42 g#41 f#42 g#42 a46"},
+    {"CANON",
+     "f#52 e52 d52 c#52 b42 a42 b42 c#52  d52 c#52 b42 a42 g42 f#42 g42 e42  "
+     "f#52 e52 d52 c#52 b42 a42 b42 c#52  d54 a42 d58"},
+    {"JOY TO THE WORLD",
+     "c53 b41 a43 g41 f42 e42 d42 c44  c53 b41 a43 g41 f42 e42 d42 c44"},
     {"STAIRS",
      "c42 d42 e42 f42 g42 a42 b42 c52  c52 b42 a42 g42 f42 e42 d42 c44"},
 };

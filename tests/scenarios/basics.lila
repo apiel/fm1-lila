@@ -17,15 +17,15 @@ expect page 5
 tap GLO
 expect page 6
 tap SAVE
-expect page 7
+expect page 6                  # SAVE has no page of its own
 tap ARP
-expect page 8
+expect page 7
 tap SEQ
-expect page 9
+expect page 8
 tap PLAY
-expect page 10
+expect page 9
 tap REC
-expect page 11
+expect page 10
 tap HOME
 expect page 0
 

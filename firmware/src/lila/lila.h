@@ -12,7 +12,7 @@
 #define NVOICE 10
 #define NPRESET 19                     /* twelve worlds, three pianos and four stories (three fables, Goldilocks) */
 #define NWORLD 12                      /* the worlds that are instruments (the ZOO band picks among them) */
-#define NMEL 12
+#define NMEL 19
 #define NKEYS_L 27                     /* F3 .. G5, as the panel's keys */
 #define KEY0_NOTE 53                   /* the lowest key plays F3 (MIDI 53) */
 
@@ -44,7 +44,6 @@ enum {
     P_BEAT, P_BEATVOL, P_BOUNCE, P_TUNING,        /* SEQ  */
     P_MSPEED, P_MMODE, P_MREPEAT, P_MBAND,        /* PLAY */
     P_RLEN, P_RVOL, P_RSPEED, P_RFUNNY,           /* REC  */
-    P_BOX, P_ACT, P_STICK, P_COLOR,               /* SAVE */
     P_MOOD, P_PRESET, P_MELODY, P_OCT,            /* ALGO, PRESETS, SELECT, OCT +/- */
     P_SCREEN,                                     /* SAVE + GLO together: SCREEN_FULL, SCREEN_MINI (a name for a second), SCREEN_OFF */
     NP

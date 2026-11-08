@@ -1,7 +1,0 @@
-- there should be different kind of FX per preset, let's have some variaty. Let's keep the bird one as it is, but other preset should have different kind of FX. I would say, also each preset should have different kind of filter.
-- my girlfriend said that she is too young to have a screen, so i would like to have a mode to disable screen, using a key combination, maybe using save+glo, or actually 3 modes:
-  - one like now
-  - one with minimal info, just showing for 1sec which preset we select and which sequence we select
-  - one no screen at all
-- she want also a piano mode, maybe few instrument would be cool, we still need to find cool animation for it.
-- the 2 stories should be in french, and the story about Lila is not  good at all, let's just take an exisiting story.

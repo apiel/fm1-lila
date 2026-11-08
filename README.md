@@ -40,7 +40,7 @@ Every button has one page and the four knobs always do something. The keys just 
 | SEQ | a drum beat to play along to |
 | PLAY / STOP | twelve songs: listen, or let the keys light up and follow them |
 | REC | record a tune and loop it, even slowed down or sped up |
-| SAVE | eight treasure boxes for favourite sounds |
+| SAVE | with GLO: the screen (all, a name, none) |
 
 ## Build and try
 

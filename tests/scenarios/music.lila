@@ -1,4 +1,4 @@
-# LILA: the arpeggiator, the beat, the melodies (listen and follow), the looper, the treasure boxes.
+# LILA: the arpeggiator, the beat, the melodies (listen and follow), the looper.
 wait 400
 master 4096
 
@@ -57,11 +57,11 @@ expect mel 1
 expect melpos <3
 turn SELECT -1
 turn SELECT -1
-expect mel 11
+expect mel 18
 tap PLAY
 expect playing 0
 turn SELECT 1
-expect mel 11
+expect mel 18
 
 # --- follow me: the song waits for the right key
 set MMODE 1
@@ -104,21 +104,3 @@ expect peak_db_min -40
 tap REC
 expect rec 0
 tap HOME
-
-# --- the treasure boxes: save a sound, change it, open the box
-set CUT 50
-set WAVE 33
-tap SAVE
-expect page 7
-set BOX 2
-set ACT 0
-tap SAVE
-set CUT 100
-set WAVE 100
-set ACT 1
-tap SAVE
-expectp CUT 50
-expectp WAVE 33
-set BOX 5
-tap SAVE
-expectp CUT 50

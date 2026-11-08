@@ -31,7 +31,7 @@ release GLO
 release SAVE
 wait 300
 expectp SCREEN 2
-expect page 9                  # still the BEAT page: the combo opened nothing
+expect page 8                  # still the BEAT page: the combo opened nothing
 wait 1500
 shot sc_off.png
 turn PRESET 1
@@ -49,4 +49,4 @@ shot sc_full.png
 tap GLO
 expect page 6
 tap SAVE
-expect page 7
+expect page 6                  # SAVE alone only gives a hint
