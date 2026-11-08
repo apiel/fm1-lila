@@ -67,11 +67,14 @@ manual = markdown.markdown((ROOT / "docs" / "MANUAL.md").read_text(), extensions
 inst = installer()
 landing = """<p><img src="img/splash.png" width="240" alt="LILA"></p>
 <h1>LILA</h1>
-<p>A polyphonic toy synth for a very young musician, as custom firmware for the M-VAVE FM-1. Twelve animated worlds: a bird, a cow, a dog, a frog,
-a spaceship, meteors, a block world, dinosaurs, a robot, the ocean, a fairy castle and the jungle. Each is its own instrument, and whatever knob is
-turned, the picture changes with it.</p>
+<p>A polyphonic toy synth for a very young musician, as custom firmware for the M-VAVE FM-1. Twenty-five animated worlds, each its own
+instrument and whatever knob is turned, the picture changes with it:</p>
+<ul><li><b>twelve animals and places</b>: a bird, a cow, a wolf, a frog, a spaceship, meteors, a block world, dinosaurs, a robot, the ocean, a fairy castle and the jungle;</li>
+<li><b>eight instruments</b> whose keys light up on the screen: a piano, an electric piano, an organ, a xylophone, a harp, a ukulele, a flute and a kalimba;</li>
+<li><b>five stories in French</b>, told by the synth: three fables of La Fontaine, <i>Boucle d'or</i> and <i>Le Petit Chaperon rouge</i>.</li></ul>
+<p>For a child too young for a screen, SAVE + GLO together switch the screen to a single name, or off.</p>
 <p><a class="go" href="emulator/">Try it in the browser</a><a class="go" href="install/">Install on an FM-1</a><a class="go" href="manual/">Manual</a></p>
-<p><img src="img/worlds.png" alt="The twelve worlds"></p>
+<p><img src="img/worlds.png" alt="The 25 worlds"></p>
 <p>The emulator runs the same code as the FM-1 (compiled to WebAssembly). The installer runs in Chrome or Edge over USB and can put the stock firmware back.
 Installing firmware is at your own risk; LILA is a beta. GPL-3.0-only; M-VAVE and FM-1 are trademarks of their owners.</p>"""
 (out / "index.html").write_text(page("LILA", landing))

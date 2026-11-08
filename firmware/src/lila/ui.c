@@ -166,11 +166,11 @@ static const wk_t WK_FLUTE[] = {
     WK(PG_FX, 2, "AIR", P_FLUFF, 127, 0, 0, 0),
     WK(PG_ENV, 0, "BLOW", P_ATK, 127, 0, 0, 0),
     WK(PG_EDIT, 1, "WARM", P_BUDDY, 127, 0, 0, 0)};
-static const wk_t WK_SITAR[] = {
-    WK(PG_HOME, 0, "BEND", P_CAMT, 127, 0, 0, 0), WK(PG_HOME, 1, "SYMPATHY", P_PING, 127, 0, 0, 0), WK(PG_HOME, 2, "SLIDE", P_CTIME, 127, 0, 0, 0),
-    WK(PG_HOME, 3, "VIBRATO", P_VIBD, 127, 0, 0, 0),
-    WK(PG_FX, 2, "SHIMMER", P_FLUFF, 127, 0, 0, 0),
-    WK(PG_EDIT, 1, "DRONES", P_BUDDY, 127, 0, 0, 0), WK(PG_EDIT, 3, "BUZZ", P_METAL, 127, 0, 0, 0)};
+static const wk_t WK_KALIMBA[] = {
+    WK(PG_HOME, 3, "WIGGLE", P_WIGGLE, 127, 0, 0, 0),
+    WK(PG_FX, 0, "SAVANNA", P_ECHO, 127, 0, 0, 0), WK(PG_FX, 2, "SHIMMER", P_FLUFF, 127, 0, 0, 0),
+    WK(PG_ENV, 1, "THUMB", P_PLUCK, 127, 0, 0, 0), WK(PG_ENV, 2, "RING", P_REL, 127, 0, 0, 0),
+    WK(PG_EDIT, 0, "WOOD", P_WAVE, 127, FM_WAVE, 0, 0), WK(PG_EDIT, 1, "BUZZ", P_NOISE, 127, 0, 0, 0), WK(PG_EDIT, 3, "TINES", P_METAL, 127, 0, 0, 0)};
 static const wk_t WK_STORY[] = {
     WK(PG_HOME, 0, "SPEED", P_CTIME, 127, FM_SPEED, 0, 0), WK(PG_HOME, 1, "ROBOT", P_CAMT, 127, 0, 0, 0), WK(PG_HOME, 2, "SIZE", P_SIZE, 127, 0, 0, 0),
     WK(PG_HOME, 3, "PITCH", P_BEND, 127, FM_BEND, 0, 0),
@@ -181,7 +181,7 @@ static const wk_t WK_STORY[] = {
 #define WKS(t) {t, (uint8_t)(sizeof t / sizeof t[0])}
 static const struct { const wk_t *t; uint8_t n; } WORLD_KNOBS[NPRESET] = {
     WKS(WK_BIRD), WKS(WK_COW), WKS(WK_DOG), WKS(WK_FROG), WKS(WK_SPACE), WKS(WK_METEOR), WKS(WK_BLOCKS), WKS(WK_DINO), WKS(WK_ROBOT),
-    WKS(WK_OCEAN), WKS(WK_CASTLE), WKS(WK_JUNGLE), WKS(WK_PIANO), WKS(WK_EPIANO), WKS(WK_ORGAN), WKS(WK_XYLO), WKS(WK_HARP), WKS(WK_UKE), WKS(WK_FLUTE), WKS(WK_SITAR), WKS(WK_STORY), WKS(WK_STORY), WKS(WK_STORY), WKS(WK_STORY)};
+    WKS(WK_OCEAN), WKS(WK_CASTLE), WKS(WK_JUNGLE), WKS(WK_PIANO), WKS(WK_EPIANO), WKS(WK_ORGAN), WKS(WK_XYLO), WKS(WK_HARP), WKS(WK_UKE), WKS(WK_FLUTE), WKS(WK_KALIMBA), WKS(WK_STORY), WKS(WK_STORY), WKS(WK_STORY), WKS(WK_STORY), WKS(WK_STORY)};
 
 static int story_world(void) { return PRESETS[P[P_PRESET] % NPRESET].story; }
 static int story_busy(void) { return story_all || story_part >= 0; }
@@ -873,9 +873,9 @@ static void overlays_draw(void)
     }
     if (story_world() >= 0 && story_part >= 0) {         /* the story's words, for the grown-up reading along */
         const char *t = story_text(story_world(), story_part);
-        char ln[3][41];
+        char ln[4][41];
         int nl = 0, len = 0, last = 0, i2, y0 = 4, np = story_parts(story_world());
-        while (*t && nl < 3) {                           /* wrap at 38 characters, on spaces */
+        while (*t && nl < 4) {                           /* wrap at 38 characters, on spaces */
             const char *e = t;
             int n = 0, cut = 0;
             while (e[n] && n < 38) {

@@ -102,6 +102,9 @@ static void stars_sky(int n, int ymax, int speed, uint16_t c)
 static void bg_fable(void);
 static void act_fable(int cx, int cy);
 static void fg_fable(void);
+static void bg_chap(void);
+static void act_chap(int cx, int cy);
+static void fg_chap(void);
 static void bg_goldy(void);
 static void act_goldy(int cx, int cy);
 static void fg_goldy(void);
@@ -126,14 +129,16 @@ static const scene_t SCENES[NPRESET] = {
     {"HARP", bg_harp, act_harp, fg_harp, 190, 112, 0x78469A, 0xFFE070},
     {"UKULELE", bg_uke, act_uke, fg_uke, 120, 196, 0xFFD68C, 0xFF8A50},
     {"FLUTE", bg_flute, act_flute, fg_flute, 150, 204, 0xFF8C5A, 0x80E0A0},
-    {"SITAR", bg_sitar, act_sitar, fg_sitar, 120, 206, 0x280A3C, 0xFFB040},
+    {"KALIMBA", bg_kalimba, act_kalimba, fg_kalimba, 120, 124, 0xFFB070, 0xFFC040},
     {"CORBEAU", bg_fable, act_fable, fg_fable, 80, 200, 0xCDEBFF, 0x8080B0},
     {"BOEUF", bg_fable, act_fable, fg_fable, 120, 176, 0xB8E8FF, 0x6EDC50},
     {"LION", bg_fable, act_fable, fg_fable, 90, 190, 0xBDE8A0, 0xFFA830},
     {"BOUCLE", bg_goldy, act_goldy, fg_goldy, 56, 188, 0xD0F0D0, 0xFFD040},
+    {"CHAPERON", bg_chap, act_chap, fg_chap, 56, 188, 0xD0F0D0, 0xFF4050},
 };
 #include "scenes_story.c"
 #include "scenes_fables.c"
+#include "scenes_chaperon.c"
 
 /* the world and everything the sound does to it, into the band that is set up */
 static void world_draw(void)

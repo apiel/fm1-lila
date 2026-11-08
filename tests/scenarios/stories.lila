@@ -1,7 +1,7 @@
 # the two story worlds: a key tells its part, PLAY tells it all, SELECT moves along, the knobs change the voice
 wait 300
 turn PRESET -1
-expectp PRESET 23
+expectp PRESET 24
 wait 700
 tapkey 0
 wait 1500
@@ -30,7 +30,7 @@ wait 1000
 tap PLAY
 wait 600
 turn PRESET -1
-expectp PRESET 22
+expectp PRESET 23
 wait 700
 tapkey 7
 wait 1600

@@ -10,8 +10,8 @@ import unicodedata
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-STORIES = ["corbeau_fr", "boeuf_fr", "lion_fr", "goldilocks_fr"]          # story 0..3: the presets' `story` field
-SCENES = {"corbeau_fr": ["SCENE"], "boeuf_fr": ["SCENE"], "lion_fr": ["SCENE"],
+STORIES = ["corbeau_fr", "boeuf_fr", "lion_fr", "goldilocks_fr", "chaperon_fr"]          # story 0..3: the presets' `story` field
+SCENES = {"corbeau_fr": ["SCENE"], "boeuf_fr": ["SCENE"], "lion_fr": ["SCENE"], "chaperon_fr": ["SCENE"],
           "goldilocks_fr": "FOREST HOUSE KITCHEN CHAIRS BEDROOM".split()}
 
 

@@ -6,21 +6,23 @@ A polyphonic toy synth for a very young musician, as custom firmware for the [M-
 Built for Lila, on the hardware layer of [fm1-tribe](../fm1-tribe) (X0X, Felucca).
 
 It is a normal synth underneath: ten voices, two oscillators and a sub, an FM partner, a filter, an envelope, an LFO,
-echo, reverb, chorus and a robot crusher. On top, it is a toy: **twelve worlds** (a bird, a cow, a dog, a frog, a
-spaceship, meteors, a block world, dinosaurs, a robot, the ocean, a fairy castle and the jungle). Each world is its own
-instrument *and* its own animated picture, with **its own knobs** (the dog howls or sounds a police siren, the frog croaks, the
-arcade has a chip arpeggio, the whale sings and pings), and **whatever knob is turned, the picture changes with it**: more echo
-leaves ghosts, more filter makes the world brighter, the robot knob turns everything into big square pixels, the size knob
-makes the animal grow.
+echo, reverb, chorus and a robot crusher. On top, it is a toy: **25 worlds**, each its own instrument *and* its own animated picture.
 
-![The twelve worlds](docs/img/worlds.png)
+![The worlds](docs/img/worlds.png)
 
-Each world also has **its own effect** on the FLUFFY knob (chorus, doubler, flanger, phaser, auto-pan, ring modulator or fuzz) and **its
-own kind of filter** (soft, talky, thin, hollow, honk, vocal). Three **piano worlds** (a piano, an electric piano, an organ) turn the keys
-into a keyboard on the screen: every key lights up and sends a coloured note rising. Five more instruments follow: a xylophone, a harp, a
-ukulele (every key strums a chord), a flute and a sitar. And **two story worlds**: each key tells a part of a
-story (in French: three fables of La Fontaine, each its own world with its own pictures, and *Boucle d'or et les trois ours*), PLAY tells it all, and the voice is played by the
-synth, so the filter, the effects and the LFO still work on it.
+- **Twelve animals and places**: a bird, a cow, a wolf, a frog, a spaceship, meteors, a block world, dinosaurs, a robot, the ocean, a fairy
+  castle and the jungle. Each has **its own knobs** (the wolf howls or sounds a police siren, the frog croaks, the arcade has a chip
+  arpeggio, the whale sings and pings), **its own effect** on the FLUFFY knob (chorus, doubler, flanger, phaser, auto-pan, ring modulator,
+  fuzz) and **its own kind of filter** (soft, talky, thin, hollow, honk, vocal).
+- **Eight instruments** where the keys light up on the screen: a piano, an electric piano and an organ (the keys become a keyboard, every key
+  sends a coloured note rising), a xylophone, a harp, a ukulele (every key strums a chord), a flute and a kalimba.
+- **Five stories, in French**, told by the synth: three fables of La Fontaine (*Le Corbeau et le Renard* in his own words, *La Grenouille qui
+  voulait se faire aussi grosse que le Bœuf*, *Le Lion et le Rat*), *Boucle d'or et les trois ours* and *Le Petit Chaperon rouge*. Each key tells
+  a part, PLAY tells it all (and it stops at the end), the words are written on the screen, and the voice goes through the synth, so the
+  filter, the effects and the LFO still work on it. The speech is coded at 100 frames a second with a smoothed glottal pulse and a little breath.
+
+**Whatever knob is turned, the picture changes with it**: more echo leaves ghosts, more filter makes the world brighter, the robot knob turns
+everything into big square pixels, the size knob makes the animal grow.
 
 For a child who is too young for a screen: **SAVE + GLO together** change the screen: all of it, then only the name of a world, a beat or a
 song for one second, then none at all (the backlight is off).
@@ -39,7 +41,7 @@ Every button has one page and the four knobs always do something. The keys just 
 | GLO | the party: tempo, key, easy notes, friends (chords) |
 | ARP | arpeggiator |
 | SEQ | a drum beat to play along to |
-| PLAY / STOP | twelve songs: listen, or let the keys light up and follow them |
+| PLAY / STOP | nineteen songs: listen, or let the keys light up and follow them; in a story, tells it all |
 | REC | record a tune and loop it, even slowed down or sped up |
 | SAVE | with GLO: the screen (all, a name, none) |
 

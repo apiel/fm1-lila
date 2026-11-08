@@ -100,11 +100,11 @@ Then five more instruments, each with its own picture and its own knobs; the key
 | **HARP** | PLUCK: a long ringing string, shimmer and angels (RING, SHIMMER, SPARKLE) | a fairy and a golden harp: each string glows and shivers (C strings red, F blue) |
 | **UKULELE** | STRUM: every key strums a chord, down, then up (STRUM = how slowly, PICK, TWANG) | a crab strumming on a beach at sunset |
 | **FLUTE** | TOOT: a breathy tone with a little chiff and a late vibrato (BREATH, CHIFF, VIBRATO, BLOW) | a snake rising from its basket, the flute's holes light |
-| **SITAR** | TWANG: a buzzing string that bends into the note, with sympathetic strings (BEND, SYMPATHY, SLIDE, BUZZ) | a singing sitar in front of a turning mandala |
+| **KALIMBA** | TINK: a thumb piano, short metallic tines with a little shimmer (THUMB, RING, TINES, BUZZ) | a meerkat playing a kalimba on the savanna at sunset |
 
 ## The screen: all, a name, none
 
-**SAVE + GLO pressed together** change the screen (a lone press of either still opens its page, a moment later):
+**SAVE + GLO pressed together** change the screen (a lone press of GLO still opens its page, a moment later; SAVE alone only shows a hint):
 
 1. **all of it**, as it is;
 2. **a name**: the screen stays black and shows, for one second, the world you chose, the beat you chose or the song you chose;
@@ -112,9 +112,9 @@ Then five more instruments, each with its own picture and its own knobs; the key
 
 The choice is kept after the FM-1 is switched off.
 
-## The two story worlds
+## The five story worlds
 
-After the instruments: three fables of La Fontaine, **CORBEAU** (*Le Corbeau et le Renard*), **BOEUF** (*La Grenouille qui voulait se faire aussi grosse que le Bœuf*) and **LION** (*Le Lion et le Rat*), (*Le Corbeau et le Renard* in La Fontaine's own words), each with its own pictures (a raven with his cheese and a fox, a frog that swells next to an ox, a lion and a rat), and **BOUCLE** (*Boucle d'or et les trois ours*), all in French.
+After the instruments, five stories in French, each with its own pictures: **CORBEAU** (*Le Corbeau et le Renard*, in La Fontaine's own words: a raven with his cheese and a fox), **BOEUF** (*La Grenouille qui voulait se faire aussi grosse que le Bœuf*: a frog that swells next to an ox), **LION** (*Le Lion et le Rat*), **BOUCLE** (*Boucle d'or et les trois ours*) and **CHAPERON** (*Le Petit Chaperon rouge*: the girl in her hood, the wolf, the grandmother's house and bed).
 
 - **Each key tells one part of the story**, in order from the lowest key (up to 27 parts: a fable has nine, so only nine keys glow). The keys that have a part glow faintly, the part being
   told is lit, and its words are written at the top of the screen for whoever is reading along.

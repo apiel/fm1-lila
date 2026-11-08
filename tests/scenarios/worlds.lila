@@ -1,85 +1,177 @@
+# every world with a key held: the pictures of the README and the web page (tools/contact_sheet.py)
 wait 300
 turn PRESET 0
 wait 900
 key w6 down
-wait 260
+wait 300
 shot w00.png
 key w6 up
-wait 600
+wait 500
 turn PRESET 1
 wait 900
 key w6 down
-wait 260
+wait 300
 shot w01.png
 key w6 up
-wait 600
+wait 500
 turn PRESET 1
 wait 900
 key w6 down
-wait 260
+wait 300
 shot w02.png
 key w6 up
-wait 600
+wait 500
 turn PRESET 1
 wait 900
 key w6 down
-wait 260
+wait 300
 shot w03.png
 key w6 up
-wait 600
+wait 500
 turn PRESET 1
 wait 900
 key w6 down
-wait 260
+wait 300
 shot w04.png
 key w6 up
-wait 600
+wait 500
 turn PRESET 1
 wait 900
 key w6 down
-wait 260
+wait 300
 shot w05.png
 key w6 up
-wait 600
+wait 500
 turn PRESET 1
 wait 900
 key w6 down
-wait 260
+wait 300
 shot w06.png
 key w6 up
-wait 600
+wait 500
 turn PRESET 1
 wait 900
 key w6 down
-wait 260
+wait 300
 shot w07.png
 key w6 up
-wait 600
+wait 500
 turn PRESET 1
 wait 900
 key w6 down
-wait 260
+wait 300
 shot w08.png
 key w6 up
-wait 600
+wait 500
 turn PRESET 1
 wait 900
 key w6 down
-wait 260
+wait 300
 shot w09.png
 key w6 up
-wait 600
+wait 500
 turn PRESET 1
 wait 900
 key w6 down
-wait 260
+wait 300
 shot w10.png
 key w6 up
-wait 600
+wait 500
 turn PRESET 1
 wait 900
 key w6 down
-wait 260
+wait 300
 shot w11.png
 key w6 up
-wait 600
+wait 500
+turn PRESET 1
+wait 900
+key w6 down
+wait 300
+shot w12.png
+key w6 up
+wait 500
+turn PRESET 1
+wait 900
+key w6 down
+wait 300
+shot w13.png
+key w6 up
+wait 500
+turn PRESET 1
+wait 900
+key w6 down
+wait 300
+shot w14.png
+key w6 up
+wait 500
+turn PRESET 1
+wait 900
+key w6 down
+wait 300
+shot w15.png
+key w6 up
+wait 500
+turn PRESET 1
+wait 900
+key w6 down
+wait 300
+shot w16.png
+key w6 up
+wait 500
+turn PRESET 1
+wait 900
+key w6 down
+wait 300
+shot w17.png
+key w6 up
+wait 500
+turn PRESET 1
+wait 900
+key w6 down
+wait 300
+shot w18.png
+key w6 up
+wait 500
+turn PRESET 1
+wait 900
+key w6 down
+wait 300
+shot w19.png
+key w6 up
+wait 500
+turn PRESET 1
+wait 900
+key w6 down
+wait 300
+shot w20.png
+key w6 up
+wait 500
+turn PRESET 1
+wait 900
+key w6 down
+wait 300
+shot w21.png
+key w6 up
+wait 500
+turn PRESET 1
+wait 900
+key w6 down
+wait 300
+shot w22.png
+key w6 up
+wait 500
+turn PRESET 1
+wait 900
+key w6 down
+wait 300
+shot w23.png
+key w6 up
+wait 500
+turn PRESET 1
+wait 900
+key w6 down
+wait 300
+shot w24.png
+key w6 up
+wait 500

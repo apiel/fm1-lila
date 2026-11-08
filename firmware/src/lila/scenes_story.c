@@ -3,7 +3,7 @@
  * three bears. The picture is the part being told (story_part), or the last one told. Included by scenes.c after SCENES. */
 #pragma once
 
-static int story_last[4];                               /* per story: the part on screen when none is being told */
+static int story_last[5];                               /* per story: the part on screen when none is being told */
 static int spart(int s) { return story_part >= 0 ? (story_last[s] = story_part) : story_last[s]; }
 
 /* a little girl, feet at (cx, cy): Goldilocks (golden curls, a blue dress; the other look is unused now) */

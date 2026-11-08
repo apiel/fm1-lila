@@ -10,7 +10,7 @@
 #include <stdint.h>
 
 #define NVOICE 10
-#define NPRESET 24                     /* twelve worlds, three pianos, five more instruments and four stories (three fables, Goldilocks) */
+#define NPRESET 25                     /* twelve worlds, three pianos, five more instruments and four stories (three fables, Goldilocks, Red Riding Hood) */
 #define NWORLD 12                      /* the worlds that are instruments (the ZOO band picks among them) */
 #define NMEL 19
 #define NKEYS_L 27                     /* F3 .. G5, as the panel's keys */

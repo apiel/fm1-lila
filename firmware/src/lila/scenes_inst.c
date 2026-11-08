@@ -1,8 +1,8 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 /* Five more instruments, each with its own picture, all lit by the keys (pk[], from scenes_piano.c): XYLO (a bear with mallets
  * and a rainbow xylophone), HARP (a fairy and a golden harp whose strings glow and shiver), UKULELE (a crab strumming on a
- * beach at sunset), FLUTE (a snake rising from its basket in the desert night), SITAR (a singing sitar in front of a turning
- * mandala). Included by scenes.c after scenes_piano.c. */
+ * beach at sunset), FLUTE (a snake rising from its basket in the desert night), KALIMBA (a meerkat with a thumb piano in the
+ * savanna sunset). Included by scenes.c after scenes_piano.c. */
 #pragma once
 
 #define INST_WORLD0 15
@@ -238,66 +238,67 @@ static void fg_flute(void)
             text_out(120 + i * 18 + sc.hit / 8, 176 - i * 12 - sc.hit / 10, &FONT_B, i == 1 ? "~" : "o", K(255, 255, 200), K(80, 40, 60));
 }
 
-/* --------------------------------------------------------------- 19 SITAR --- */
-static void bg_sitar(void)
-{
-    int i, a0 = (int)(TM / 70);
-    vgrad(0, 240, K(120, 20, 50), K(40, 10, 60));
-    for (i = 0; i < 2; i++) {                                                    /* a palace's pillars */
-        box_(8 + i * 216, 24, 16, 176, K(190, 60, 70));
-        box_(4 + i * 216, 20, 24, 8, K(255, 200, 100));
-        box_(4 + i * 216, 192, 24, 8, K(255, 200, 100));
-    }
-    fill_circle(120, 96, 66, K(70, 16, 70));                                    /* a mandala that turns */
-    for (i = 0; i < 12; i++) {
-        int a = a0 + i * 21;
-        fill_tri(120 + icos(a) * 20 / 127, 96 + isin(a) * 20 / 127, 120 + icos(a - 6) * 62 / 127, 96 + isin(a - 6) * 62 / 127,
-                 120 + icos(a + 6) * 62 / 127, 96 + isin(a + 6) * 62 / 127, piano_col(i * 2, 40 + sc.lvl / 2));
-    }
-    ring_(120, 96, 64, 3, K(255, 210, 110));
-    ring_(120, 96, 30, 2, K(255, 210, 110));
-    fill_circle(120, 96, 10, K(255, 220, 120));
-    box_(0, 196, 240, 50, K(150, 40, 50));
-    for (i = 0; i < 8; i++)
-        box_(i * 32, 200, 16, 4, K(255, 200, 100));
-}
-static void act_sitar(int cx, int cy)                                           /* a sitar that sings: a gourd with a face and a long neck */
-{
-    int g = sc.mouth * 8 / 255, ln = sc.lean / 3, i, v = sc.lvl / 40;
-    uint16_t gd = K(214, 120, 50), gd2 = K(160, 80, 36), wd = K(120, 70, 36), gold = K(255, 214, 110), wh = K(255, 255, 255), ink = K(40, 24, 24);
-    AL(0, -50, 8 + ln, -150, 7, wd);                                                 /* the neck */
-    for (i = 0; i < 9; i++)                                                           /* the frets */
-        AB(-4 + ln * i / 9 + i * 8 / 9, -62 - i * 9, 12, 2, gold);
-    AE(10 + ln, -156, 11, 12, gd);                                                   /* the little gourd at the top, and the pegs */
-    AL(8 + ln, -168, 8 + ln, -176, 2, wd);
-    AE(8 + ln, -178, 3, 3, gold);
-    for (i = -2; i <= 2; i++) {                                                        /* the strings shiver with the sound */
-        int sh = (isin((int)(TM / 2) + i * 40) * v) >> 8;
-        AL(i * 2 + sh, -34, 9 + ln + i * 2 + sh, -146, 0, wh);
-    }
-    AE(0, -34, 40, 36, gd2);                                                          /* the gourd */
-    AE(0, -36, 36, 32, gd);
-    AE(-12, -50, 11, 7, blend(gd, wh, 6));
-    AE(-12, -40, 7, 8, wh);
-    AE(12, -40, 7, 8, wh);
-    AE(-12, -40, 3, 4, ink);
-    AE(12, -40, 3, 4, ink);
-    AE(-22, -26, 6, 4, K(255, 150, 130));
-    AE(22, -26, 6, 4, K(255, 150, 130));
-    if (g > 1)
-        AE(0, -22, 7, 1 + g / 2, K(130, 30, 40));
-    else {
-        AL(-6, -24, 0, -20, 1, ink);
-        AL(0, -20, 6, -24, 1, ink);
-    }
-    AB(-22, -6, 44, 4, gold);
-}
-static void fg_sitar(void)
+/* ------------------------------------------------------------- 19 KALIMBA --- */
+static void bg_kalimba(void)
 {
     int i;
-    for (i = 0; i < 5; i++) {                                                         /* marigold petals float up on each note */
-        int y = 230 - (int)((TM / 18u + (unsigned)i * 47u) % 200u), x = 20 + i * 50 + (isin((int)(TM / 20) + i * 60) >> 4);
-        if (sc.lvl > 30)
-            fill_ellipse(x, y, 4, 3, i & 1 ? K(255, 160, 40) : K(255, 200, 60));
+    vgrad(0, 190, K(255, 120, 70), K(255, 226, 140));
+    fill_circle(120, 150, 54, K(255, 210, 90));
+    fill_circle(120, 150, 44, K(255, 236, 140));
+    for (i = 0; i < 3; i++) {                                                  /* acacia trees: a flat crown on a thin trunk */
+        int x = 34 + i * 82, y = 150 + (i & 1) * 8;
+        box_(x - 2, y - 30, 4, 34, K(70, 36, 30));
+        fill_ellipse(x, y - 32, 30, 8, K(60, 70, 40));
+        fill_ellipse(x - 14, y - 36, 16, 6, K(70, 84, 46));
+    }
+    box_(0, 150, 240, 100, K(196, 140, 70));
+    for (i = 0; i < 14; i++)
+        fat_line(i * 18 + 4, 182, i * 18 + 8 + (isin((int)(TM / 18) + i * 30) >> 5), 172, 0, K(150, 110, 50));
+    cloud(((int)(TM / 100) + 100) % 300 - 40, 40, 8, K(255, 190, 150));
+}
+static void act_kalimba(int cx, int cy)                                          /* a meerkat with its thumbs on the tines */
+{
+    int g = sc.mouth * 7 / 255, par = (sc.score / 10) & 1, tx = 20 + sc.pitch * 200 / 255 - cx, k, ln = sc.lean / 3;
+    uint16_t fur = K(214, 170, 110), lt = K(250, 226, 180), br = K(90, 56, 36), ink = K(30, 20, 20);
+    AL(-12, -8, -40, -34 + (isin((int)(TM / 10)) >> 5), 3, fur);                  /* the tail */
+    AE(-9, -3, 8, 4, fur);
+    AE(9, -3, 8, 4, fur);
+    AE(0, -30, 20, 32, fur);
+    AE(0, -26, 12, 22, lt);
+    for (k = 0; k < 2; k++) {                                                     /* two arms: a thumb hits where the last note was */
+        int side = k ? 1 : -1, active = (k == par), hx = active ? iclamp(tx, -90, 90) : side * 22, hy = active ? (sc.hit > 110 ? 26 : 10) : 6;
+        AL(side * 14, -44, hx, hy, 4, fur);
+        AE(hx, hy, 4, 4, br);
+    }
+    AE(ln, -70, 16, 15, fur);
+    AE(ln - 14, -80, 4, 5, br);
+    AE(ln + 14, -80, 4, 5, br);
+    AE(ln - 7, -72, 5, 6, br);
+    AE(ln + 7, -72, 5, 6, br);
+    AE(ln - 7, -72, 2, 3, K(255, 255, 255));
+    AE(ln + 7, -72, 2, 3, K(255, 255, 255));
+    AE(ln, -62, 4, 3, ink);
+    if (g > 1)
+        AE(ln, -57, 4, 1 + g / 2, K(150, 40, 60));
+    else {
+        AL(ln - 4, -58, ln, -56, 1, ink);
+        AL(ln, -56, ln + 4, -58, 1, ink);
+    }
+}
+static void fg_kalimba(void)
+{
+    int k;
+    fill_rbox(14, 170, 212, 70, 14, K(130, 74, 36));                              /* the wooden box, a sound hole, the bridge */
+    fill_rbox(18, 174, 204, 62, 12, K(176, 104, 52));
+    fill_circle(120, 214, 14, K(60, 32, 22));
+    fill_circle(120, 214, 8, K(30, 16, 12));
+    box_(22, 176, 196, 5, K(230, 200, 110));
+    for (k = 0; k < NKEYS_L; k++) {                                                /* the tines: the middle ones longest */
+        int x = key_x(k), len = 46 - iabs(k - 13) * 2, lit = pk[k], sh = (isin((int)(TM / 3) + k * 30) * lit) >> 10;
+        uint16_t c = lit ? blend(K(200, 205, 215), K(255, 250, 170), 4 + lit * 12 / 255) : K(200, 205, 215);
+        fat_line(x, 178, x + sh, 178 - len, 1, c);
+        fill_circle(x + sh, 178 - len, 2, lit ? K(255, 250, 190) : K(150, 156, 170));
+        if (lit > 140)
+            sparkle(x + sh, 174 - len, 2, K(255, 255, 220));
     }
 }

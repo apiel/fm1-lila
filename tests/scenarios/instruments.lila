@@ -1,4 +1,4 @@
-# the five instruments after the pianos: XYLO HARP UKULELE FLUTE SITAR: keys light, the pictures follow
+# the five instruments after the pianos: XYLO HARP UKULELE FLUTE KALIMBA: keys light, the pictures follow
 wait 300
 turn PRESET 1
 turn PRESET 1
@@ -70,7 +70,7 @@ tapkey 3
 key 6 down
 key 14 down
 wait 260
-shot in_sitar.png
+shot in_kalimba.png
 key 6 up
 key 14 up
 # the ukulele strums: one key sounds a chord

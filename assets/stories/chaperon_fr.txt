@@ -1,0 +1,13 @@
+# LE PETIT CHAPERON ROUGE (fr): the tale of Charles Perrault (public domain), retold gently, with the famous lines kept. One line per key (12 parts). A line: SCENE|text. The picture follows the part being told.
+SCENE|Il était une fois une petite fille que tout le monde appelait le Petit Chaperon rouge.
+SCENE|Un jour, sa maman lui dit : Va porter cette galette et ce petit pot de beurre à ta mère-grand, qui est malade.
+SCENE|Le Petit Chaperon rouge partit à travers la forêt. Elle rencontra compère le loup.
+SCENE|Où vas-tu comme ça, petite ? demanda le loup. Je vais chez ma mère-grand, répondit-elle.
+SCENE|Le loup courut plus vite qu'elle, et arriva le premier à la maison de la grand-mère.
+SCENE|Toc, toc, toc ! Qui est là ? C'est votre petite-fille, le Petit Chaperon rouge. Tire la chevillette, la bobinette cherra.
+SCENE|Le loup entra, enferma la grand-mère dans le placard, mit sa chemise de nuit, et se coucha dans le lit.
+SCENE|Bientôt, le Petit Chaperon rouge arriva. Toc, toc, toc ! Elle tira la chevillette, et la porte s'ouvrit.
+SCENE|Mère-grand, que vous avez de grandes oreilles ! C'est pour mieux t'entendre, mon enfant.
+SCENE|Mère-grand, que vous avez de grandes dents ! C'est pour mieux te manger ! cria le loup.
+SCENE|Un bûcheron qui passait par là entendit ses cris. Il chassa le loup, qui s'enfuit dans la forêt, et il délivra la grand-mère.
+SCENE|Depuis ce jour, le Petit Chaperon rouge ne parle plus aux loups. Fin.
