@@ -84,6 +84,30 @@ static const pv_t SET_ORGAN[] = {
     {P_BOING, 10}, {P_WAVE, 56}, {P_BUDDY, 10}, {P_BIG, 52}, {P_METAL, 22}, {P_FMR, 17}, {P_VIBD, 14}, {P_VIBS, 70}, {P_VIBDLY, 40},
 };
 
+/* five more instruments: a mallet, a string, a strum, a breath, a twang */
+static const pv_t SET_XYLO[] = {
+    {P_ECHO, 14}, {P_SPACE, 30}, {P_FLUFF, 34}, {P_CUT, 120}, {P_RESO, 8}, {P_FTYPE, 5}, {P_PLUCK, 108}, {P_REL, 18}, {P_BOING, 30},
+    {P_METAL, 24}, {P_FMR, 59}, {P_NOISE, 10}, {P_NZDEC, 10},
+};
+static const pv_t SET_HARP[] = {
+    {P_ECHO, 18}, {P_SPACE, 74}, {P_FLUFF, 56}, {P_CUT, 108}, {P_RESO, 6}, {P_PLUCK, 78}, {P_REL, 76}, {P_BOING, 40}, {P_WAVE, 6},
+    {P_BUDDY, 10}, {P_BIG, 6}, {P_METAL, 10}, {P_FMR, 25}, {P_STARS, 18},
+};
+static const pv_t SET_UKE[] = {
+    {P_ECHO, 8}, {P_SPACE, 36}, {P_FLUFF, 24}, {P_CUT, 90}, {P_RESO, 14}, {P_FTYPE, 5}, {P_PLUCK, 92}, {P_REL, 34}, {P_BOING, 62},
+    {P_WAVE, 36}, {P_BUDDY, 12}, {P_BIG, 12}, {P_METAL, 18}, {P_FMR, 17}, {P_NOISE, 8}, {P_NZDEC, 8}, {P_STRUM, 60},
+};
+static const pv_t SET_FLUTE[] = {
+    {P_ECHO, 14}, {P_SPACE, 56}, {P_FLUFF, 36}, {P_CUT, 100}, {P_RESO, 10}, {P_ATK, 52}, {P_PLUCK, 0}, {P_REL, 30}, {P_BOING, 12},
+    {P_WAVE, 3}, {P_BUDDY, 6}, {P_NOISE, 26}, {P_NZDEC, 60}, {P_CTYPE, 6}, {P_CAMT, 10}, {P_CTIME, 24}, {P_VIBD, 34}, {P_VIBS, 58},
+    {P_VIBDLY, 66},
+};
+static const pv_t SET_SITAR[] = {
+    {P_ECHO, 30}, {P_SPACE, 50}, {P_FLUFF, 44}, {P_CUT, 96}, {P_RESO, 44}, {P_FTYPE, 4}, {P_PLUCK, 86}, {P_REL, 80}, {P_BOING, 80},
+    {P_WAVE, 70}, {P_BUDDY, 44}, {P_BIG, 20}, {P_METAL, 56}, {P_FMR, 17}, {P_NOISE, 6}, {P_NZDEC, 20}, {P_CTYPE, 6}, {P_CAMT, 24},
+    {P_CTIME, 56}, {P_VIBD, 16}, {P_VIBS, 56}, {P_VIBDLY, 40}, {P_PING, 50}, {P_PINGT, 20},
+};
+
 /* the two story worlds: a clear voice, a little room */
 static const pv_t SET_FABLE[] = {
     {P_CUT, 112}, {P_RESO, 8}, {P_REL, 34}, {P_SPACE, 34}, {P_ECHO, 8}, {P_CTIME, 64}, {P_BUDDY, 0}, {P_WAVE, 0}, {P_PINGT, 30},
@@ -109,6 +133,11 @@ const preset_t PRESETS[NPRESET] = {
     {"PIANO", "PLINK", SET(PIANO), 0, 92, 0, -1, FXK_CHORUS},
     {"E-PIANO", "DOO-WAH", SET(EPIANO), 0, 90, 0, -1, FXK_PHASE},
     {"ORGAN", "HMMM", SET(ORGAN), 0, 78, 0, -1, FXK_PAN},
+    {"XYLO", "TING", SET(XYLO), 1, 140, 0, -1, FXK_SLAP},
+    {"HARP", "PLUCK", SET(HARP), 0, 92, 0, -1, FXK_CHORUS},
+    {"UKULELE", "STRUM", SET(UKE), 0, 90, 0, -1, FXK_PHASE},
+    {"FLUTE", "TOOT", SET(FLUTE), 1, 55, 0, -1, FXK_PAN},
+    {"SITAR", "TWANG", SET(SITAR), 0, 150, 0, -1, FXK_FLANGE},
     {"CORBEAU", "UNE FABLE", SET(FABLE), 0, 75, 0, 0, FXK_CHORUS},
     {"BOEUF", "UNE FABLE", SET(FABLE), 0, 75, 0, 1, FXK_CHORUS},
     {"LION", "UNE FABLE", SET(FABLE), 0, 75, 0, 2, FXK_CHORUS},

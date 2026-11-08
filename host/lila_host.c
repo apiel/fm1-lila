@@ -381,7 +381,7 @@ static int key_of(const char *s)
 
 static const char *const PN[NP] = {"ECHO", "SPACE", "FLUFF", "ROBOT", "CUT", "RESO", "FTYPE", "GRIT", "ATK", "PLUCK", "REL", "BOING", "LSPD", "LDEP", "LWHAT", "LWAVE",
                                    "WAVE", "BUDDY", "BIG", "METAL", "BEND", "STARS", "SIZE", "WIGGLE", "CTYPE", "CAMT", "CTIME", "VIBD", "VIBS", "VIBDLY", "AMR", "AMD",
-                                   "DUTY", "PWMD", "CHIP", "CHIPS", "VOWEL", "FORM", "NOISE", "NZDEC", "STOMP", "BELL", "CHAT", "CHATR", "PING", "PINGT", "FMR", "TEMPO", "KEY", "EASY", "FRIENDS", "ARP", "ARPSPD", "ARPRNG",
+                                   "DUTY", "PWMD", "CHIP", "CHIPS", "VOWEL", "FORM", "NOISE", "NZDEC", "STOMP", "BELL", "CHAT", "CHATR", "PING", "PINGT", "FMR", "STRUM", "TEMPO", "KEY", "EASY", "FRIENDS", "ARP", "ARPSPD", "ARPRNG",
                                    "STICKY", "BEAT", "BEATVOL", "BOUNCE", "TUNING", "MSPEED", "MMODE", "MREPEAT", "MBAND", "RLEN", "RVOL", "RSPEED", "RFUNNY",
                                    "MOOD", "PRESET", "MELODY", "OCT", "SCREEN"};
 static int pidx(const char *s)                           /* a parameter by name (P_ECHO: "ECHO") or by number */

@@ -3,7 +3,7 @@
  * the lion and the rat. The picture follows the part being told (nine parts a fable). Included by scenes.c after the table. */
 #pragma once
 
-#define FABLE_WORLD0 15
+#define FABLE_WORLD0 20
 
 /* a fox, feet at (cx, cy), facing right: up = how high it looks (0..100), mouth = how open, cheese = in its mouth */
 static void fox_(int cx, int cy, int up, int mouth, int cheese)

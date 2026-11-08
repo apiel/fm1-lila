@@ -37,9 +37,9 @@ def main(out):
                 sc, t = ln.split("|", 1)
                 code = SCENES[name].index(sc.strip().rstrip("*")) | (0x80 if sc.strip().endswith("*") else 0)
                 parts.append((code, ascii_of(t.strip())))
-        raw = lpc.read_bytes() if lpc.exists() else b"LPC1" + struct.pack("<H", 0)
-        if raw[:4] != b"LPC1":
-            raise SystemExit(f"{lpc}: not an LPC1 file")
+        raw = lpc.read_bytes() if lpc.exists() else b"LPC2" + struct.pack("<H", 0)
+        if raw[:4] != b"LPC2":
+            raise SystemExit(f"{lpc}: not an LPC2 file: run tools/story_make.py again")
         n = struct.unpack("<H", raw[4:6])[0]
         offs, cnts = [], []
         for i in range(n):

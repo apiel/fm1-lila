@@ -146,6 +146,31 @@ static const wk_t WK_ORGAN[] = {
     WK(PG_ENV, 1, "PUFF", P_PLUCK, 127, 0, 0, 0), WK(PG_ENV, 2, "HOLD", P_REL, 127, 0, 0, 0),
     WK(PG_EDIT, 0, "PIPES", P_WAVE, 127, FM_WAVE, 0, 0), WK(PG_EDIT, 1, "STOPS", P_BUDDY, 127, 0, 0, 0), WK(PG_EDIT, 2, "BASS", P_BIG, 127, 0, 0, 0),
     WK(PG_EDIT, 3, "REED", P_METAL, 127, 0, 0, 0)};
+static const wk_t WK_XYLO[] = {
+    WK(PG_HOME, 3, "WIGGLE", P_WIGGLE, 127, 0, 0, 0),
+    WK(PG_FX, 0, "HALL", P_ECHO, 127, 0, 0, 0), WK(PG_FX, 1, "ROOM", P_SPACE, 127, 0, 0, 0), WK(PG_FX, 2, "DOUBLE", P_FLUFF, 127, 0, 0, 0),
+    WK(PG_ENV, 1, "MALLET", P_PLUCK, 127, 0, 0, 0), WK(PG_ENV, 2, "RING", P_REL, 127, 0, 0, 0),
+    WK(PG_EDIT, 0, "WOOD", P_WAVE, 127, FM_WAVE, 0, 0), WK(PG_EDIT, 3, "METAL", P_METAL, 127, 0, 0, 0)};
+static const wk_t WK_HARP[] = {
+    WK(PG_HOME, 1, "SPARKLE", P_STARS, 127, 0, 0, 0),
+    WK(PG_FX, 0, "HALL", P_ECHO, 127, 0, 0, 0), WK(PG_FX, 1, "ANGELS", P_SPACE, 127, 0, 0, 0), WK(PG_FX, 2, "SHIMMER", P_FLUFF, 127, 0, 0, 0),
+    WK(PG_ENV, 2, "RING", P_REL, 127, 0, 0, 0),
+    WK(PG_EDIT, 3, "STRINGS", P_METAL, 127, 0, 0, 0)};
+static const wk_t WK_UKE[] = {
+    WK(PG_HOME, 0, "STRUM", P_STRUM, 127, 0, 0, 0), WK(PG_HOME, 1, "SPARKLE", P_STARS, 127, 0, 0, 0),
+    WK(PG_FX, 2, "WAVY", P_FLUFF, 127, 0, 0, 0),
+    WK(PG_ENV, 1, "PICK", P_PLUCK, 127, 0, 0, 0),
+    WK(PG_EDIT, 3, "TWANG", P_METAL, 127, 0, 0, 0)};
+static const wk_t WK_FLUTE[] = {
+    WK(PG_HOME, 0, "BREATH", P_NOISE, 127, 0, 0, 0), WK(PG_HOME, 1, "CHIFF", P_CAMT, 127, 0, 0, 0), WK(PG_HOME, 2, "VIBRATO", P_VIBD, 127, 0, 0, 0),
+    WK(PG_FX, 2, "AIR", P_FLUFF, 127, 0, 0, 0),
+    WK(PG_ENV, 0, "BLOW", P_ATK, 127, 0, 0, 0),
+    WK(PG_EDIT, 1, "WARM", P_BUDDY, 127, 0, 0, 0)};
+static const wk_t WK_SITAR[] = {
+    WK(PG_HOME, 0, "BEND", P_CAMT, 127, 0, 0, 0), WK(PG_HOME, 1, "SYMPATHY", P_PING, 127, 0, 0, 0), WK(PG_HOME, 2, "SLIDE", P_CTIME, 127, 0, 0, 0),
+    WK(PG_HOME, 3, "VIBRATO", P_VIBD, 127, 0, 0, 0),
+    WK(PG_FX, 2, "SHIMMER", P_FLUFF, 127, 0, 0, 0),
+    WK(PG_EDIT, 1, "DRONES", P_BUDDY, 127, 0, 0, 0), WK(PG_EDIT, 3, "BUZZ", P_METAL, 127, 0, 0, 0)};
 static const wk_t WK_STORY[] = {
     WK(PG_HOME, 0, "SPEED", P_CTIME, 127, FM_SPEED, 0, 0), WK(PG_HOME, 1, "ROBOT", P_CAMT, 127, 0, 0, 0), WK(PG_HOME, 2, "SIZE", P_SIZE, 127, 0, 0, 0),
     WK(PG_HOME, 3, "PITCH", P_BEND, 127, FM_BEND, 0, 0),
@@ -156,7 +181,7 @@ static const wk_t WK_STORY[] = {
 #define WKS(t) {t, (uint8_t)(sizeof t / sizeof t[0])}
 static const struct { const wk_t *t; uint8_t n; } WORLD_KNOBS[NPRESET] = {
     WKS(WK_BIRD), WKS(WK_COW), WKS(WK_DOG), WKS(WK_FROG), WKS(WK_SPACE), WKS(WK_METEOR), WKS(WK_BLOCKS), WKS(WK_DINO), WKS(WK_ROBOT),
-    WKS(WK_OCEAN), WKS(WK_CASTLE), WKS(WK_JUNGLE), WKS(WK_PIANO), WKS(WK_EPIANO), WKS(WK_ORGAN), WKS(WK_STORY), WKS(WK_STORY), WKS(WK_STORY), WKS(WK_STORY)};
+    WKS(WK_OCEAN), WKS(WK_CASTLE), WKS(WK_JUNGLE), WKS(WK_PIANO), WKS(WK_EPIANO), WKS(WK_ORGAN), WKS(WK_XYLO), WKS(WK_HARP), WKS(WK_UKE), WKS(WK_FLUTE), WKS(WK_SITAR), WKS(WK_STORY), WKS(WK_STORY), WKS(WK_STORY), WKS(WK_STORY)};
 
 static int story_world(void) { return PRESETS[P[P_PRESET] % NPRESET].story; }
 static int story_busy(void) { return story_all || story_part >= 0; }
@@ -635,7 +660,7 @@ static void world_events(void)
         }
         sc.hit = 255;
         sc.score += 10;
-        if (sc.world >= PIANO_WORLD0 && sc.world < PIANO_WORLD0 + 3)
+        if (sc.world >= PIANO_WORLD0 && sc.world < PIANO_WORLD0 + 8)
             piano_note(e.note, e.vel);
         if (P[P_STOMP] > 8) {
             sc.stompf = 255;
@@ -782,7 +807,7 @@ static void sc_update(void)
         note_origin(&x, &y);
         part_add(PK_DOT, x + 20 + rnd_range(-6, 6), y + 40 + rnd_range(-6, 6), rnd_range(6, 18), rnd_range(-10, 4), 22, 3 + sc.noise / 30, RGB(200, 200, 210), 0);
     }
-    if (sc.world >= PIANO_WORLD0 && sc.world < PIANO_WORLD0 + 3)
+    if (sc.world >= PIANO_WORLD0 && sc.world < PIANO_WORLD0 + 8)
         piano_step(ui.held_k);
     look_update();
     sc.rec = rec_state;

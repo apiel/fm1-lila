@@ -641,6 +641,17 @@ static void world_extras(int note, int vel)
             sched_add(at + 2600u, SC_OFF, SRC_SPARK, 0x430 + i, 0, 0, 0);
         }
     }
+    if (P[P_STRUM]) {                                    /* a strummed chord: the notes of a major chord one after the other, down and up */
+        static const int8_t CH[3] = {4, 7, 12};
+        static uint8_t down;
+        uint32_t sp = (uint32_t)(FS * (0.005f + (float)P[P_STRUM] * (0.033f / 127.0f))), at = t;
+        down ^= 1u;
+        for (i = 0; i < 3; i++) {
+            at += sp;
+            sched_add(at, SC_ON, SRC_SPARK, 0x450 + i, note + CH[down ? i : 2 - i], vel * (8 - i) / 10, &g_vp);
+            sched_add(at + (uint32_t)(FS * 0.9f), SC_OFF, SRC_SPARK, 0x450 + i, 0, 0, 0);
+        }
+    }
     if (P[P_PING]) {
         int count = (int)P[P_PING] * 4 / 127;
         uint32_t gap = (uint32_t)(FS * (0.12f + (float)P[P_PINGT] * (0.78f / 127.0f))), at = t;
@@ -1148,21 +1159,26 @@ static void rec_press(void)
 }
 
 /* ------------------------------------------------------------------ the stories --- */
-/* LPC speech (tools/lpc_enc.c makes it): 12 reflection coefficients, a level and a pitch, 50 frames a second, spoken at 11025 Hz
+/* LPC speech (tools/lpc_enc.c makes it, format LPC2): 12 reflection coefficients, a level, a pitch and how voiced it is, 100 frames
+ * a second (a key frame, then a frame between that corrects the average of its two neighbouring keys), spoken at 11025 Hz
  * times the SIZE (smaller formants: a mouse, bigger: a giant). The excitation is the synth: a Speak & Spell pulse, or the SHAPE
  * knob's waves, with the BUDDY, the BIG sub, the FRIENDS' chords and a WHISPER of noise; the pitch follows the speech, the KEY, the
  * octave, BEND and the LFO, and ROBOT pulls it toward one note. Then the filter, the envelope and the effects, like a voice. */
 #define ST_ORDER 12
 #define ST_FS 11025.0f
-static const uint8_t ST_KBITS[ST_ORDER] = {7, 7, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4};
+static const uint8_t ST_KBITS[ST_ORDER] = {7, 7, 6, 6, 6, 5, 5, 5, 5, 5, 4, 3};        /* a key frame's coefficients */
+static const uint8_t ST_DBITS[ST_ORDER] = {4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2};        /* a frame between: what the neighbours' average misses */
+static const float ST_DSTEP[ST_ORDER] = {0.03f, 0.03f, 0.03f, 0.03f, 0.03f, 0.025f, 0.025f, 0.02f, 0.02f, 0.02f, 0.02f, 0.02f};
+#define ST_PAIR 15u                          /* bytes of a key frame (10) and a frame between (5) */
 volatile int8_t story_part = -1;
 volatile uint8_t story_all, story_pos;
 static struct {
     int s, on, gate;
-    uint32_t f0, fend;                       /* the part's frames */
+    uint32_t f0, nfr;                        /* the part's first pair, and its frames (even) */
     float fpos;                              /* frames since the part started */
     float k0[ST_ORDER + 1], k1[ST_ORDER + 1], a[ST_ORDER + 1], y[ST_ORDER + 1];
-    float g0, g1, p0, p1;                    /* the level and the period of the two frames around now */
+    float g0, g1, p0, p1, v0, v1;            /* the level, the period and the voicing of the two frames around now */
+    float pl, nzp, jit, shm;                 /* the smoothed pulse, the breath's filter, this period's jitter and loudness */
     int fi;                                  /* the frame k0 holds */
     float de, ph, ph2, ph3, phs, lph, prev, cur, env, gprev, s1, s2, lvl;
     int sub;                                 /* LPC samples until the coefficients are refreshed */
@@ -1174,30 +1190,63 @@ const char *story_text(int s, int part) { return s >= 0 && s < NSTORY && part >=
 int story_scene(int s, int part) { return s >= 0 && s < NSTORY && part >= 0 && part < STORIES[s].parts ? STORIES[s].scene[part] : 0; }
 static int story_of_preset(void) { return PRESETS[P[P_PRESET] % NPRESET].story; }
 
-static void st_frame(uint32_t f, float *k, float *g, float *p)
+typedef struct { float k[ST_ORDER + 1]; int gq, pq, vq; } stq_t;
+static unsigned st_bits(const uint8_t *b, int *pos, int n)
 {
-    const uint8_t *b = STORIES[st.s].fr + f * 10u;
-    int pos = 0, j, q;
+    unsigned v = 0;
+    int i;
+    for (i = 0; i < n; i++, (*pos)++)
+        v |= (unsigned)((b[*pos >> 3] >> (*pos & 7)) & 1u) << i;
+    return v;
+}
+static void st_key(const uint8_t *b, stq_t *q)             /* a key frame */
+{
+    int pos = 0, j;
     for (j = 0; j < ST_ORDER; j++) {
-        int n = ST_KBITS[j], m = (1 << (n - 1)) - 1, i;
-        unsigned v = 0;
-        for (i = 0; i < n; i++, pos++)
-            v |= (unsigned)((b[pos >> 3] >> (pos & 7)) & 1u) << i;
-        k[j + 1] = fm_sinf((float)((int)v - m) / (float)m * (FM_PI * 0.5f));
+        int n = ST_KBITS[j], m = (1 << (n - 1)) - 1;
+        q->k[j + 1] = fm_sinf((float)((int)st_bits(b, &pos, n) - m) / (float)m * (FM_PI * 0.5f));
     }
-    for (q = 0, j = 0; j < 6; j++, pos++)
-        q |= ((b[pos >> 3] >> (pos & 7)) & 1) << j;
-    *g = fm_exp2f((float)q * 1.5f * (3.321928f / 20.0f)) - 1.0f;      /* 10^(q 1.5 / 20) */
-    for (q = 0, j = 0; j < 7; j++, pos++)
-        q |= ((b[pos >> 3] >> (pos & 7)) & 1) << j;
-    *p = q ? 25.0f * fm_exp2f((float)(q - 1) * (4.0f / 126.0f)) : 0.0f;
+    q->gq = (int)st_bits(b, &pos, 6);
+    q->pq = (int)st_bits(b, &pos, 8);
+    q->vq = (int)st_bits(b, &pos, 2);
+}
+/* frame i of the part: a key (even), or the average of the two keys around it and what it adds (odd) */
+static void st_frame(int i, float *k, float *g, float *p, float *v)
+{
+    const uint8_t *base = STORIES[st.s].fr + (st.f0 + (uint32_t)(i >> 1)) * ST_PAIR;
+    stq_t a, o;
+    int j;
+    st_key(base, &a);
+    o = a;
+    if (i & 1) {
+        stq_t n = a;
+        int pos = 80, d;
+        if ((uint32_t)((i >> 1) + 1) * 2u < st.nfr)
+            st_key(base + ST_PAIR, &n);
+        for (j = 0; j < ST_ORDER; j++) {
+            int bits = ST_DBITS[j], q = (int)st_bits(base, &pos, bits) - (1 << (bits - 1));
+            float kv = 0.5f * (a.k[j + 1] + n.k[j + 1]) + (float)q * ST_DSTEP[j];
+            o.k[j + 1] = kv > 0.995f ? 0.995f : kv < -0.995f ? -0.995f : kv;
+        }
+        d = (int)st_bits(base, &pos, 4) - 8 + (a.gq + n.gq + 1) / 2;
+        o.gq = d < 0 ? 0 : d > 63 ? 63 : d;
+        if (!a.pq) {                                         /* the previous key is unvoiced: this one follows the next */
+            o.pq = n.pq;
+            o.vq = n.vq;
+        }
+    }
+    for (j = 1; j <= ST_ORDER; j++)
+        k[j] = o.k[j];
+    *g = fm_exp2f((float)o.gq * 1.5f * (3.321928f / 20.0f)) - 1.0f;      /* 10^(q 1.5 / 20) */
+    *p = o.pq ? 25.0f * fm_exp2f((float)(o.pq - 1) * (4.0f / 254.0f)) : 0.0f;
+    *v = (float)o.vq * (1.0f / 3.0f);
 }
 static void st_load(int fi)                                /* the two frames around fi */
 {
-    uint32_t a = st.f0 + (uint32_t)fi, b = a + 1u < st.fend ? a + 1u : a;
+    int b = fi + 1 < (int)st.nfr ? fi + 1 : fi;
     st.fi = fi;
-    st_frame(a, st.k0, &st.g0, &st.p0);
-    st_frame(b, st.k1, &st.g1, &st.p1);
+    st_frame(fi, st.k0, &st.g0, &st.p0, &st.v0);
+    st_frame(b, st.k1, &st.g1, &st.p1, &st.v1);
 }
 static void story_start(int part)
 {
@@ -1206,8 +1255,10 @@ static void story_start(int part)
         return;
     st.s = s;
     st.f0 = STORIES[s].off[part];
-    st.fend = st.f0 + STORIES[s].n[part];
+    st.nfr = STORIES[s].n[part];
     st.fpos = 0.0f;
+    st.pl = st.nzp = 0.0f;
+    st.jit = st.shm = 1.0f;
     st.on = st.gate = STORIES[s].n[part] > 0;
     st.sub = 0;
     st.gap = 0;
@@ -1232,11 +1283,11 @@ static void story_stop(void)
 /* one LPC sample */
 static float st_sample(float rate)
 {
-    float frac, k[ST_ORDER + 1], g, p, e, nz, y, robot = knob((const uint8_t *)P, P_CAMT);
+    float frac, k[ST_ORDER + 1], g, p, e, nz, y, vc, robot = knob((const uint8_t *)P, P_CAMT);
     int j, fi;
-    st.fpos += 50.0f * fm_exp2f((64.0f - (float)P[P_CTIME]) * (1.0f / 64.0f)) / rate;    /* SLOW: 0.5x .. 2x, the pitch stays */
+    st.fpos += 100.0f * fm_exp2f((64.0f - (float)P[P_CTIME]) * (1.0f / 64.0f)) / rate;    /* SLOW: 0.5x .. 2x, the pitch stays */
     fi = (int)st.fpos;
-    if (st.f0 + (uint32_t)fi >= st.fend) {
+    if ((uint32_t)fi >= st.nfr) {
         st.on = 0;
         st.gate = 0;
         return 0.0f;
@@ -1261,20 +1312,28 @@ static float st_sample(float rate)
     }
     g = (st.g0 + (st.g1 - st.g0) * frac) * (1.0f / 32768.0f);
     p = st.p0 > 0.0f && st.p1 > 0.0f ? st.p0 + (st.p1 - st.p0) * frac : st.p0;
+    vc = st.v0 + (st.v1 - st.v0) * frac;                   /* 0 breathy .. 1 clean */
     nz = frnd() * 1.73f;
     if (p > 0.0f) {                                        /* voiced: the synth plays the pitch of the speech */
         float f0 = ST_FS / p, semis = (float)((int)P[P_KEY] - 6) + 12.0f * (float)((int)P[P_OCT] - 3) + ctl.bend + ctl.wig + ctl.lfo_pitch;
         float lf = fm_log2f(f0), inc, wv = (float)P[P_WAVE];
         lf += (7.13f - lf) * robot;                        /* ROBOT: toward one note (140 Hz) */
         f0 = fm_exp2f(lf + semis * (1.0f / 12.0f));
-        inc = f0 / rate;
+        inc = f0 / rate * st.jit;                          /* jitter: no two periods are exactly alike */
         if (inc > 0.45f)
             inc = 0.45f;
         st.ph += inc;
-        if (wv < 16.0f) {                                  /* the Speak & Spell pulse */
-            e = 0.0f;
-            if (st.ph >= 1.0f)
-                e = fm_sqrtf(1.0f / inc);
+        if (wv < 16.0f) {                                  /* the pulse: a glottal one, smoothed, with breath in the less voiced frames */
+            float imp = 0.0f, hp;
+            if (st.ph >= 1.0f) {
+                imp = fm_sqrtf(1.0f / inc) * st.shm;
+                st.jit = 1.0f + 0.012f * frnd();
+                st.shm = 1.0f + 0.05f * frnd();
+            }
+            st.pl += 0.7f * (imp - st.pl);                 /* a low pass: the buzz of a bare impulse is gone */
+            hp = (nz - st.nzp * 0.8f) * 0.78f;              /* breath: noise in the highs */
+            st.nzp = nz;
+            e = st.pl * 1.1f * (0.45f + 0.55f * vc) + hp * (0.12f + 0.75f * (1.0f - vc));
         } else
             e = shape(st.ph - (float)(int)st.ph, inc, (wv - 16.0f) * (3.0f / 111.0f), 0.5f) * 0.95f;
         if (st.ph >= 1.0f)
@@ -1384,8 +1443,8 @@ static void story_run(float *out)
     }
     st.s1 = s1;
     st.s2 = s2;
-    if (st.on && st.fend > st.f0)
-        story_pos = (uint8_t)(st.fpos * 255.0f / (float)(st.fend - st.f0) > 255.0f ? 255.0f : st.fpos * 255.0f / (float)(st.fend - st.f0));
+    if (st.on && st.nfr)
+        story_pos = (uint8_t)(st.fpos * 255.0f / (float)st.nfr > 255.0f ? 255.0f : st.fpos * 255.0f / (float)st.nfr);
 }
 
 /* --------------------------------------------------------------- the events --- */

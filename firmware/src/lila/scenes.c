@@ -98,6 +98,7 @@ static void stars_sky(int n, int ymax, int speed, uint16_t c)
 #include "scenes_b.c"
 #include "scenes_c.c"
 #include "scenes_piano.c"
+#include "scenes_inst.c"
 static void bg_fable(void);
 static void act_fable(int cx, int cy);
 static void fg_fable(void);
@@ -121,6 +122,11 @@ static const scene_t SCENES[NPRESET] = {
     {"PIANO", bg_piano, act_piano, fg_piano, 120, 128, 0x2A1030, 0xFFD450},
     {"E-PIANO", bg_piano, act_piano, fg_piano, 120, 128, 0x20083A, 0x50F0FF},
     {"ORGAN", bg_piano, act_piano, fg_piano, 120, 128, 0x40303C, 0xFFC080},
+    {"XYLO", bg_xylo, act_xylo, fg_xylo, 120, 130, 0xFFECFA, 0xFF70A0},
+    {"HARP", bg_harp, act_harp, fg_harp, 190, 112, 0x78469A, 0xFFE070},
+    {"UKULELE", bg_uke, act_uke, fg_uke, 120, 196, 0xFFD68C, 0xFF8A50},
+    {"FLUTE", bg_flute, act_flute, fg_flute, 150, 204, 0xFF8C5A, 0x80E0A0},
+    {"SITAR", bg_sitar, act_sitar, fg_sitar, 120, 206, 0x280A3C, 0xFFB040},
     {"CORBEAU", bg_fable, act_fable, fg_fable, 80, 200, 0xCDEBFF, 0x8080B0},
     {"BOEUF", bg_fable, act_fable, fg_fable, 120, 176, 0xB8E8FF, 0x6EDC50},
     {"LION", bg_fable, act_fable, fg_fable, 90, 190, 0xBDE8A0, 0xFFA830},

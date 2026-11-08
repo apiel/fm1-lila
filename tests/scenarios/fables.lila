@@ -4,7 +4,7 @@ turn PRESET -1
 turn PRESET -1
 turn PRESET -1
 turn PRESET -1
-expectp PRESET 15
+expectp PRESET 20
 wait 800
 key 0 down
 wait 450

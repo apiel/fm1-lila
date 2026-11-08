@@ -10,7 +10,7 @@
 #include <stdint.h>
 
 #define NVOICE 10
-#define NPRESET 19                     /* twelve worlds, three pianos and four stories (three fables, Goldilocks) */
+#define NPRESET 24                     /* twelve worlds, three pianos, five more instruments and four stories (three fables, Goldilocks) */
 #define NWORLD 12                      /* the worlds that are instruments (the ZOO band picks among them) */
 #define NMEL 19
 #define NKEYS_L 27                     /* F3 .. G5, as the panel's keys */
@@ -38,6 +38,7 @@ enum {
     P_CHAT, P_CHATR,                              /* a chatter of little blips after a note: how many, how far apart in pitch */
     P_PING, P_PINGT,                              /* the same note again and again, softer (sonar): how often, how far apart */
     P_FMR,                                        /* the FM partner's ratio */
+    P_STRUM,                                      /* a strummed chord with every note (ukulele): how slowly it is strummed */
     NSND,
     P_TEMPO = NSND, P_KEY, P_EASY, P_FRIENDS,     /* GLO  */
     P_ARP, P_ARPSPD, P_ARPRNG, P_STICKY,          /* ARP  */

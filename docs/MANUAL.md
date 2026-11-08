@@ -84,13 +84,23 @@ This is the **generic** layout. Each world then takes over some of these knobs a
 | 11 | CASTLE | TINKLE: a music-box bell | a unicorn in front of a castle and a rainbow |
 | 12 | JUNGLE | TRUMPET: a brassy horn that scoops up, with a breath and a stomp | an elephant raising its trunk among palm trees |
 
-## The three piano worlds
+## The piano worlds and the instruments
 
 After the jungle: **PIANO** (a concert hall with red curtains), **E-PIANO** (a neon synthwave night) and **ORGAN** (a cathedral with a rose
 window and glowing pipes). The panel's 27 keys are drawn as a keyboard at the bottom of the screen: every key sinks and lights in its own
 colour when it sounds (pressed, or played by a song, the arpeggiator or the loop) and sends a coloured note rising. A little singing note
 floats above and takes everything the other animals take (size, boing, twins, echo ghosts, a shimmering double). Their knobs have piano
 names: HALL / ROOM / CHORUS (or PHASER, ROTARY), HAMMER and PEDAL, STRINGS, BASS, SHINE.
+
+Then five more instruments, each with its own picture and its own knobs; the keys light up in all of them:
+
+| World | Sound | Picture |
+|---|---|---|
+| **XYLO** | TING: wooden bars with a bright mallet click (MALLET, RING, WOOD, METAL) | a bear hitting a rainbow xylophone, the bars jump |
+| **HARP** | PLUCK: a long ringing string, shimmer and angels (RING, SHIMMER, SPARKLE) | a fairy and a golden harp: each string glows and shivers (C strings red, F blue) |
+| **UKULELE** | STRUM: every key strums a chord, down, then up (STRUM = how slowly, PICK, TWANG) | a crab strumming on a beach at sunset |
+| **FLUTE** | TOOT: a breathy tone with a little chiff and a late vibrato (BREATH, CHIFF, VIBRATO, BLOW) | a snake rising from its basket, the flute's holes light |
+| **SITAR** | TWANG: a buzzing string that bends into the note, with sympathetic strings (BEND, SYMPATHY, SLIDE, BUZZ) | a singing sitar in front of a turning mandala |
 
 ## The screen: all, a name, none
 
@@ -104,7 +114,7 @@ The choice is kept after the FM-1 is switched off.
 
 ## The two story worlds
 
-After the pianos: three fables of La Fontaine, **CORBEAU** (*Le Corbeau et le Renard*), **BOEUF** (*La Grenouille qui voulait se faire aussi grosse que le Bœuf*) and **LION** (*Le Lion et le Rat*), (*Le Corbeau et le Renard* in La Fontaine's own words), each with its own pictures (a raven with his cheese and a fox, a frog that swells next to an ox, a lion and a rat), and **BOUCLE** (*Boucle d'or et les trois ours*), all in French.
+After the instruments: three fables of La Fontaine, **CORBEAU** (*Le Corbeau et le Renard*), **BOEUF** (*La Grenouille qui voulait se faire aussi grosse que le Bœuf*) and **LION** (*Le Lion et le Rat*), (*Le Corbeau et le Renard* in La Fontaine's own words), each with its own pictures (a raven with his cheese and a fox, a frog that swells next to an ox, a lion and a rat), and **BOUCLE** (*Boucle d'or et les trois ours*), all in French.
 
 - **Each key tells one part of the story**, in order from the lowest key (up to 27 parts: a fable has nine, so only nine keys glow). The keys that have a part glow faintly, the part being
   told is lit, and its words are written at the top of the screen for whoever is reading along.

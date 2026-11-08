@@ -3,9 +3,10 @@
 """story_make.py STORY.txt VOICE.onnx [--piper PIPER] [--slow 1.15]: a story's speech, coded for the FM-1.
 
 Each line of STORY.txt (SCENE|text, # comments) is spoken by Piper (a free text-to-speech program, https://github.com/OHF-Voice/piper1-gpl),
-resampled to 11025 Hz with sox, trimmed, and LPC-coded by tools/lpc_enc.c. The frames of all the lines go into STORY.lpc next to the text:
+resampled to 11025 Hz with sox, trimmed, and LPC-coded by tools/lpc_enc.c (LPC2). The frames of all the lines go into STORY.lpc next to the text:
 
-  "LPC1", u16 parts, then for each part: u32 first frame, u16 frames; then the 10-byte frames.
+  "LPC2", u16 parts, then for each part: u32 first pair, u16 frames (always even); then the 15-byte pairs of frames (100 frames a second:
+  a 10-byte key frame and a 5-byte frame between, see tools/lpc_enc.c).
 
 The .lpc files are committed (the build does not need Piper); tools/gen_stories.py turns them and the texts into C at build time.
 The voices used: en_US-ljspeech-high (LJ Speech, public domain), fr_FR-siwis-medium (SIWIS, CC BY 4.0)."""
@@ -53,12 +54,12 @@ def main():
                             "reverse", "pad", "0.05", "0.15"], check=True)
             subprocess.run([str(enc), str(raw), str(lpc)], check=True, capture_output=True)
             frames.append(lpc.read_bytes())
-            print(f"  {i + 1:2d}/{len(parts)} {len(frames[-1]) // 10 / 50:4.1f} s  {text[:60]}")
-    head = b"LPC1" + struct.pack("<H", len(parts))
+            print(f"  {i + 1:2d}/{len(parts)} {len(frames[-1]) // 15 / 50:4.1f} s  {text[:60]}")
+    head = b"LPC2" + struct.pack("<H", len(parts))
     pos, table = 0, b""
     for fr in frames:
-        n = len(fr) // 10
-        table += struct.pack("<IH", pos, n)
+        n = len(fr) // 15                              # pairs
+        table += struct.pack("<IH", pos, n * 2)
         pos += n
     out = Path(a.story).with_suffix(".lpc")
     out.write_bytes(head + table + b"".join(frames))
