@@ -112,8 +112,21 @@ static const uint8_t LCD_SEQ[] = {
     0x13, 0,                     /* NORON */
 };
 
-/* the light is a pin, active low: the screen can be dark while the rest runs (the screen-free modes) */
-void plat_backlight(int on) { fm1_lcd_backlight(on); }
+/* the light is a pin, active low: the screen can be dark while the rest runs (the screen-free modes).
+ * It sits on port A, whose output register the TIMER5 key / LED scan also read-modify-writes: a tick landing between
+ * this read and write put back a stale shift-register state, and the scan died (no keys, no LEDs, screen dark).
+ * So only touch the pin when it changes, and with the interrupts off. */
+void plat_backlight(int on)
+{
+    static int cur = -1;
+    on = on != 0;
+    if (on == cur)
+        return;
+    cur = on;
+    fm1_irq_off();
+    fm1_lcd_backlight(on);
+    fm1_irq_on();
+}
 
 static void lcd_init(void)
 {

@@ -295,7 +295,7 @@ static void lila_load(void)
         P[P_BEAT] = 0;                         /* a beat or an arpeggio that starts by itself would be a surprise */
         P[P_ARP] = 0;
         P[P_MOOD] &= 3;
-        P[P_SCREEN] = P[P_SCREEN] >= NSCREEN ? 0 : P[P_SCREEN];
+        P[P_SCREEN] = P[P_SCREEN] >= SCREEN_OFF ? 0 : P[P_SCREEN];   /* a saved OFF boots as full */
     }
     /* else: engine_init() sets the defaults */
 }
@@ -404,7 +404,7 @@ static void screen_cycle(void)
 {
     static const char *const NM[NSCREEN] = {"SCREEN", "SCREEN", "SCREEN"};
     static const char *const VL[NSCREEN] = {"ALL", "MINIMAL", "OFF"};
-    int m = ((int)P[P_SCREEN] + 1) % NSCREEN;
+    int m = P[P_SCREEN] == SCREEN_FULL ? SCREEN_MINI : SCREEN_FULL;   /* SCREEN_OFF is disabled for now (it left the FM-1 dead) */
     P[P_SCREEN] = (uint8_t)m;
     ui.dark = 0;
     plat_backlight(1);

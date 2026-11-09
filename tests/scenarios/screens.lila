@@ -1,4 +1,4 @@
-# the three screen modes: SAVE + GLO together go all -> minimal -> none -> all, and neither button does its own job
+# the three screen modes: SAVE + GLO together go all -> minimal -> all (the screen-off mode is disabled), and neither button does its own job
 wait 300
 expectp SCREEN 0
 expect page 0
@@ -23,20 +23,6 @@ set BEAT 0
 tap SEQ
 wait 300
 shot sc_mini_beat.png
-press GLO                      # the other order: GLO first
-wait 50
-press SAVE
-wait 60
-release GLO
-release SAVE
-wait 300
-expectp SCREEN 2
-expect page 8                  # still the BEAT page: the combo opened nothing
-wait 1500
-shot sc_off.png
-turn PRESET 1
-wait 1500
-shot sc_off2.png
 press SAVE
 press GLO
 wait 60
