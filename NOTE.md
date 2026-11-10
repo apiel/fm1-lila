@@ -1,0 +1,3 @@
+- when selecting a preset, an associated piano key should be shown... like a progress, so when screen is in minimal mode, we see where we are. Also pressing save+one of the piono key, bring us to the preset.
+
+- when i was playing a sound, and then switching to story mode the sound was not stoping. It's kind of a bug, but in the end i find it cool to have a background sound. Now i am wondering how we could add a background sound to the story :-) i guess something matching the story would make more sense...

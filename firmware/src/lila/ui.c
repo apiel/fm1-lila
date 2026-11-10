@@ -232,6 +232,8 @@ static struct {
     uint32_t pend;                      /* SAVE / GLO presses held back a moment: together they change the screen mode */
     uint32_t pend_t, mini_until;        /* when they were pressed; the minimal screen shows its words until then */
     uint8_t combo, dark;                /* both held now; the screen has been blanked */
+    uint32_t skipk;                     /* keys pressed with SAVE (a jump to a world): they make no sound, nor their release */
+    uint32_t world_ms;                  /* when the world last changed: its key is lit bright for a moment */
 } ui;
 
 /* what is kept when the toy is switched off: the settings (the screen mode among them) */
@@ -395,6 +397,7 @@ static void world_change(int idx, int immediate)
     }
     mini_toast(PRESETS[idx].name, PRESETS[idx].voice, rgb24(SCENES[idx].accent));
     ui.touch_ms = plat_ms();
+    ui.world_ms = ui.touch_ms;
 }
 
 /* ------------------------------------------------------------------- input --- */
@@ -537,6 +540,16 @@ static void input(void)
         }
     }
     for (i = 0; i < NKEYS_L; i++) {
+        if (((kd >> i) & 1u) && (b & (1u << B_SAVE)) && i < NPRESET) {   /* SAVE + a key: the world of that key (key n = world n) */
+            ui.skipk |= 1u << i;
+            ui.pend &= ~(1u << B_SAVE);                 /* no "with party" hint for this press */
+            world_change(i, 0);
+            continue;
+        }
+        if ((ku >> i) & 1u && ((ui.skipk >> i) & 1u)) {
+            ui.skipk &= ~(1u << i);
+            continue;
+        }
         if ((kd >> i) & 1u) {
             ev_post(EV_KEY_ON, i, 0);
             ui.touch_ms = now;
@@ -544,7 +557,7 @@ static void input(void)
         if ((ku >> i) & 1u)
             ev_post(EV_KEY_OFF, i, 0);
     }
-    ui.held_k = k;
+    ui.held_k = k & ~ui.skipk;
     for (i = 0; i < 4; i++) {
         d = plat_enc(EN_K1 + i);
         if (d)
@@ -1128,6 +1141,13 @@ static void leds(void)
             k |= 1u << story_key_of_part(story_world(), story_part);
         if (story_busy())
             b |= 1u << B_PLAY;
+    }
+    {   /* the world's own key: bright for 2 s after a change, then a dim light, so the minimal screen still tells where we are */
+        int wk = (int)P[P_PRESET] % NPRESET;
+        if (t - ui.world_ms < 2000u)
+            k |= 1u << wk;
+        else
+            kd |= 1u << wk;
     }
     if (mel_playing && mel_expect >= 0) {
         if (P[P_MMODE] == 1 && ((t / 200u) & 1u))
